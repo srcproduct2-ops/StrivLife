@@ -1,1010 +1,869 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="th">
 <head>
-<base target="_top">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=IBM+Plex+Sans+Thai:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<title>StrivLife</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><text y='20' font-size='20'>🌱</text></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  :root{
-    --paper:#E9EDEC; --card:#FFFFFF; --ink:#152025; --muted:#5C6B70; --line:#CDD6D5;
-    --amber:#F0B429; --errand:#2C5F7C; --trip:#2E7D5B; --other:#7A4E8C; --radius:12px;
-    --display:"Chakra Petch","IBM Plex Sans Thai","Noto Sans Thai","Sarabun",sans-serif;
-    --body:"IBM Plex Sans Thai","Noto Sans Thai","Sarabun",sans-serif;
-    --mono:"IBM Plex Mono",ui-monospace,monospace;
-  }
-  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-  html,body{margin:0;padding:0}
-  body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
-  .wrap{max-width:960px;margin:0 auto;padding:16px 14px calc(96px + env(safe-area-inset-bottom))}
-  .hide{display:none !important}
+:root{--bg:#f6f6fb;--card:#ffffff;--text:#1e1b4b;--muted:#6b6f8a;--soft:#f0f0fa;--border:#e8e8f4;--dark:#1e1b4b;--grad:linear-gradient(135deg,#6366f1 0%,#8b5cf6 100%);--grad-soft:linear-gradient(135deg,#eef2ff,#f5f3ff);--accent:#6366f1;--ok:#10b981;--shadow:0 1px 2px rgba(30,27,75,.04),0 10px 30px rgba(30,27,75,.06);color-scheme:light}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:#fff;color:var(--text);font:15px/1.6 "Inter","Sarabun",system-ui,-apple-system,sans-serif;-webkit-font-smoothing:antialiased;overscroll-behavior-y:contain}
+body{display:flex;justify-content:center}
+[hidden]{display:none!important}
 
-  /* ===== หน้าเข้าสู่ระบบ ===== */
-  #authView{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:22px 16px}
-  .auth{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px;width:100%;max-width:380px}
-  .auth h1{font-family:var(--display);font-size:24px;margin:0 0 2px}
-  .auth p.lead{color:var(--muted);font-size:13px;margin:0 0 18px}
-  .tabs{display:flex;background:#F1F4F3;border-radius:10px;padding:3px;margin-bottom:16px}
-  .tabs button{flex:1;border:none;background:none;font-family:var(--body);font-size:14px;padding:9px;border-radius:8px;cursor:pointer;color:var(--muted)}
-  .tabs button[aria-pressed="true"]{background:var(--ink);color:#fff}
+/* Phone frame (desktop) */
+#app{position:relative;width:100%;height:100dvh;overflow-y:auto;overflow-x:hidden;background:var(--bg);transform:translateZ(0)}
+@media (min-width:600px){
+  body{align-items:center}
+  #app{width:390px;height:844px;max-height:calc(100dvh - 48px);border-radius:48px;border:0;box-shadow:0 30px 60px rgba(30,27,75,.18)}
+}
 
-  label{display:block;font-size:12px;color:var(--muted);margin-bottom:5px}
-  input,textarea,select{width:100%;font-family:var(--body);font-size:16px;color:var(--ink);border:1px solid var(--line);border-radius:10px;padding:11px 12px;background:#FBFCFC}
-  textarea{resize:vertical;min-height:56px}
-  input:focus-visible,textarea:focus-visible,select:focus-visible,button:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
-  .field{margin-bottom:12px}
-  .two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-  .msg{font-size:13px;color:#A3302B;margin:2px 0 10px;min-height:18px}
-  .msg.ok{color:#1F6B4F}
-  .linkbtn{background:none;border:none;color:var(--muted);font-family:var(--body);font-size:13px;
-           text-decoration:underline;cursor:pointer;padding:10px 0 0;display:block;width:100%;text-align:center}
-  .hint{font-size:12px;color:var(--muted);margin:-6px 0 12px;line-height:1.45}
-  .divider{border-top:1px solid var(--line);margin:16px 0 14px}
+/* Buttons */
+button,.btn{font:inherit;font-weight:700;border:0;border-radius:16px;padding:12px 20px;background:var(--grad);color:#fff;cursor:pointer;box-shadow:0 8px 20px rgba(99,102,241,.28);transition:transform .18s cubic-bezier(.2,.8,.2,1),box-shadow .2s,opacity .15s}
+button:hover{transform:translateY(-1px)}
+button:active{transform:scale(.97)}
+button.ghost{background:var(--soft);color:var(--text);box-shadow:none}
+button.sm{padding:6px 12px;font-size:.8rem;border-radius:12px}
+button.danger{background:none;color:#e11d48;box-shadow:none;padding:6px 10px}
+.actions{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:14px}
 
-  .btn{font-family:var(--body);font-size:15px;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:10px;padding:11px 14px;cursor:pointer;transition:.15s}
-  .btn:active{transform:scale(.985)}
-  .btn.solid{background:var(--ink);color:#fff;border-color:var(--ink)}
-  .btn.full{width:100%}
-  .btn.sm{font-size:13px;padding:7px 11px}
-  .btn.icon{font-family:var(--mono);padding:8px 13px}
-  .btn.danger{color:#A3302B;border-color:#E2C3C1}
-  .btn[disabled]{opacity:.55;pointer-events:none}
-  .spacer{flex:1}
+/* Splash */
+#splash{position:absolute;inset:0;z-index:100;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:#fff;transition:opacity .6s ease,visibility .6s;cursor:pointer}
+#splash.gone{opacity:0;visibility:hidden}
+.logo{width:88px;height:88px;border-radius:28px;background:var(--grad);display:grid;place-items:center;box-shadow:0 16px 36px rgba(99,102,241,.35);color:#fff;font-weight:900;font-size:2rem}
+.splash-name{font-size:2.1rem;font-weight:900;letter-spacing:-.03em}
+.splash-tag{color:var(--muted);font-size:.95rem}
+.splash-bar{width:140px;height:4px;border-radius:4px;background:var(--border);overflow:hidden;margin-top:28px}
+.splash-bar i{display:block;height:100%;width:0;background:var(--grad);animation:load 2.2s ease forwards}
+@keyframes load{to{width:100%}}
 
-  /* ===== หัวเรื่อง ===== */
-  .masthead{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}
-  .brand h1{font-family:var(--display);font-weight:700;font-size:22px;margin:0;line-height:1.2}
-  .brand p{margin:1px 0 0;color:var(--muted);font-size:12.5px}
-  .me{display:flex;align-items:center;gap:7px;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:5px 12px 5px 6px;cursor:pointer;font-size:13.5px}
-  .av{border-radius:50%;display:grid;place-items:center;color:#fff;font-family:var(--display);font-weight:600;flex:none;width:24px;height:24px;font-size:11px}
+/* Auth */
+#auth{height:100%;display:flex;align-items:stretch;justify-content:center;padding:12px;background:#fff}
+.au-card{width:100%;height:100%;border-radius:40px;padding:44px 28px 28px;display:flex;flex-direction:column;overflow-y:auto;background:linear-gradient(160deg,#1e1b4b 0%,#312e81 100%);box-shadow:none;color:#fff}
+.au-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.au-brand{font-weight:900;color:#c4b5fd;font-size:1rem;letter-spacing:-.01em}
+.au-card h2{margin:14px 0 18px;font-size:1.9rem;font-weight:900;letter-spacing:-.03em}
+.au-err{color:#fca5a5;min-height:20px;font-size:.85rem;margin-bottom:6px}
+.au-in{display:flex;align-items:center;gap:10px;background:#fff;color:var(--text);border-radius:999px;padding:6px 14px 6px 6px;margin-bottom:12px}
+.au-ic{width:44px;height:44px;border-radius:50%;background:var(--grad);color:#fff;display:grid;place-items:center;flex:none}
+.au-ic svg{width:20px;height:20px}
+.au-in input{flex:1;min-width:0;border:0;background:transparent;padding:10px 0;font:inherit;font-size:16px;color:var(--text);box-shadow:none;border-radius:0}
+.au-in input:focus{outline:none;box-shadow:none;background:transparent;border:0}
+.au-in input::placeholder{color:#9b9fb8}
+.au-link{background:none;border:0;color:#c4b5fd;font:inherit;font-weight:700;font-size:.82rem;padding:6px 8px;cursor:pointer;box-shadow:none;border-radius:10px;white-space:nowrap}
+.au-link:hover{transform:none;box-shadow:none;opacity:.8}
+.au-actions{display:flex;justify-content:flex-end;margin:18px 0 6px}
+.au-go{width:56px;height:56px;border-radius:50%;padding:0;background:#fff;color:#4338ca;display:grid;place-items:center;box-shadow:0 0 0 6px rgba(255,255,255,.14)}
+.au-go svg{width:24px;height:24px}
+.au-note{text-align:center;color:#a5a3d6;font-size:.85rem;margin:12px 0 0}
+.au-or{display:flex;align-items:center;gap:12px;color:#a5a3d6;font-size:.85rem;margin:20px 0 14px}
+.au-or::before,.au-or::after{content:"";flex:1;height:1px;background:#4338ca}
+.au-google{width:100%;height:52px;border-radius:999px;background:#fff;color:var(--text);box-shadow:none;display:flex;align-items:center;justify-content:center;gap:10px;font-weight:700;padding:0}
+.au-google:hover{box-shadow:none}
+.au-google svg{width:20px;height:20px}
+.au-guest{width:100%;background:none;box-shadow:none;color:#c7d2fe;font-weight:700;margin-top:14px;padding:10px}
+.au-guest:hover{transform:none;box-shadow:none;color:#fff}
+.au-card .au-hint{color:#a5a3d6;font-size:.85rem;margin:-6px 0 12px}
 
-  .odo{background:var(--ink);border-radius:var(--radius);padding:13px 15px;display:flex;gap:20px;flex-wrap:wrap;margin-bottom:14px}
-  .odo-unit{display:flex;flex-direction:column;gap:6px}
-  .odo-label{font-family:var(--display);font-size:10.5px;letter-spacing:.14em;color:#8FA3A8}
-  .reel{display:flex;gap:3px;align-items:baseline}
-  .reel span{font-family:var(--mono);font-weight:600;font-size:20px;line-height:1;background:#0B1216;color:var(--amber);padding:6px 5px;border-radius:3px;min-width:17px;text-align:center;box-shadow:inset 0 -6px 8px -6px #000, inset 0 6px 8px -6px #3A4A50}
-  .reel span.sep{background:none;box-shadow:none;padding:6px 0;min-width:5px;color:#8FA3A8}
-  .reel .suffix{font-family:var(--display);font-size:11px;color:#8FA3A8;background:none;box-shadow:none;padding:0 0 0 4px;min-width:auto}
+/* Topbar */
+body.guest .topbar,body.guest .tabs,body.guest .view{display:none!important}
+.topbar{position:sticky;top:0;z-index:5;padding:calc(env(safe-area-inset-top,0px) + 14px) 18px 10px;background:rgba(246,246,251,.85);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+.brand{display:flex;align-items:center;gap:12px}
+.brand>div:nth-child(2){flex:1;min-width:0}
+.avatar{width:44px;height:44px;border-radius:14px;background:var(--grad);color:#fff;display:grid;place-items:center;font-weight:800;flex:none;overflow:hidden}
+.avatar img{width:100%;height:100%;object-fit:cover}
+.brand small{display:block;font-size:.78rem;color:var(--muted);font-weight:600}
+.topbar h1{margin:0;font-size:1.15rem;font-weight:800;letter-spacing:-.02em}
+.tb-actions{display:flex;gap:8px}
+.icon-btn,.lang-btn{height:44px;border-radius:14px;border:0;background:#fff;color:var(--muted);box-shadow:var(--shadow);display:grid;place-items:center;padding:0 14px;cursor:pointer;font-weight:700;font-size:.8rem}
+.icon-btn{width:44px;padding:0;color:var(--text)}
+.icon-btn svg{width:22px;height:22px}
+.lang-btn:hover,.icon-btn:hover{transform:translateY(-1px);background:#fff}
 
-  .monthbar{display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap}
-  .monthbar h2{font-family:var(--display);font-weight:600;font-size:18px;margin:0;min-width:150px}
+/* View + cards */
+.view{max-width:760px;margin:0 auto;padding:8px 16px 150px;display:grid;gap:14px}
+.card{background:var(--card);border-radius:22px;padding:18px;min-width:0;box-shadow:var(--shadow);border:1px solid var(--border)}
+.card h3{margin:0 0 12px;font-size:1rem;font-weight:800;display:flex;justify-content:space-between;align-items:center}
+.muted{color:var(--muted);font-size:.87rem}
+.greet{font-size:.92rem;color:var(--muted);margin:6px 2px 0;font-weight:600}
+.name{font-size:2rem;font-weight:900;letter-spacing:-.03em;margin:0;line-height:1.15}
+.weekcard{background:radial-gradient(120% 120% at 100% 0%,rgba(196,181,253,.45),transparent 55%),linear-gradient(135deg,#4338ca,#7c3aed);color:#fff;border-radius:24px;padding:20px;min-height:150px;display:flex;flex-direction:column;justify-content:space-between;box-shadow:0 18px 40px rgba(99,102,241,.3)}
+.weekcard .big{font-size:2.6rem;font-weight:900;line-height:1}
+.weekcard .lbl{font-size:.85rem;opacity:.85}
+.weekcard .go{display:flex;justify-content:space-between;font-size:.85rem;margin-top:10px;font-weight:600}
+.bar2{height:6px;border-radius:6px;background:rgba(255,255,255,.25);margin-top:12px;overflow:hidden}
+.bar2 i{display:block;height:100%;background:#fff;border-radius:6px;transition:width .4s ease}
 
-  .cal{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden}
-  .dow{display:grid;grid-template-columns:repeat(7,1fr);background:#DFE5E4}
-  .dow div{font-family:var(--display);font-size:11px;color:var(--muted);text-align:center;padding:7px 0}
-  .grid{display:grid;grid-template-columns:repeat(7,1fr)}
-  .cell{border-top:1px solid var(--line);border-right:1px solid var(--line);min-height:96px;padding:5px;cursor:pointer;background:var(--card);display:flex;flex-direction:column;gap:3px}
-  .cell:nth-child(7n){border-right:none}
-  .cell.dim{background:#F1F4F3;color:#9BA9AD;cursor:default}
-  .cell.sel{background:#FDF3DC;box-shadow:inset 0 0 0 2px var(--amber)}
-  .daynum{font-family:var(--mono);font-size:13px;font-weight:600;color:var(--muted)}
-  .cell.today .daynum{background:var(--amber);color:var(--ink);border-radius:50%;width:22px;height:22px;display:grid;place-items:center}
-  .chip{font-size:11.5px;padding:2px 5px;border-radius:4px;color:#fff;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  .chip.errand{background:var(--errand)} .chip.trip{background:var(--trip)} .chip.other{background:var(--other)}
-  .chip.busy{background:repeating-linear-gradient(45deg,#8A9599,#8A9599 4px,#9CA6A9 4px,#9CA6A9 8px)}
-  .more{font-size:11px;color:var(--muted)}
-  .cell-sum{margin-top:auto;font-family:var(--mono);font-size:10.5px;color:var(--muted)}
-  .dots{display:none;gap:3px;flex-wrap:wrap}
-  .dots i{width:6px;height:6px;border-radius:50%;display:block}
+/* Checklist */
+.addform{display:grid;grid-template-columns:1fr auto;gap:8px}
+.addform input,.addform select{width:100%;padding:12px 14px;border:1.5px solid transparent;border-radius:14px;background:var(--soft);color:var(--text);font:inherit;font-size:16px}
+.addform input:focus,.addform select:focus{outline:none;border-color:var(--accent);background:#fff;box-shadow:0 0 0 4px rgba(99,102,241,.15)}
+.addform select{grid-column:1/2}
+.addform button{grid-row:1/3;grid-column:2}
+.task{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--border)}
+.task:last-child{border-bottom:0}
+.chk{width:30px;height:30px;border-radius:10px;padding:0;background:#fff;border:1.5px solid #c7c9e2;color:#fff;box-shadow:none;display:grid;place-items:center;flex:none;font-size:14px}
+.chk:hover{transform:none;box-shadow:none}
+.task.done .chk{background:var(--grad);border-color:transparent}
+.tt{flex:1;min-width:0;font-weight:600;cursor:pointer;word-break:break-word}
+.task.done .tt{text-decoration:line-through;color:var(--muted)}
 
-  .panel{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:13px}
-  .panel h3{font-family:var(--display);font-size:11.5px;letter-spacing:.12em;color:var(--muted);margin:0 0 9px;font-weight:600}
-  section{margin-top:18px}
-  .sec-head{display:flex;align-items:center;gap:9px;margin-bottom:9px;flex-wrap:wrap}
-  .sec-head h2{font-family:var(--display);font-size:18px;margin:0}
+/* Week strip */
+.wk{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;text-align:center;font-size:.72rem;color:var(--muted)}
+.wk b{display:block;font-size:1rem;color:var(--text);margin-top:6px;padding:8px 0;border-radius:14px}
+.wk b.sel{background:var(--grad);color:#fff;box-shadow:0 8px 18px rgba(99,102,241,.3)}
 
-  .plan{display:flex;gap:10px;align-items:flex-start;padding:12px 0;border-bottom:1px solid var(--line);cursor:pointer}
-  .plan:last-child{border-bottom:none}
-  .pdate{font-family:var(--mono);font-size:11px;text-align:center;line-height:1.15;color:var(--muted);border-left:3px solid var(--line);padding-left:8px;min-width:50px}
-  .pdate b{display:block;font-size:16px;color:var(--ink)}
-  .plan.errand .pdate{border-left-color:var(--errand)}
-  .plan.trip .pdate{border-left-color:var(--trip)}
-  .plan.other .pdate{border-left-color:var(--other)}
-  .plan.busy .pdate{border-left-color:#8A9599}
-  .plan.busy .ptitle{color:var(--muted)}
-  .chk{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--ink);background:#FBFCFC;
-       border:1px solid var(--line);border-radius:10px;padding:12px;cursor:pointer;margin:0}
-  .chk input{width:20px;height:20px;flex:none;accent-color:#8A9599;margin:0}
-  .chk small{display:block;color:var(--muted);font-size:12px}
-  .busyhint{background:#F3F0E4;border:1px solid #E4DCC2;color:#6B5A24;border-radius:10px;
-            padding:9px 11px;font-size:12.5px;margin-bottom:12px}
-  .busybadge{font-family:var(--body);font-size:11px;background:#EDEFEF;color:#5C6B70;
-             border-radius:999px;padding:1px 8px;display:inline-block;margin-top:5px}
-  .pbody{min-width:0;flex:1}
-  .ptitle{font-size:14.5px;font-weight:500}
-  .pmeta{font-size:12.5px;color:var(--muted);font-family:var(--mono);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  .faces{display:flex;margin-top:6px;align-items:center;gap:6px}
-  .stack{display:flex}
-  .stack .av{margin-right:-6px;border:2px solid var(--card);width:22px;height:22px}
-  .goingnum{font-size:12px;color:var(--muted);margin-left:8px}
-  .pright{text-align:right;font-family:var(--mono);font-size:12.5px;white-space:nowrap}
-  .pright b{display:block;font-size:14px}
-  .tagme{font-family:var(--body);font-size:11px;background:#E4F0EA;color:#1F6B4F;border-radius:999px;padding:1px 8px;display:inline-block;margin-top:5px}
-  .tagme.maybe{background:#FBF0D8;color:#8A6410}
-  .tagme.no{background:#EDEFEF;color:#5C6B70}
-  .joinbtn{margin-top:9px;display:inline-flex;align-items:center;gap:6px;background:#1F6B4F;color:#fff;
-           border:none;border-radius:999px;padding:8px 15px;font-family:var(--body);font-size:13.5px;
-           font-weight:500;cursor:pointer;box-shadow:0 2px 6px rgba(31,107,79,.25)}
-  .joinbtn.ghost{background:transparent;color:var(--muted);border:1px solid var(--line);box-shadow:none;
-                 padding:6px 13px;font-size:12.5px;margin-left:6px}
-  .chev{align-self:center;color:#B4BEC0;font-family:var(--mono);font-size:22px;line-height:1;padding-left:2px}
-  .plan{transition:background .12s;border-radius:10px;padding-left:2px}
-  .plan:hover{background:#F6F9F8}
+/* History */
+.hgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+.hcell{aspect-ratio:1;border-radius:10px;background:var(--soft);display:grid;place-items:center;font-size:.72rem;font-weight:700;color:var(--text)}
+.hcell.l1{background:#e0e7ff}
+.hcell.l2{background:#a5b4fc}
+.hcell.l3{background:var(--grad);color:#fff}
+.hcell.today{outline:2px solid var(--dark);outline-offset:1px}
 
-  .tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-bottom:12px}
-  .tile{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:11px 12px}
-  .tile .k{font-size:12px;color:var(--muted)}
-  .tile .v{font-family:var(--mono);font-weight:600;font-size:20px;margin-top:2px}
-  .tile .v small{font-family:var(--display);font-size:11px;color:var(--muted);margin-left:3px}
-  .panels{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-  .brow{margin-bottom:11px}
-  .brow-top{display:flex;justify-content:space-between;font-size:13.5px;margin-bottom:5px;gap:8px}
-  .brow-top span{font-family:var(--mono);font-size:12.5px;color:var(--muted);white-space:nowrap}
-  .bar{height:7px;background:#E3E9E8;border-radius:4px;overflow:hidden}
-  .bar i{display:block;height:100%;border-radius:4px}
-  .plist{list-style:none;margin:0;padding:0}
-  .plist li{display:flex;justify-content:space-between;gap:10px;align-items:center;font-size:13.5px;padding:6px 0;border-bottom:1px dashed var(--line)}
-  .plist li:last-child{border-bottom:none}
-  .plist span.n{font-family:var(--mono);font-size:12.5px;color:var(--muted);white-space:nowrap}
-  .seg{display:flex;border:1px solid var(--line);border-radius:9px;overflow:hidden;background:var(--card)}
-  .seg button{border:none;background:none;font-family:var(--body);font-size:13px;padding:8px 14px;cursor:pointer;color:var(--muted)}
-  .seg button[aria-pressed="true"]{background:var(--ink);color:#fff}
-  .empty{color:var(--muted);font-size:13.5px;padding:16px 0;text-align:center}
+/* Summary */
+.bars{display:flex;align-items:flex-end;gap:8px;height:140px;margin-top:8px}
+.bars div{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;font-size:.7rem;color:var(--muted);gap:4px}
+.bars i{display:block;width:100%;border-radius:10px 10px 4px 4px;background:var(--grad);min-height:4px}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.stat{background:var(--grad-soft);border:1px solid var(--border);border-radius:20px;padding:14px}
+.stat b{display:block;font-size:1.5rem;font-weight:900;color:var(--text)}
+.stat span{font-size:.8rem;color:var(--muted)}
 
-  /* ตาราง List All */
-  .mhead{font-family:var(--display);font-size:11.5px;letter-spacing:.1em;color:var(--muted);
-         background:#F1F4F3;border-radius:7px;padding:6px 11px;margin:14px 0 2px}
-  .mhead:first-child{margin-top:0}
-  .arow{display:grid;grid-template-columns:78px 1fr auto auto;gap:10px;align-items:center;
-        padding:10px 4px;border-bottom:1px solid var(--line);cursor:pointer;border-radius:8px}
-  .arow:last-child{border-bottom:none}
-  .arow:hover{background:#F6F9F8}
-  .arow.busyrow{opacity:.72}
-  .adate{font-family:var(--mono);font-size:12.5px;color:var(--ink);white-space:nowrap}
-  .adate small{color:var(--muted);margin-left:2px}
-  .atitle{font-size:14px;min-width:0}
-  .atitle small{display:block;font-size:12px;color:var(--muted);font-family:var(--mono);
-                overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  .apeople{display:flex;align-items:center}
-  .apeople .av{margin-right:-5px;border:2px solid var(--card);width:20px;height:20px;font-size:9px}
-  .amoney{font-family:var(--mono);font-size:13px;white-space:nowrap;color:var(--muted)}
-  @media (max-width:560px){
-    .arow{grid-template-columns:62px 1fr auto;gap:8px}
-    .amoney{display:none}
-  }
+/* Tab bar + FAB */
+.tabs{position:fixed;bottom:calc(env(safe-area-inset-bottom,0px) + 14px);left:50%;transform:translateX(-50%);width:min(560px,calc(100% - 28px));display:flex;align-items:center;gap:12px;z-index:6}
+.pill{position:relative;flex:1;display:grid;grid-template-columns:repeat(5,1fr);gap:4px;padding:8px;border-radius:26px;background:rgba(255,255,255,.92);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);box-shadow:0 12px 32px rgba(30,27,75,.14),0 0 0 1px rgba(255,255,255,.6) inset}
+.ind{position:absolute;top:16px;left:0;width:50px;height:34px;border-radius:14px;background:var(--grad);box-shadow:0 8px 18px rgba(99,102,241,.35);transition:left .5s cubic-bezier(.34,1.4,.64,1);pointer-events:none;z-index:0}
+.tabs .pill button{position:relative;z-index:1;background:none;color:var(--muted);box-shadow:none;font-size:.68rem;font-weight:600;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:8px 0;border-radius:18px;min-width:0}
+.tabs .pill button:hover{transform:none;box-shadow:none}
+.tabs .pill button .ic{width:50px;height:34px;display:grid;place-items:center;transition:color .3s ease,transform .35s cubic-bezier(.34,1.56,.64,1)}
+.tabs .pill button .ic svg{width:22px;height:22px}
+.tabs .pill button.on{color:var(--text);font-weight:800}
+.tabs .pill button.on .ic{color:#fff;transform:translateY(-1px) scale(1.05)}
+.tabs .pill button:active{transform:scale(.92)}
+.fab{flex:none;width:58px;height:58px;border-radius:20px;padding:0;background:var(--grad);color:#fff;box-shadow:0 14px 30px rgba(99,102,241,.42);display:grid;place-items:center}
+.fab svg{width:26px;height:26px}
+.fab:hover{transform:translateY(-2px)}
 
-  /* ===== ปุ่มลอย + แผ่นเลื่อน ===== */
-  .fab{position:fixed;right:16px;bottom:calc(18px + env(safe-area-inset-bottom));z-index:40;
-       background:var(--ink);color:#fff;border:none;border-radius:999px;padding:15px 22px;
-       font-family:var(--display);font-size:15px;font-weight:600;box-shadow:0 6px 18px rgba(21,32,37,.28);cursor:pointer}
-  .sheet-bg{position:fixed;inset:0;background:rgba(21,32,37,.5);display:none;align-items:flex-end;justify-content:center;z-index:60}
-  .sheet-bg.open{display:flex}
-  .sheet{background:var(--card);border-radius:18px 18px 0 0;width:100%;max-width:520px;max-height:92vh;overflow-y:auto;padding:18px 16px calc(20px + env(safe-area-inset-bottom))}
-  .grip{width:38px;height:4px;background:var(--line);border-radius:99px;margin:0 auto 12px}
-  .sheet h3{font-family:var(--display);font-size:18px;margin:0 0 2px}
-  .sheet .sub{color:var(--muted);font-size:12.5px;margin-bottom:14px;font-family:var(--mono)}
-  .types{display:flex;gap:7px}
-  .types button{flex:1;border:1px solid var(--line);background:#FBFCFC;border-radius:10px;padding:10px 4px;font-family:var(--body);font-size:13.5px;cursor:pointer;color:var(--muted)}
-  .types button[aria-pressed="true"]{color:#fff;border-color:transparent}
-  .types button[data-t="errand"][aria-pressed="true"]{background:var(--errand)}
-  .types button[data-t="trip"][aria-pressed="true"]{background:var(--trip)}
-  .types button[data-t="other"][aria-pressed="true"]{background:var(--other)}
-  .actions{display:flex;gap:8px;margin-top:16px}
-  .actions .btn{flex:1;padding:13px}
-  .rsvp{display:flex;gap:7px;margin:14px 0}
-  .rsvp button{flex:1;border:1px solid var(--line);background:#FBFCFC;border-radius:10px;padding:13px 4px;font-family:var(--body);font-size:14px;cursor:pointer;color:var(--muted)}
-  .rsvp button[aria-pressed="true"][data-r="yes"]{background:#1F6B4F;color:#fff;border-color:transparent}
-  .rsvp button[aria-pressed="true"][data-r="maybe"]{background:var(--amber);color:var(--ink);border-color:transparent}
-  .rsvp button[aria-pressed="true"][data-r="no"]{background:#8A9599;color:#fff;border-color:transparent}
-  .rsvpsave{width:100%;padding:13px;margin-bottom:6px}
-  .rsvpnote{font-size:12px;color:var(--muted);text-align:center;margin:-2px 0 12px}
-  .detrow{display:flex;justify-content:space-between;gap:10px;font-size:13.5px;padding:8px 0;border-bottom:1px dashed var(--line)}
-  .detrow span.k{color:var(--muted)}
-  .person{display:flex;align-items:center;gap:7px;font-size:13.5px;padding:5px 0}
-  .cmt{border-top:1px solid var(--line);margin-top:14px;padding-top:12px}
-  .cmt .item{display:flex;gap:8px;padding:5px 0;font-size:13.5px}
-  .cmt .txt{background:#F2F6F5;border-radius:12px;padding:7px 11px;flex:1;min-width:0;word-break:break-word}
-  .cmt .txt b{display:block;font-size:11.5px;color:var(--muted);font-weight:500}
-  .cmtbox{display:flex;gap:7px;margin-top:9px}
-  .cmtbox input{flex:1}
-
-  .toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%) translateY(16px);background:var(--ink);color:#fff;font-size:13.5px;padding:11px 17px;border-radius:10px;opacity:0;pointer-events:none;transition:.25s;z-index:90;max-width:92vw;text-align:center}
-  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-  .loading{position:fixed;inset:0;background:var(--paper);display:grid;place-items:center;z-index:100;font-family:var(--display);color:var(--muted)}
-  .loading .box{display:flex;flex-direction:column;align-items:center;gap:14px}
-
-  /* แถบโหลดด้านบนจอ */
-  #topbar{position:fixed;top:0;left:0;right:0;height:5px;z-index:200;overflow:hidden;
-          opacity:0;transition:opacity .2s;pointer-events:none;background:rgba(21,32,37,.08)}
-  #topbar.on{opacity:1}
-  #topbar i{display:block;height:100%;width:38%;border-radius:0 5px 5px 0;
-            background:linear-gradient(90deg,rgba(240,180,41,0),var(--amber),#2E7D5B,rgba(46,125,91,0));
-            animation:slide 1.15s cubic-bezier(.4,0,.2,1) infinite}
-  @keyframes slide{0%{transform:translateX(-105%)}100%{transform:translateX(365%)}}
-
-  /* ป้ายบอกว่ากำลังคุยกับชีต */
-  #syncpill{position:fixed;top:16px;left:50%;z-index:201;display:flex;align-items:center;gap:9px;
-            background:var(--ink);color:#fff;font-size:13.5px;padding:10px 18px;border-radius:999px;
-            box-shadow:0 6px 20px rgba(21,32,37,.3);white-space:nowrap;
-            transform:translateX(-50%) translateY(-24px);opacity:0;pointer-events:none;
-            transition:opacity .2s,transform .2s}
-  #syncpill.on{opacity:1;transform:translateX(-50%) translateY(0)}
-  #syncpill .spinner{margin:0}
-
-  /* วงกลมหมุนในปุ่ม */
-  .spinner{width:15px;height:15px;border:2px solid rgba(255,255,255,.35);border-top-color:#fff;
-           border-radius:50%;display:inline-block;vertical-align:-3px;margin-right:8px;
-           animation:spin .7s linear infinite}
-  .spinner.dark{border-color:rgba(21,32,37,.18);border-top-color:var(--ink)}
-  .spinner.big{width:30px;height:30px;border-width:3px;margin:0}
-  @keyframes spin{to{transform:rotate(360deg)}}
-
-  /* จาง ๆ ตอนกำลังดึงข้อมูลใหม่ */
-  .syncing{opacity:.55;transition:opacity .2s}
-  footer{margin-top:22px;color:var(--muted);font-size:12px;text-align:center}
-
-  @media (max-width:760px){ .tiles{grid-template-columns:1fr 1fr} .panels{grid-template-columns:1fr} }
-  @media (max-width:560px){
-    .cell{min-height:58px;padding:4px}
-    .chip,.more,.cell-sum{display:none}
-    .dots{display:flex}
-    .brand h1{font-size:19px}
-    .odo{gap:14px}
-    .reel span{font-size:17px;min-width:15px;padding:5px 4px}
-  }
-  @media (prefers-reduced-motion:reduce){*{transition:none!important}
-    #topbar i,.spinner{animation-duration:2.5s}}
+/* Toast */
+.toast{position:fixed;left:50%;bottom:110px;transform:translateX(-50%);background:var(--dark);color:#fff;padding:12px 18px;border-radius:14px;font-size:14px;opacity:0;transition:opacity .3s;pointer-events:none;max-width:88%;text-align:center;z-index:9}
+.toast.show{opacity:1}
+/* Bottom nav v2: glass bar, mint capsule for active tab, round dark action button */
+.pill{background:rgba(255,255,255,.55);-webkit-backdrop-filter:blur(18px) saturate(1.6);backdrop-filter:blur(18px) saturate(1.6);border:1px solid rgba(30,27,75,.08);box-shadow:0 12px 32px rgba(30,27,75,.14),inset 0 1px 0 rgba(255,255,255,.6)}
+.ind{background:#dcfce7;box-shadow:none;border-radius:999px;width:50px;height:34px;top:16px}
+.tabs .pill button{transition:transform .15s ease,color .25s ease}
+.tabs .pill button:not(.on){color:var(--muted)}
+.tabs .pill button.on{color:#14532d;font-weight:800}
+.tabs .pill button.on .ic{color:#15803d;transform:none}
+.tabs .pill button:active{transform:scale(.92)}
+.tabs .pill button:hover .ic svg{animation:navWiggle .5s ease}
+@keyframes navWiggle{0%,100%{transform:rotate(0)}25%{transform:rotate(-10deg)}75%{transform:rotate(10deg)}}
+.tabs{gap:10px}
+.fab{width:56px;height:56px;border-radius:50%;background:#1e1b4b;color:#fff;box-shadow:0 10px 24px rgba(30,27,75,.35)}
+.fab:hover{background:#1e1b4b;transform:translateY(-2px)}
+.fab:active{transform:scale(.92)}
+/* Bottom bar slides away when scrolling down and returns when scrolling up */
+.tabs{transition:transform .35s ease}
+.tabs.hide{transform:translate(-50%,220%)}
+/* Slide-to-sign-in control */
+.au-actions{display:block;margin:18px 0 6px}
+.slider{position:relative;height:60px;width:100%;border-radius:999px;background:#fff;overflow:hidden;padding:4px;user-select:none;-webkit-user-select:none;touch-action:none;box-shadow:0 10px 30px rgba(0,0,0,.2);transition:background .4s ease}
+.sl-fill{position:absolute;left:0;top:0;bottom:0;width:0;border-radius:999px;background:linear-gradient(90deg,rgba(99,102,241,.06),rgba(139,92,246,.3));transition:opacity .3s}
+.sl-text{position:absolute;inset:0;display:grid;place-items:center;padding-left:44px;color:#9b9fb8;font-weight:600;font-size:.95rem;pointer-events:none;white-space:nowrap}
+.sl-knob{position:absolute;top:4px;left:4px;width:52px;height:52px;border-radius:50%;background:var(--grad);color:#fff;display:grid;place-items:center;cursor:grab;box-shadow:0 6px 16px rgba(99,102,241,.4);z-index:2;touch-action:none}
+.sl-knob:active{cursor:grabbing}
+.sl-knob svg{width:22px;height:22px}
+.slider.ok{background:linear-gradient(135deg,#34d399,#10b981)}
+.slider.ok .sl-fill{opacity:0}
+.slider.ok .sl-knob{background:#fff;color:#10b981;box-shadow:0 6px 16px rgba(0,0,0,.15)}
+.slider.ok .sl-text{color:#fff;font-weight:800}
+/* Tap animation: floating circle pops up under the active tab, icon bounces */
+.ind{top:8px;width:50px;height:50px;border-radius:50%;background:var(--grad);box-shadow:0 10px 22px rgba(99,102,241,.4);transition:left .5s cubic-bezier(.34,1.4,.64,1)}
+.ind.bounce{animation:navPop .55s cubic-bezier(.34,1.3,.64,1)}
+@keyframes navPop{0%{transform:translateY(0) scale(.85)}35%{transform:translateY(-14px) scale(1.12)}100%{transform:translateY(0) scale(1)}}
+.tabs .pill button.on .ic{color:#fff;transform:none}
+.tabs .pill button.on .ic svg{animation:iconBounce .5s ease}
+@keyframes iconBounce{0%{transform:scale(.6)}60%{transform:scale(1.2)}100%{transform:scale(1)}}
+.tabs .pill button:active .ic{transform:scale(.85)}
+/* Tab panel expands from the tapped tab and merges into the page */
+.reveal{position:absolute;border-radius:50%;background:var(--grad);transform:scale(0);z-index:4;pointer-events:none;animation:revealIn .42s cubic-bezier(.6,0,.3,1) forwards;transition:opacity .4s ease}
+.reveal.out{opacity:0}
+@keyframes revealIn{to{transform:scale(1)}}
+.ind{transition:none}
+/* Liquid link: a white blob rises from the bar toward the selected tab and merges with it */
+.goo{position:absolute;left:-30px;right:-30px;top:-40px;bottom:-30px;pointer-events:none;z-index:0;filter:url(#goo)}
+.goo-bar{position:absolute;left:30px;right:30px;top:40px;bottom:30px;border-radius:26px;background:#fff}
+.goo-blob{position:absolute;top:17px;width:46px;height:46px;border-radius:50%;background:#fff;transition:left .55s cubic-bezier(.25,.8,.25,1)}
+.tabs .pill button{position:relative;z-index:1}
+/* Compact tab bar: smaller frame, icons keep their size */
+.tabs{width:min(520px,calc(100% - 28px));gap:8px}
+.tabs .pill{padding:5px 6px;border-radius:24px}
+.tabs .pill button{padding:4px 0 3px;gap:2px}
+.ind{top:2px}
+/* Icon-only tab bar: labels stay in the DOM for screen readers but are not shown */
+.tabs .pill button .lb{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.tabs .pill button{gap:0}
+.ind{top:1px}
+/* Roomier tab frame so the selected circle sits fully inside */
+.tabs .pill{padding:10px 8px;border-radius:30px}
+.ind{top:6px}
+/* Floating add-item panel opened by the + button */
+.sheet-backdrop{position:fixed;inset:0;z-index:20;background:rgba(30,27,75,.35);opacity:0;transition:opacity .3s ease}
+.sheet-backdrop.open{opacity:1}
+.sheet{position:fixed;left:0;right:0;bottom:0;z-index:21;background:#fff;border-radius:28px 28px 0 0;padding:12px 20px calc(24px + env(safe-area-inset-bottom,0px));box-shadow:0 -12px 40px rgba(30,27,75,.2);transform:translateY(105%);transition:transform .35s cubic-bezier(.2,.8,.2,1)}
+.sheet.open{transform:none}
+.sheet-grip{width:44px;height:5px;border-radius:5px;background:#d4d4e4;margin:0 auto 14px}
+.sheet h3{margin:0 0 12px;font-size:1.05rem;font-weight:800}
+/* Per-day planning, calendar, previews and checklists */
+.addform{display:flex;flex-direction:column;gap:10px}
+.addform button{grid-row:auto;grid-column:auto;width:100%}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.fld{display:flex;flex-direction:column;gap:4px;font-size:.78rem;color:var(--muted);font-weight:600}
+.fld input,.fld select,.addform textarea{width:100%;padding:11px 12px;border:1.5px solid transparent;border-radius:14px;background:var(--soft);color:var(--text);font:inherit;font-size:16px}
+.addform textarea{resize:none}
+.rep{display:flex;gap:8px;align-items:center;font-size:.9rem;color:var(--text)}
+.rep input{width:18px;height:18px;accent-color:#6366f1}
+.sheet-go{margin-top:4px}
+.cal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.cal-head b{font-weight:800}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;text-align:center}
+.cal .wd{font-size:.72rem;color:var(--muted);font-weight:700;padding:4px 0}
+.cal .cd{position:relative;border:0;background:none;box-shadow:none;padding:8px 0;border-radius:12px;color:var(--text);font-weight:700;font-size:.9rem;cursor:pointer}
+.cal .cd:hover{transform:none;box-shadow:none;background:var(--soft)}
+.cal .cd.blank{visibility:hidden}
+.cal .cd.today{outline:2px solid #6366f1;outline-offset:-2px}
+.cal .cd.sel{background:var(--grad);color:#fff}
+.cal .cd .dot{position:absolute;bottom:3px;left:50%;transform:translateX(-50%);width:5px;height:5px;border-radius:50%;background:#6366f1}
+.cal .cd.sel .dot{background:#fff}
+.hscroll{display:flex;gap:10px;overflow-x:auto;padding-bottom:4px}
+.pv{min-width:112px;background:var(--card);border:1px solid var(--border);border-radius:18px;padding:12px;display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center}
+.pv-ico{font-size:1.9rem;width:56px;height:56px;border-radius:18px;background:var(--grad-soft);display:grid;place-items:center}
+.pv-t{font-weight:700;font-size:.85rem}
+.pv-m{font-size:.75rem;color:var(--muted)}
+.pv.done{opacity:.5}
+.ico{width:34px;height:34px;border-radius:12px;background:var(--grad-soft);display:grid;place-items:center;font-size:1.05rem;flex:none}
+.tbody{flex:1;min-width:0}
+.task{align-items:flex-start}
+.task .chk{margin-top:2px}
+.chip{font-size:.65rem;background:var(--soft);color:#6366f1;border-radius:999px;padding:2px 6px;margin-left:4px;font-weight:700}
+.tm{font-size:.75rem;color:var(--muted)}
+.steps{margin-top:6px;display:grid;gap:4px}
+.step{display:flex;align-items:center;gap:8px;font-size:.85rem;color:var(--muted)}
+.step input{width:16px;height:16px;accent-color:#6366f1;flex:none;padding:0;box-shadow:none}
+.step.done span{text-decoration:line-through}
+.hcell{box-shadow:none;padding:0;transform:none}
+.hcell:hover{transform:none;box-shadow:none}
 </style>
 </head>
-<body>
+<body class="guest">
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><filter id="goo"><feGaussianBlur in="SourceGraphic" stdDeviation="6" result="b"/><feColorMatrix in="b" mode="matrix" values="1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 18 -8" result="g"/><feComposite in="SourceGraphic" in2="g" operator="atop"/></filter></defs></svg>
+<div id="app">
 
-<div id="topbar"><i></i></div>
-<div id="syncpill"><span class="spinner"></span><span id="syncTxt">กำลังซิงก์กับชีต…</span></div>
-<div class="loading" id="loading">
-  <div class="box"><span class="spinner dark big"></span><span>กำลังโหลดข้อมูลจากชีต…</span></div>
-</div>
+  <!-- Splash -->
+  <section id="splash" onclick="this.classList.add('gone')">
+    <div class="logo">S</div>
+    <div class="splash-name">StrivLife</div>
+    <div class="splash-tag">Small steps, big results.</div>
+    <div class="splash-bar"><i></i></div>
+  </section>
 
-<!-- ===== เข้าสู่ระบบ / สมัครสมาชิก ===== -->
-<div id="authView" class="hide">
-  <div class="auth">
-    <h1>ไปไหนดีว๊า</h1>
-    <p class="lead">ใส่ชื่อเล่นแล้วเริ่มใช้ได้เลย ไม่ต้องสมัคร ไม่ต้องจำรหัส</p>
-    <div class="field"><label for="aName">ชื่อเล่นของคุณ</label>
-      <input id="aName" placeholder="เช่น บีม" maxlength="20" autocomplete="nickname"></div>
-    <div class="hint">เพื่อนจะเห็นชื่อนี้บนนัดที่คุณลงและตรงรายชื่อคนที่จะไป
-      ถ้าเคยใช้ชื่อนี้แล้ว ระบบจะจำนัดเดิมของคุณไว้ให้</div>
-    <div class="msg" id="authMsg"></div>
-    <button class="btn solid full" id="btnAuth">เริ่มใช้งาน</button>
-  </div>
-</div>
+  <!-- Auth -->
+  <section id="auth">
+    <div class="au-card">
+      <div class="au-top">
+        <span class="au-brand">StrivLife</span>
+        <button class="au-link" id="auSwitch" data-act="toggleMode" hidden>เข้าสู่ระบบ</button>
+      </div>
+      <h2 id="auTitle">เข้าสู่ระบบ</h2>
+      <div class="au-err" id="auErr" role="alert"></div>
 
-<!-- ===== หน้าหลัก ===== -->
-<div id="appView" class="hide">
-<div class="wrap">
-  <header class="masthead">
-    <div class="brand">
-      <h1>ไปไหนดีว๊า</h1>
-      <p>ข้อมูลบันทึกลง Google Sheets อัตโนมัติ</p>
+      <div class="au-in" id="auNameWrap" hidden>
+        <span class="au-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg></span>
+        <input id="auName" placeholder="ชื่อที่แสดง" autocomplete="name">
+      </div>
+      <div class="au-in">
+        <span class="au-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="m4 7 8 6 8-6"/></svg></span>
+        <input id="auEmail" type="email" placeholder="User ID (หรืออีเมล)" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false">
+      </div>
+      <div class="au-in">
+        <span class="au-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span>
+        <input id="auPass" type="password" placeholder="รหัสผ่าน (อย่างน้อย 8 ตัว)" autocomplete="current-password">
+        <button class="au-link" type="button" data-act="forgot" id="auForgot">ลืมรหัสผ่าน?</button>
+      </div>
+      <div class="au-in" id="auPass2Wrap" hidden>
+        <span class="au-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span>
+        <input id="auPass2" type="password" placeholder="ยืนยันรหัสผ่าน" autocomplete="new-password">
+      </div>
+
+      <div class="au-actions">
+        <div class="slider" id="slider">
+          <div class="sl-fill"></div>
+          <div class="sl-text" id="slText">เลื่อนเพื่อเข้าสู่ระบบ</div>
+          <div class="sl-knob"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+        </div>
+      </div>
+
+      <div class="au-note" id="auRegWrap"><span>ยังไม่มีบัญชี?</span> <button class="au-link" type="button" data-act="toggleMode">สมัครสมาชิก</button></div>
+
+      <div class="au-or"><span>หรือ</span></div>
+      <button class="au-google" data-act="googleLogin">
+        <svg viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9 3.5l6.7-6.7C35.6 2.4 30.2 0 24 0 14.6 0 6.5 5.4 2.6 13.2l7.8 6.1C12.3 13.5 17.7 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 3-2.3 5.5-4.8 7.2l7.5 5.8c4.4-4.1 7-10.1 7-17.5z"/><path fill="#FBBC05" d="M10.4 28.7c-.5-1.4-.8-2.9-.8-4.7s.3-3.3.8-4.7l-7.8-6.1C.9 16.6 0 20.2 0 24s.9 7.4 2.6 10.8l7.8-6.1z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.5-5.8c-2.1 1.4-4.8 2.3-8.4 2.3-6.3 0-11.7-4.2-13.6-9.8l-7.8 6C6.5 42.6 14.6 48 24 48z"/></svg>
+        ดำเนินการต่อด้วย Google
+      </button>
+      <button class="au-guest" data-act="guestLogin">เข้าใช้แบบผู้เยี่ยมชม (ไม่ต้องสมัคร)</button>
+      <p class="au-note">การใช้งานนี้เพื่อการวางแผนและติดตามกิจวัตรเท่านั้น</p>
     </div>
-    <div class="me" id="meChip" role="button" tabindex="0"></div>
+  </section>
+
+  <!-- Topbar -->
+  <header class="topbar">
+    <div class="brand">
+      <div class="avatar" id="avatar"></div>
+      <div><small id="greet"></small><h1 id="title">วันนี้</h1></div>
+      <div class="tb-actions">
+        <button class="lang-btn" data-act="lang" aria-label="ภาษา">TH</button>
+        <button class="icon-btn" data-act="bell" aria-label="การแจ้งเตือน"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 8 3 8H3s3-1 3-8"/><path d="M10 21h4"/></svg></button>
+      </div>
+    </div>
   </header>
 
-  <div class="odo" id="odo"></div>
+  <!-- Main view -->
+  <main id="view" class="view"></main>
 
-  <div class="monthbar">
-    <button class="btn icon" id="prev" aria-label="เดือนก่อน">‹</button>
-    <h2 id="monthLabel"></h2>
-    <button class="btn icon" id="next" aria-label="เดือนถัดไป">›</button>
-    <div class="spacer"></div>
-    <button class="btn sm" id="btnRefresh">รีเฟรช</button>
-    <select id="filter" style="width:auto;font-size:13.5px;padding:8px 10px">
-      <option value="all">ทุกนัด</option>
-      <option value="mine">เฉพาะที่ฉันจะไป</option>
-      <option value="trip">ไปเที่ยว</option>
-      <option value="errand">ไปธุระ</option>
-      <option value="other">อื่น ๆ</option>
-      <option value="busy">เฉพาะวันไม่ว่าง</option>
-    </select>
-  </div>
-
-  <div class="cal">
-    <div class="dow"><div>อา</div><div>จ</div><div>อ</div><div>พ</div><div>พฤ</div><div>ศ</div><div>ส</div></div>
-    <div class="grid" id="grid"></div>
-  </div>
-
-  <section>
-    <div class="sec-head">
-      <h2 id="listTitle">นัดในเดือนนี้</h2>
-      <div class="spacer"></div>
-      <button class="btn sm hide" id="btnClearDay">ดูทั้งเดือน</button>
+  <!-- Bottom tabs + FAB -->
+  <nav class="tabs">
+    <div class="pill">
+      <div class="goo" aria-hidden="true"><div class="goo-bar"></div><div class="goo-blob"></div></div>
+      <span class="ind" aria-hidden="true"></span>
+      <button data-tab="today"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"/></svg></span><span class="lb">หน้าหลัก</span></button>
+      <button data-tab="schedule"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg></span><span class="lb">ตารางงาน</span></button>
+      <button data-tab="history"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5M12 7v5l3 2"/></svg></span><span class="lb">ประวัติ</span></button>
+      <button data-tab="summary"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 20V10M10 20V4M16 20v-8M22 20H2"/></svg></span><span class="lb">สรุป</span></button>
+      <button data-tab="profile"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg></span><span class="lb">โปรไฟล์</span></button>
     </div>
-    <div class="panel" id="listPanel"></div>
-  </section>
-
-  <section>
-    <div class="sec-head">
-      <h2>ภาพรวม</h2>
-      <div class="seg" id="scope">
-        <button data-s="month" aria-pressed="true">เดือนนี้</button>
-        <button data-s="all" aria-pressed="false">ทั้งหมด</button>
-      </div>
+    <button class="fab" data-act="fab" aria-label="เพิ่มรายการ"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button>
+  </nav>
+  <div class="sheet-backdrop" data-act="closeSheet" id="sheetBg" hidden></div>
+<div class="sheet" id="sheet" hidden>
+  <div class="sheet-grip"></div>
+  <h3>เพิ่มรายการ</h3>
+  <form class="addform" id="addForm">
+    <input id="newText" placeholder="เช่น อ่านหนังสือ 20 นาที" maxlength="80" autocomplete="off">
+    <div class="frow">
+      <label class="fld"><span>วันที่</span><input type="date" id="newDate"></label>
+      <label class="fld"><span>เวลา</span><input type="time" id="newTime"></label>
     </div>
-    <div class="tiles" id="tiles"></div>
-    <div class="panels">
-      <div class="panel"><h3>แยกตามประเภท</h3><div id="byType"></div></div>
-      <div class="panel">
-        <h3>ใครไปบ่อยที่สุด</h3><ul class="plist" id="ranking"></ul>
-        <h3 style="margin-top:15px">ตัวเลขของฉัน</h3><ul class="plist" id="mine"></ul>
-      </div>
+    <div class="frow">
+      <label class="fld"><span>ช่วง</span><select id="newPeriod"><option value="morning">เช้า</option><option value="afternoon">กลางวัน</option><option value="evening">เย็น</option></select></label>
+      <label class="fld"><span>ไอคอน</span><select id="newIcon"><option>📌</option><option>📘</option><option>✏️</option><option>🏃</option><option>💧</option><option>🧘</option><option>🍎</option><option>💻</option><option>🛌</option><option>🎯</option><option>🎵</option><option>🧹</option></select></label>
     </div>
-  </section>
-
-  <section>
-    <div class="sec-head">
-      <h2>List All</h2>
-      <div class="seg" id="allScope">
-        <button data-a="upcoming" aria-pressed="true">ที่ยังไม่ถึง</button>
-        <button data-a="all" aria-pressed="false">ทั้งหมด</button>
-      </div>
-      <div class="spacer"></div>
-      <span class="goingnum" id="allCount"></span>
-    </div>
-    <div class="panel" id="allPanel"></div>
-  </section>
-
-  <footer>บันทึกนัดที่ชีต Record1 · สมาชิกที่ชีต User01</footer>
+    <textarea id="newSteps" rows="2" placeholder="ขั้นตอนย่อย (บรรทัดละ 1 ข้อ) ไม่บังคับ"></textarea>
+    <label class="rep"><input type="checkbox" id="newRepeat"> ทำทุกวัน</label>
+    <button type="submit" class="sheet-go">เพิ่มรายการ</button>
+  </form>
 </div>
-<button class="fab" id="fab">+ ลงนัด</button>
 </div>
-
-<!-- แผ่นฟอร์มนัด -->
-<div class="sheet-bg" id="formBg">
-  <div class="sheet" role="dialog" aria-modal="true">
-    <div class="grip"></div>
-    <h3 id="formTitle">ลงนัดใหม่</h3>
-    <div class="sub" id="formSub"></div>
-    <div class="field">
-      <label class="planOnly">ประเภท</label>
-      <div class="types planOnly" id="types">
-        <button type="button" data-t="trip" aria-pressed="true">ไปเที่ยว</button>
-        <button type="button" data-t="errand" aria-pressed="false">ไปธุระ</button>
-        <button type="button" data-t="other" aria-pressed="false">อื่น ๆ</button>
-      </div>
-    </div>
-    <div class="field">
-      <label class="chk" for="fBusy">
-        <input type="checkbox" id="fBusy">
-        <span>วันนี้ฉันไม่ว่าง<small>แจ้งเพื่อนว่าอย่านัดวันนี้ ไม่มีปุ่มให้ใครกดร่วม</small></span>
-      </label>
-    </div>
-    <div class="busyhint hide" id="busyHint"></div>
-    <div class="field"><label for="fTitle" id="lbTitle">ไปทำอะไร</label><input id="fTitle" placeholder="เช่น ไปทะเลบางแสน"></div>
-    <div class="field planOnly" id="wrapPlace"><label for="fPlace">นัดเจอที่ไหน</label><input id="fPlace" placeholder="เช่น หน้า BTS อ่อนนุช"></div>
-    <div class="field two">
-      <div><label for="fDate">วันที่</label><input id="fDate" type="date"></div>
-      <div class="planOnly"><label for="fCost">ค่าเดินทาง/คน</label><input id="fCost" type="number" inputmode="decimal" min="0" placeholder="0"></div>
-    </div>
-    <div class="field two">
-      <div><label for="fStart">เวลาเริ่ม</label><input id="fStart" type="time"></div>
-      <div><label for="fEnd">เวลาสิ้นสุด</label><input id="fEnd" type="time"></div>
-    </div>
-    <div class="field planOnly"><label for="fDist">ระยะทาง (กม.)</label><input id="fDist" type="number" inputmode="decimal" min="0" placeholder="0"></div>
-    <div class="field"><label for="fNote">รายละเอียด</label><textarea id="fNote" placeholder="เช่น เจอกัน 7 โมง ใครมีรถบอกด้วย"></textarea></div>
-    <div class="msg" id="formMsg"></div>
-    <div class="actions">
-      <button class="btn danger hide" id="btnDelete" style="flex:0 0 auto">ลบ</button>
-      <button class="btn" id="btnCancelForm">ปิด</button>
-      <button class="btn solid" id="btnSavePlan">บันทึก</button>
-    </div>
-  </div>
-</div>
-
-<!-- แผ่นรายละเอียดนัด -->
-<div class="sheet-bg" id="detBg">
-  <div class="sheet" role="dialog" aria-modal="true">
-    <div class="grip"></div>
-    <div id="detBody"></div>
-    <div class="actions">
-      <button class="btn hide" id="btnEdit">แก้ไข</button>
-      <button class="btn solid" id="btnCloseDet">ปิด</button>
-    </div>
-  </div>
-</div>
-
-<!-- แผ่นบัญชีผู้ใช้ -->
-<div class="sheet-bg" id="accBg">
-  <div class="sheet" role="dialog" aria-modal="true" style="max-width:420px">
-    <div class="grip"></div>
-    <h3>ชื่อของฉัน</h3>
-    <div class="sub" id="accSub"></div>
-    <div class="field"><label for="accName">ชื่อเล่น</label><input id="accName" maxlength="20"></div>
-    <div class="hint">เปลี่ยนแล้วชื่อบนนัดเก่าของคุณจะเปลี่ยนตามทั้งหมด</div>
-    <div class="msg" id="accMsg"></div>
-    <div class="actions">
-      <button class="btn danger" id="btnLogout" style="flex:0 0 auto">สลับคน</button>
-      <button class="btn" id="btnCloseAcc">ปิด</button>
-      <button class="btn solid" id="btnSaveName">บันทึกชื่อ</button>
-    </div>
-  </div>
-</div>
-
 <div class="toast" id="toast"></div>
 
 <script>
-(function(){
-  "use strict";
+// ===== Config & constants =====
+const GOOGLE_CLIENT_ID = "YOUR_CLIENT_ID.apps.googleusercontent.com";
+const PERIODS = [["morning","เช้า"],["afternoon","กลางวัน"],["evening","เย็น"]];
+const ORDER = {morning:0, afternoon:1, evening:2};
+const ICONS = ["📌","📘","✏️","🏃","💧","🧘","🍎","💻","🛌","🎯","🎵","🧹"];
+const TITLES = {today:"วันนี้", schedule:"ตารางงาน", history:"ประวัติ", summary:"สรุป", profile:"โปรไฟล์"};
+const WEEK = ["จ","อ","พ","พฤ","ศ","ส","อา"];
 
-  var TH=["มกราคม","กุมภาพันธ์","มีนาคม","เมษายน","พฤษภาคม","มิถุนายน","กรกฎาคม","สิงหาคม","กันยายน","ตุลาคม","พฤศจิกายน","ธันวาคม"];
-  var TYPE_LABEL={errand:"ไปธุระ",trip:"ไปเที่ยว",other:"อื่น ๆ",busy:"วันไม่ว่าง"};
-  var TYPE_COLOR={errand:"#2C5F7C",trip:"#2E7D5B",other:"#7A4E8C",busy:"#8A9599"};
-  var RSVP={yes:"ไปแน่",maybe:"ยังไม่แน่",no:"ไม่ไป"};
-  var AV=["#2C5F7C","#2E7D5B","#7A4E8C","#B5652F","#3F6E8C","#8A6410","#4B7A5C","#8C4A5E"];
+// templates = items repeated every day; plans = items for one date
+const state = {
+  lang: "th", user: null, authMode: "login", tab: "today", users: [],
+  templates: [], plans: {}, done: {},
+  sel: "", month: "", calOpen: false, reminders: false
+};
 
-  var uid="", me=null, members={}, plans=[];
-  var view=new Date(), scope="month", filter="all", selDate=null;
-  var editingId=null, detId=null, pendingType="trip", pendingRsvp=null, allScope="upcoming";
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const pad = n => String(n).padStart(2, "0");
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+function keyOf(d){ return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`; }
+function todayKey(){ return keyOf(new Date()); }
+function parseKey(k){ const [y,m,d] = k.split("-").map(Number); return new Date(y, m-1, d); }
+function addDays(k, n){ const d = parseKey(k); d.setDate(d.getDate() + n); return keyOf(d); }
+function locale(){ return state.lang === "en" ? "en-US" : "th-TH"; }
+function dateLabel(k){ return parseKey(k).toLocaleDateString(locale(), {weekday:"long", day:"numeric", month:"long"}); }
 
-  function $(id){ return document.getElementById(id); }
-  function esc(s){ return String(s==null?"":s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];}); }
-  function iso(d){ return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); }
-  function n_(v){ var x=parseFloat(v); return isFinite(x)&&x>0?x:0; }
-  function money(n){ return n.toLocaleString("th-TH",{maximumFractionDigits:0}); }
-  function km(n){ return n.toLocaleString("th-TH",{maximumFractionDigits:1}); }
-  function toast(m){ var t=$("toast"); t.textContent=m; t.classList.add("show"); clearTimeout(t._t); t._t=setTimeout(function(){t.classList.remove("show");},2600); }
-  function hash(s){ var h=0; for(var i=0;i<s.length;i++) h=(h*31+s.charCodeAt(i))>>>0; return h; }
-  function nameOf(id){ return members[id] || "สมาชิก"; }
-  function dt(p){ return p.busy ? "busy" : p.type; }          // ประเภทที่ใช้แสดงผล
-  function busyOn(date,skipId){                                // ใครไม่ว่างวันนั้นบ้าง
-    return plans.filter(function(p){ return p.busy && p.date===date && p.id!==skipId; })
-                .map(function(p){ return p.ownerName||nameOf(p.ownerId); });
+// ===== Translation (Thai source text -> English) =====
+const EN = {
+  "เข้าสู่ระบบ":"Sign in","สร้างบัญชี":"Create account","ยังไม่มีบัญชี?":"No account yet?","สมัครสมาชิก":"Sign up",
+  "มีบัญชีอยู่แล้ว?":"Already have an account?","หรือ":"or","ดำเนินการต่อด้วย Google":"Continue with Google",
+  "เข้าใช้แบบผู้เยี่ยมชม (ไม่ต้องสมัคร)":"Continue as guest (no sign-up)",
+  "การใช้งานนี้เพื่อการวางแผนและติดตามกิจวัตรเท่านั้น":"For planning and tracking daily routines only",
+  "ลืมรหัสผ่าน?":"Forgot password?","User ID (หรืออีเมล)":"User ID (or email)",
+  "รหัสผ่าน (อย่างน้อย 8 ตัว)":"Password (min. 8 characters)","ยืนยันรหัสผ่าน":"Confirm password","ชื่อที่แสดง":"Display name",
+  "เลื่อนเพื่อเข้าสู่ระบบ":"Slide to sign in","เลื่อนเพื่อสมัครสมาชิก":"Slide to sign up","ยินดีต้อนรับ!":"Welcome!",
+  "วันนี้":"Today","ตารางงาน":"Schedule","ประวัติ":"History","สรุป":"Summary","โปรไฟล์":"Profile","หน้าหลัก":"Home",
+  "วันนี้ทำสำเร็จ":"Completed today","รายการ":"items","ทำต่ออีกนิด ›":"Keep going ›","ยอดเยี่ยม!":"Great job!",
+  "เพิ่มรายการ":"Add item","เช่น อ่านหนังสือ 20 นาที":"e.g. Read for 20 minutes",
+  "เช้า":"Morning","กลางวัน":"Afternoon","เย็น":"Evening","เพิ่ม":"Add",
+  "ยังไม่มีรายการ":"No items yet","ไม่มีรายการ":"No items","ลบ":"Delete","แก้ไขรายการ":"Edit item",
+  "ทุกวัน":"Daily","ทำทุกวัน":"Every day","วันที่":"Date","เวลา":"Time","ช่วง":"Period","ไอคอน":"Icon",
+  "ขั้นตอนย่อย (บรรทัดละ 1 ข้อ) ไม่บังคับ":"Sub-steps (one per line, optional)",
+  "พรุ่งนี้":"Tomorrow","เตรียมไว้ล่วงหน้า":"Prepared in advance","ไม่มีรายการในวันนี้":"Nothing planned",
+  "กางปฏิทิน":"Expand calendar","พับปฏิทิน":"Collapse calendar","+ เพิ่มแผน":"+ Add plan",
+  "การแจ้งเตือน":"Reminders","เปิดอยู่":"On","ปิดอยู่":"Off",
+  "รับการแจ้งเตือนเมื่อถึงเวลาทำกิจวัตร":"Get notified when it's time for your routine",
+  "ปิดการแจ้งเตือน":"Turn off reminders","เปิดการแจ้งเตือน":"Turn on reminders",
+  "จ":"M","อ":"T","พ":"W","พฤ":"T","ศ":"F","ส":"S","อา":"S",
+  "ย้อนหลัง 28 วัน":"Last 28 days","🟩 ครบทั้งหมด":"🟩 Fully done","ครบบางส่วน":"Partially done",
+  "วันที่ทำครบทุกรายการ":"Days fully completed","วัน":"days",
+  "ความสำเร็จ 7 วันล่าสุด":"Last 7 days","รายการที่ทำสำเร็จทั้งหมด":"Total items completed",
+  "เฉลี่ยทุกวันที่บันทึก":"Average on logged days","รายการวันนี้":"Items today",
+  "บัญชี":"Account","โหมดผู้เยี่ยมชม":"Guest mode","ออกจากระบบ":"Sign out","ผู้เยี่ยมชม":"Guest",
+  "ออกจากระบบแล้ว":"Signed out","สมัครสมาชิกสำเร็จ":"Signed up successfully","เร็ว ๆ นี้":"Coming soon",
+  "ยังไม่มีการแจ้งเตือนใหม่":"No new notifications","กรุณาพิมพ์รายการก่อน":"Please type an item first",
+  "เพิ่มรายการแล้ว":"Item added","เปิดการแจ้งเตือนแล้ว":"Reminders turned on","ปิดการแจ้งเตือนแล้ว":"Reminders turned off",
+  "ฟีเจอร์รีเซ็ตรหัสผ่านจะเปิดใช้เร็ว ๆ นี้":"Password reset is coming soon",
+  "ยังไม่ได้ตั้งค่า Google Client ID — เข้าแบบทดสอบแทน":"Google Client ID not set — using demo sign-in",
+  "อีเมลหรือรหัสผ่านไม่ถูกต้อง":"Incorrect email or password","กรุณากรอกชื่อที่แสดง":"Please enter a display name",
+  "รูปแบบอีเมลไม่ถูกต้อง":"Invalid email format","รหัสผ่านต้องมีอย่างน้อย 8 ตัวอักษร":"Password must be at least 8 characters",
+  "รหัสผ่านไม่ตรงกัน":"Passwords do not match","อีเมลนี้ถูกใช้งานแล้ว":"This email is already in use"
+};
+function tr(s){ return state.lang === "en" && EN[s] ? EN[s] : s; }
+// Walks the app's text nodes and placeholders; keeps the original Thai so it can switch back
+function i18n(){
+  const root = $("app");
+  const w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+  let n;
+  while ((n = w.nextNode())) {
+    if (n._th === undefined) n._th = n.nodeValue;
+    const k = n._th.trim();
+    const t = state.lang === "en" && EN[k];
+    n.nodeValue = t ? n._th.replace(k, t) : n._th;
   }
-  function avatar(name,size){
-    var s=size||24, c=AV[hash(name||"?")%AV.length];
-    return '<span class="av" style="background:'+c+';width:'+s+'px;height:'+s+'px;font-size:'+Math.round(s*.44)+'px">'+esc((name||"?").trim().charAt(0))+'</span>';
-  }
-
-  /* ---- เก็บโทเคนไว้ในเครื่อง ---- */
-  var mem={};
-  function store(k,v){ try{ v===null?localStorage.removeItem(k):localStorage.setItem(k,v); }catch(e){ mem[k]=v; } }
-  function fetchStore(k){ try{ return localStorage.getItem(k); }catch(e){ return mem[k]||null; } }
-
-  /* ---- ที่อยู่ของ Apps Script (ลงท้ายด้วย /exec) ---- */
-  var API="https://script.google.com/macros/s/AKfycbx5YHeu2-O81PrSLK5jMd4d-IWHssLe5h9AT5Tw9dzaHOuutTPFJcBmGEAQGvmEpqTY/exec";
-
-  /* ---- แถบโหลดด้านบน ---- */
-  var netN=0, netAt=0, netTimer=null;
-  var NET_TEXT={
-    joinAs:"กำลังเข้าใช้งาน…", bootstrap:"กำลังโหลดข้อมูลจากชีต…", savePlan:"กำลังบันทึกนัดลงชีต…",
-    deletePlan:"กำลังลบออกจากชีต…",   setRsvp:"กำลังบันทึกคำตอบ…",
-    addComment:"กำลังส่งข้อความ…",     changeName:"กำลังบันทึกชื่อ…"
-  };
-  function netShow(on){
-    $("topbar").classList[on?"add":"remove"]("on");
-    $("syncpill").classList[on?"add":"remove"]("on");
-  }
-  function netStart(fn){
-    if(netTimer){ clearTimeout(netTimer); netTimer=null; }
-    netN++;
-    $("syncTxt").textContent=NET_TEXT[fn]||"กำลังซิงก์กับชีต…";
-    if(netN===1){ netAt=Date.now(); netShow(true); }
-  }
-  function netEnd(){
-    netN=Math.max(0,netN-1);
-    if(netN) return;
-    var left=Math.max(0, 600-(Date.now()-netAt));   // โชว์อย่างน้อย 0.6 วิ จะได้ทันเห็น
-    netTimer=setTimeout(function(){ netShow(false); netTimer=null; }, left);
-  }
-  function spin(txt,dark){ return '<span class="spinner'+(dark?" dark":"")+'"></span>'+txt; }
-
-  /* ---- เรียกฟังก์ชันฝั่ง Apps Script ----
-     เปิดจาก Apps Script จะใช้ google.script.run
-     เปิดจาก GitHub Pages หรือที่อื่นจะใช้ fetch ไปที่ API ข้างบน  */
-  function call(fn){
-    netStart(fn);
-    return call_.apply(null,arguments).then(
-      function(v){ netEnd(); return v; },
-      function(e){ netEnd(); throw e; });
-  }
-  function call_(fn){
-    var args=Array.prototype.slice.call(arguments,1);
-    if(window.google && google.script && google.script.run){
-      return new Promise(function(res,rej){
-        google.script.run.withSuccessHandler(res).withFailureHandler(function(e){
-          rej(new Error(e && e.message ? e.message : "เกิดข้อผิดพลาด"));
-        })[fn].apply(null,args);
-      });
-    }
-    // ใช้ text/plain เพื่อเลี่ยง preflight ที่ Apps Script ไม่รองรับ
-    return fetch(API,{
-      method:"POST",
-      headers:{"Content-Type":"text/plain;charset=utf-8"},
-      body:JSON.stringify({action:fn,args:args})
-    }).then(function(r){
-      if(!r.ok) throw new Error("เชื่อมต่อไม่ได้ (HTTP "+r.status+")");
-      return r.json();
-    }).then(function(j){
-      if(!j||!j.ok) throw new Error((j&&j.error)||"เกิดข้อผิดพลาด");
-      return j.data;
-    }).catch(function(e){
-      if(e instanceof TypeError) throw new Error("ต่อกับเซิร์ฟเวอร์ไม่ได้ ตรวจว่า Deploy เป็น Anyone แล้วหรือยัง");
-      throw e;
-    });
-  }
-
-  /* ---- ออโดมิเตอร์ ---- */
-  function reel(v,suf){
-    var s=String(v), h='<div class="reel">';
-    for(var i=0;i<s.length;i++){ var c=s[i]; h+=(c===","||c===".")?'<span class="sep">'+c+'</span>':'<span>'+c+'</span>'; }
-    return h+'<span class="suffix">'+suf+'</span></div>';
-  }
-  function goingList(p,kind){ var g=p.going||{}; return Object.keys(g).filter(function(k){return g[k]===kind;}); }
-  function myRsvp(p){ return (p.going||{})[me.id]||null; }
-
-  function renderOdo(){
-    var ppl={}, myCost=0;
-    plans.forEach(function(p){
-      if(p.busy) return;
-      goingList(p,"yes").forEach(function(u){ ppl[u]=1; });
-      if(myRsvp(p)==="yes") myCost+=n_(p.cost);
-    });
-    $("odo").innerHTML=
-      '<div class="odo-unit"><div class="odo-label">นัดทั้งหมด</div>'+reel(plans.length,"นัด")+'</div>'+
-      '<div class="odo-unit"><div class="odo-label">เพื่อนที่ร่วมแล้ว</div>'+reel(Object.keys(ppl).length,"คน")+'</div>'+
-      '<div class="odo-unit"><div class="odo-label">ค่าเดินทางของฉัน</div>'+reel(money(myCost),"บาท")+'</div>';
-  }
-
-  /* ---- ตัวกรอง ---- */
-  function visible(list){
-    if(filter==="all") return list;
-    if(filter==="busy") return list.filter(function(p){ return p.busy; });
-    if(filter==="mine") return list.filter(function(p){ return !p.busy && myRsvp(p)==="yes"; });
-    return list.filter(function(p){ return !p.busy && p.type===filter; });
-  }
-  function ofDate(d){ return visible(plans).filter(function(p){return p.date===d;}).sort(function(a,b){return (a.start||"99").localeCompare(b.start||"99");}); }
-  function monthPlans(){
-    var y=view.getFullYear(), m=view.getMonth();
-    return visible(plans).filter(function(p){
-      if(!p.date) return false;
-      var d=new Date(p.date+"T00:00");
-      return d.getFullYear()===y && d.getMonth()===m;
-    });
-  }
-
-  /* ---- ปฏิทิน ---- */
-  function renderCalendar(){
-    var y=view.getFullYear(), m=view.getMonth();
-    $("monthLabel").textContent=TH[m]+" "+(y+543);
-    var first=new Date(y,m,1), start=new Date(y,m,1-first.getDay()), today=iso(new Date()), h="";
-    for(var i=0;i<42;i++){
-      var d=new Date(start.getFullYear(),start.getMonth(),start.getDate()+i);
-      var key=iso(d), inM=d.getMonth()===m, list=inM?ofDate(key):[];
-      h+='<div class="cell'+(inM?"":" dim")+(key===today?" today":"")+(key===selDate?" sel":"")+'" data-date="'+key+'">'+
-         '<div class="daynum">'+d.getDate()+'</div>';
-      if(list.length){
-        h+='<div class="dots">';
-        list.slice(0,6).forEach(function(p){ h+='<i style="background:'+TYPE_COLOR[dt(p)]+'"></i>'; });
-        h+='</div>';
-        list.slice(0,2).forEach(function(p){
-          h+='<div class="chip '+dt(p)+'">'+(p.busy?"ไม่ว่าง · "+esc(p.ownerName||nameOf(p.ownerId)):esc(p.title))+'</div>';
-        });
-        if(list.length>2) h+='<div class="more">+'+(list.length-2)+' นัด</div>';
-        var ppl=0; list.forEach(function(p){ if(!p.busy) ppl+=goingList(p,"yes").length; });
-        h+='<div class="cell-sum">'+(ppl?ppl+" คนไป":"")+'</div>';
-      }
-      h+='</div>';
-    }
-    $("grid").innerHTML=h;
-  }
-
-  /* ---- รายการนัด ---- */
-  function planRow(p){
-    var d=p.date?new Date(p.date+"T00:00"):new Date();
-    var time=p.start?p.start+(p.end?"–"+p.end:""):"ยังไม่ระบุเวลา";
-    var yes=goingList(p,"yes"), mine=myRsvp(p);
-    var owner=esc(p.ownerName||nameOf(p.ownerId));
-    if(p.busy){
-      return '<div class="plan busy" data-id="'+p.id+'">'+
-        '<div class="pdate"><b>'+d.getDate()+'</b>'+TH[d.getMonth()].slice(0,3)+'</div>'+
-        '<div class="pbody"><div class="ptitle">'+owner+' ไม่ว่าง</div>'+
-        '<div class="pmeta">'+(p.start?time:"ทั้งวัน")+(p.title&&p.title!=="ไม่ว่าง"?" · "+esc(p.title):"")+'</div>'+
-        '<span class="busybadge">อย่านัดวันนี้</span></div>'+
-        '<div class="pright" style="color:var(--muted)">—</div><div class="chev">›</div></div>';
-    }
-    return '<div class="plan '+p.type+'" data-id="'+p.id+'">'+
-      '<div class="pdate"><b>'+d.getDate()+'</b>'+TH[d.getMonth()].slice(0,3)+'</div>'+
-      '<div class="pbody"><div class="ptitle">'+esc(p.title)+'</div>'+
-      '<div class="pmeta">'+time+(p.place?" · "+esc(p.place):"")+' · โดย '+owner+'</div>'+
-      '<div class="faces"><div class="stack">'+yes.slice(0,5).map(function(u){return avatar(nameOf(u),22);}).join("")+'</div>'+
-      '<span class="goingnum">'+(yes.length?yes.length+" คนจะไป":"ยังไม่มีใครกด")+'</span></div>'+
-      (mine
-        ? '<span class="tagme '+mine+'">'+(mine==="no"?"คุณไม่ไป":"คุณ"+RSVP[mine])+'</span>'+
-          '<button class="joinbtn ghost" type="button">เปลี่ยนคำตอบ</button>'
-        : '<button class="joinbtn" type="button">กดเข้าร่วมนัดนี้</button>')+
-      '</div>'+
-      '<div class="pright"><b>฿'+money(n_(p.cost))+'</b>'+(n_(p.dist)?km(n_(p.dist))+" กม.":"")+'</div>'+
-      '<div class="chev">›</div></div>';
-  }
-  function renderList(){
-    var list,title;
-    if(selDate){
-      var d=new Date(selDate+"T00:00");
-      title="นัดวันที่ "+d.getDate()+" "+TH[d.getMonth()];
-      list=ofDate(selDate);
-      $("btnClearDay").classList.remove("hide");
-    }else{
-      title="นัดในเดือน "+TH[view.getMonth()];
-      list=monthPlans().slice().sort(function(a,b){ return a.date.localeCompare(b.date)||(a.start||"").localeCompare(b.start||""); });
-      $("btnClearDay").classList.add("hide");
-    }
-    $("listTitle").textContent=title;
-    $("listPanel").innerHTML=list.length?list.map(planRow).join(""):
-      '<div class="empty">ยังไม่มีนัดในช่วงนี้'+(selDate?' · <button class="btn sm" id="addHere">ลงนัดวันนี้</button>':'')+'</div>';
-  }
-
-  /* ---- ภาพรวม ---- */
-  function tile(k,v,u){ return '<div class="tile"><div class="k">'+k+'</div><div class="v">'+v+'<small>'+u+'</small></div></div>'; }
-  function renderOverview(){
-    var all=scope==="month"?monthPlans():visible(plans);
-    var list=all.filter(function(p){ return !p.busy; });
-    var busyDays=all.filter(function(p){ return p.busy; });
-    var myBusy=busyDays.filter(function(p){ return p.ownerId===me.id; }).length;
-    var groupCost=0,dist=0,ppl={},myCost=0,myCount=0,myDist=0;
-    list.forEach(function(p){
-      var yes=goingList(p,"yes");
-      groupCost+=n_(p.cost)*yes.length; dist+=n_(p.dist);
-      yes.forEach(function(u){ ppl[u]=(ppl[u]||0)+1; });
-      if(myRsvp(p)==="yes"){ myCost+=n_(p.cost); myDist+=n_(p.dist); myCount++; }
-    });
-    $("tiles").innerHTML=tile("จำนวนนัด",list.length,"นัด")+tile("ค่าเดินทางรวมกลุ่ม",money(groupCost),"บาท")+
-      tile("ระยะทางรวม",km(dist),"กม.")+tile("วันที่มีคนไม่ว่าง",busyDays.length,"วัน");
-
-    var types=["trip","errand","other"],max=1,agg={};
-    types.forEach(function(t){
-      var sub=list.filter(function(p){return p.type===t;}),c=0,k=0,g=0;
-      sub.forEach(function(p){ var y=goingList(p,"yes").length; c+=n_(p.cost)*y; k+=n_(p.dist); g+=y; });
-      agg[t]={n:sub.length,c:c,k:k,g:g}; if(sub.length>max) max=sub.length;
-    });
-    $("byType").innerHTML=types.map(function(t){
-      var a=agg[t];
-      return '<div class="brow"><div class="brow-top"><b style="font-weight:500">'+TYPE_LABEL[t]+' · '+a.n+' นัด</b>'+
-        '<span>'+a.g+' คน · ฿'+money(a.c)+'</span></div>'+
-        '<div class="bar"><i style="width:'+Math.round(a.n/max*100)+'%;background:'+TYPE_COLOR[t]+'"></i></div></div>';
-    }).join("");
-
-    var rank=Object.keys(ppl).map(function(u){return {u:u,c:ppl[u]};}).sort(function(a,b){return b.c-a.c;}).slice(0,6);
-    $("ranking").innerHTML=rank.length?rank.map(function(x){
-      return '<li><span style="display:flex;align-items:center;gap:8px">'+avatar(nameOf(x.u),22)+esc(nameOf(x.u))+(x.u===me.id?" (ฉัน)":"")+'</span><span class="n">'+x.c+' นัด</span></li>';
-    }).join(""):'<li style="color:#5C6B70">ยังไม่มีใครกดว่าจะไป</li>';
-
-    $("mine").innerHTML=
-      '<li>นัดที่ฉันจะไป<span class="n">'+myCount+' นัด</span></li>'+
-      '<li>ค่าเดินทางที่ฉันต้องจ่าย<span class="n">฿'+money(myCost)+'</span></li>'+
-      '<li>ระยะทางของฉัน<span class="n">'+km(myDist)+' กม.</span></li>'+
-      '<li>เฉลี่ยต่อนัด<span class="n">฿'+money(myCount?Math.round(myCost/myCount):0)+'</span></li>'+
-      '<li>วันที่ฉันแจ้งไม่ว่าง<span class="n">'+myBusy+' วัน</span></li>';
-  }
-
-  /* ---- List All: นัดของทุกคนรวมกัน ---- */
-  var DOW=["อา","จ","อ","พ","พฤ","ศ","ส"];
-  function renderAllList(){
-    var today=iso(new Date());
-    var list=plans.slice().filter(function(p){ return p.date; })
-      .sort(function(a,b){ return a.date.localeCompare(b.date)||(a.start||"").localeCompare(b.start||""); });
-    if(allScope==="upcoming") list=list.filter(function(p){ return p.date>=today; });
-    else list.reverse();
-
-    var meetN=list.filter(function(p){ return !p.busy; }).length;
-    var busyN=list.length-meetN;
-    $("allCount").textContent=meetN+" นัด"+(busyN?" · "+busyN+" วันไม่ว่าง":"");
-
-    if(!list.length){
-      $("allPanel").innerHTML='<div class="empty">'+(allScope==="upcoming"?"ไม่มีนัดที่ยังไม่ถึง":"ยังไม่มีรายการ")+'</div>';
-      return;
-    }
-    var h="", cur="";
-    list.forEach(function(p){
-      var d=new Date(p.date+"T00:00"), key=p.date.slice(0,7);
-      if(key!==cur){ cur=key; h+='<div class="mhead">'+TH[d.getMonth()]+" "+(d.getFullYear()+543)+'</div>'; }
-      var owner=esc(p.ownerName||nameOf(p.ownerId));
-      var yes=goingList(p,"yes");
-      h+='<div class="arow'+(p.busy?" busyrow":"")+'" data-id="'+p.id+'">'+
-        '<div class="adate">'+d.getDate()+' '+TH[d.getMonth()].slice(0,3)+' <small>'+DOW[d.getDay()]+'</small></div>'+
-        '<div class="atitle">'+(p.busy?owner+' ไม่ว่าง':esc(p.title))+
-          '<small>'+(p.busy
-            ? (p.title&&p.title!=="ไม่ว่าง"?esc(p.title):"ทั้งวัน")
-            : (p.start?p.start+(p.end?"–"+p.end:""):"ยังไม่ระบุเวลา")+(p.place?" · "+esc(p.place):"")+" · โดย "+owner)+
-          '</small></div>'+
-        '<div class="apeople">'+(p.busy?'<span class="goingnum">—</span>'
-          : yes.slice(0,4).map(function(u){ return avatar(nameOf(u),20); }).join("")+
-            '<span class="goingnum">'+yes.length+' คน</span>')+'</div>'+
-        '<div class="amoney">'+(p.busy?"":"฿"+money(n_(p.cost)))+'</div>'+
-      '</div>';
-    });
-    $("allPanel").innerHTML=h;
-  }
-
-  function renderMe(){ $("meChip").innerHTML=avatar(me.name,24)+esc(me.name); }
-  function renderAll(){ renderMe(); renderOdo(); renderCalendar(); renderList(); renderOverview(); renderAllList(); }
-
-  /* ---- โหลดข้อมูล ---- */
-  function reload(silent){
-    return call("bootstrap",uid).then(function(d){
-      me=d.me; plans=d.plans||[];
-      members={}; (d.members||[]).forEach(function(m){ members[m.id]=m.name; });
-      renderAll();
-      if(!silent) toast("อัปเดตแล้ว");
-    }).catch(function(e){
-      if(/ไม่พบชื่อ|ใส่ชื่อ/.test(e.message)){ store("tb_uid",null); showAuth(); }
-      else toast(e.message);
-    });
-  }
-
-  /* ---- ฟอร์มนัด ---- */
-  function setType(t){
-    pendingType=t;
-    Array.prototype.forEach.call($("types").children,function(b){ b.setAttribute("aria-pressed",b.dataset.t===t?"true":"false"); });
-  }
-  function toggleBusyMode(){
-    var on=$("fBusy").checked;
-    document.querySelectorAll(".planOnly").forEach(function(el){ el.classList[on?"add":"remove"]("hide"); });
-    $("lbTitle").textContent=on?"เหตุผล (ไม่ใส่ก็ได้)":"ไปทำอะไร";
-    $("fTitle").placeholder=on?"เช่น ติดสอบ, ทำงาน":"เช่น ไปทะเลบางแสน";
-    $("formTitle").textContent=on?"แจ้งวันไม่ว่าง":(editingId?"แก้ไขนัด":"ลงนัดใหม่");
-  }
-  function showBusyHint(){
-    var names=busyOn($("fDate").value,editingId);
-    var el=$("busyHint");
-    if(names.length && !$("fBusy").checked){
-      el.textContent="วันนี้มีคนแจ้งว่าไม่ว่าง: "+names.join(", ");
-      el.classList.remove("hide");
-    }else el.classList.add("hide");
-  }
-  function openForm(date,id){
-    editingId=id||null;
-    var p=id?plans.filter(function(x){return x.id===id;})[0]:null;
-    $("fBusy").checked=!!(p&&p.busy);
-    $("formTitle").textContent=p?"แก้ไขนัด":"ลงนัดใหม่";
-    var d=new Date(((p&&p.date)||date)+"T00:00");
-    $("formSub").textContent=d.getDate()+" "+TH[d.getMonth()]+" "+(d.getFullYear()+543);
-    setType(p?p.type:"trip");
-    $("fTitle").value=(p&&!(p.busy&&p.title==="ไม่ว่าง"))?p.title:""; $("fPlace").value=p?p.place:"";
-    $("fDate").value=p?p.date:date;
-    $("fCost").value=p&&n_(p.cost)?p.cost:""; $("fDist").value=p&&n_(p.dist)?p.dist:"";
-    $("fStart").value=p?p.start:""; $("fEnd").value=p?p.end:"";
-    $("fNote").value=p?p.note:"";
-    $("btnDelete").classList[p?"remove":"add"]("hide");
-    $("formMsg").textContent="";
-    toggleBusyMode(); showBusyHint();
-    $("formBg").classList.add("open");
-  }
-  function savePlan(){
-    var payload={
-      id:editingId, type:pendingType, busy:$("fBusy").checked,
-      title:$("fTitle").value.trim(), place:$("fPlace").value.trim(),
-      date:$("fDate").value||iso(new Date()),
-      cost:$("fCost").value, dist:$("fDist").value,
-      start:$("fStart").value, end:$("fEnd").value, note:$("fNote").value.trim()
-    };
-    if(!payload.title && !payload.busy){ $("formMsg").textContent="กรุณาใส่หัวข้อนัด"; return; }
-    $("btnSavePlan").disabled=true; $("btnSavePlan").innerHTML=spin("กำลังบันทึก…");
-    $("formMsg").textContent="";
-    call("savePlan",uid,payload).then(function(){
-      $("formBg").classList.remove("open");
-      view=new Date(payload.date+"T00:00"); selDate=payload.date;
-      toast(editingId?"แก้ไขแล้ว":(payload.busy?"แจ้งวันไม่ว่างแล้ว":"ลงนัดแล้ว"));
-      return reload(true);
-    }).catch(function(e){ $("formMsg").textContent=e.message; })
-      .then(function(){ $("btnSavePlan").disabled=false; $("btnSavePlan").textContent="บันทึก"; });
-  }
-  function delPlan(){
-    if(!confirm("ลบนัดนี้ออกจากชีตเลยไหม")) return;
-    call("deletePlan",uid,editingId).then(function(){
-      $("formBg").classList.remove("open"); $("detBg").classList.remove("open");
-      toast("ลบแล้ว"); return reload(true);
-    }).catch(function(e){ $("formMsg").textContent=e.message; });
-  }
-
-  /* ---- รายละเอียดนัด ---- */
-  function openDetail(id){ detId=id; pendingRsvp=null; renderDetail(); $("detBg").classList.add("open"); }
-  function renderDetail(){
-    var p=plans.filter(function(x){return x.id===detId;})[0];
-    if(!p){ $("detBg").classList.remove("open"); return; }
-    var d=p.date?new Date(p.date+"T00:00"):new Date();
-    var yes=goingList(p,"yes"),maybe=goingList(p,"maybe"),no=goingList(p,"no"),mine=myRsvp(p);
-    if(p.busy){
-      $("detBody").innerHTML='<h3>'+esc(p.ownerName||nameOf(p.ownerId))+' ไม่ว่าง</h3>'+
-        '<div class="sub">'+d.getDate()+' '+TH[d.getMonth()]+' '+(d.getFullYear()+543)+'</div>'+
-        '<div class="busyhint">วันนี้เจ้าตัวแจ้งว่าไม่ว่าง ถ้าจะนัดควรเลี่ยงวันนี้</div>'+
-        '<div class="detrow"><span class="k">ช่วงเวลา</span>'+(p.start?p.start+(p.end?" – "+p.end:""):"ทั้งวัน")+'</div>'+
-        (p.title&&p.title!=="ไม่ว่าง"?'<div class="detrow"><span class="k">เหตุผล</span>'+esc(p.title)+'</div>':"")+
-        (p.note?'<div class="detrow" style="display:block"><span class="k">รายละเอียด</span><div style="margin-top:4px">'+esc(p.note)+'</div></div>':"");
-      $("btnEdit").classList[p.ownerId===me.id?"remove":"add"]("hide");
-      return;
-    }
-    var saved=mine||"", cur=(pendingRsvp!==null?pendingRsvp:saved), dirty=(cur!==saved);
-    var h='<h3>'+esc(p.title)+'</h3><div class="sub">'+TYPE_LABEL[p.type]+' · '+d.getDate()+' '+TH[d.getMonth()]+' '+(d.getFullYear()+543)+' · ลงโดย '+esc(p.ownerName||nameOf(p.ownerId))+'</div>'+
-      '<div class="rsvp" id="rsvp">'+["yes","maybe","no"].map(function(k){
-        return '<button data-r="'+k+'" aria-pressed="'+(cur===k)+'">'+RSVP[k]+'</button>';
-      }).join("")+'</div>'+
-      '<button class="btn solid rsvpsave" id="btnSaveRsvp"'+(dirty?'':' disabled')+'>'+
-        (dirty?(cur?"บันทึกคำตอบ":"ยกเลิกคำตอบของฉัน"):"บันทึกคำตอบ")+'</button>'+
-      '<div class="rsvpnote">'+(dirty?"เลือกแล้วอย่าลืมกดบันทึก":(cur?"คำตอบปัจจุบัน: "+RSVP[cur]:"ยังไม่ได้ตอบ"))+'</div>'+
-      '<div class="detrow"><span class="k">เวลา</span>'+(p.start?p.start+(p.end?" – "+p.end:""):"ยังไม่ระบุ")+'</div>'+
-      (p.place?'<div class="detrow"><span class="k">นัดเจอที่</span>'+esc(p.place)+'</div>':"")+
-      '<div class="detrow"><span class="k">ค่าเดินทาง/คน</span>฿'+money(n_(p.cost))+'</div>'+
-      (n_(p.dist)?'<div class="detrow"><span class="k">ระยะทาง</span>'+km(n_(p.dist))+' กม.</div>':"")+
-      '<div class="detrow"><span class="k">รวมทั้งกลุ่ม</span>฿'+money(n_(p.cost)*yes.length)+'</div>'+
-      (p.note?'<div class="detrow" style="display:block"><span class="k">รายละเอียด</span><div style="margin-top:4px">'+esc(p.note)+'</div></div>':"");
-
-    h+='<h3 style="font-family:var(--display);font-size:11.5px;letter-spacing:.12em;color:var(--muted);margin:14px 0 4px">คนที่จะไป ('+yes.length+')</h3>';
-    h+=yes.length?yes.map(function(u){ return '<div class="person">'+avatar(nameOf(u),24)+esc(nameOf(u))+(u===me.id?" (ฉัน)":"")+'</div>'; }).join(""):'<div class="person" style="color:var(--muted)">ยังไม่มีใครกดว่าจะไป</div>';
-    if(maybe.length) h+='<div class="person" style="color:var(--muted);font-size:12.5px">ยังไม่แน่: '+maybe.map(function(u){return esc(nameOf(u));}).join(", ")+'</div>';
-    if(no.length) h+='<div class="person" style="color:var(--muted);font-size:12.5px">ไม่ไป: '+no.map(function(u){return esc(nameOf(u));}).join(", ")+'</div>';
-
-    h+='<div class="cmt"><h3 style="font-family:var(--display);font-size:11.5px;letter-spacing:.12em;color:var(--muted);margin:0 0 4px">คุยกันเรื่องนัดนี้</h3>';
-    h+=(p.comments&&p.comments.length)?p.comments.map(function(c){
-      return '<div class="item">'+avatar(c.name||nameOf(c.by),24)+'<div class="txt"><b>'+esc(c.name||nameOf(c.by))+'</b>'+esc(c.text)+'</div></div>';
-    }).join(""):'<div class="person" style="color:var(--muted)">ยังไม่มีข้อความ</div>';
-    h+='<div class="cmtbox"><input id="cInput" placeholder="พิมพ์ข้อความ" maxlength="200"><button class="btn" id="cSend">ส่ง</button></div></div>';
-
-    $("detBody").innerHTML=h;
-    $("btnEdit").classList[p.ownerId===me.id?"remove":"add"]("hide");
-  }
-  function pickRsvp(kind,btn){
-    var p=plans.filter(function(x){return x.id===detId;})[0]; if(!p) return;
-    var saved=myRsvp(p)||"";
-    var cur=(pendingRsvp!==null?pendingRsvp:saved);
-    pendingRsvp=(cur===kind)?"":kind;              // กดซ้ำ = ยกเลิกคำตอบ
-    Array.prototype.forEach.call(btn.parentNode.children,function(b){
-      b.setAttribute("aria-pressed", b.dataset.r===pendingRsvp?"true":"false");
-    });
-    var dirty=(pendingRsvp!==saved), sb=$("btnSaveRsvp");
-    sb.disabled=!dirty;
-    sb.textContent=(dirty&&!pendingRsvp)?"ยกเลิกคำตอบของฉัน":"บันทึกคำตอบ";
-    var note=document.querySelector(".rsvpnote");
-    if(note) note.textContent=dirty?"เลือกแล้วอย่าลืมกดบันทึก":(saved?"คำตอบปัจจุบัน: "+RSVP[saved]:"ยังไม่ได้ตอบ");
-  }
-  function saveRsvp(){
-    var id=detId, val=pendingRsvp, sb=$("btnSaveRsvp");
-    if(val===null) return;
-    sb.disabled=true; sb.innerHTML=spin("กำลังบันทึก…");
-    call("setRsvp",uid,id,val||"none").then(function(r){
-      plans.forEach(function(p){ if(p.id===id) p.going=r.going; });
-      pendingRsvp=null;
-      renderDetail(); renderOdo(); renderCalendar(); renderList(); renderOverview();
-      toast("บันทึกคำตอบแล้ว");
-    }).catch(function(e){
-      toast(e.message); sb.disabled=false; sb.textContent="บันทึกคำตอบ";
-    });
-  }
-  function sendComment(){
-    var el=$("cInput"); if(!el||!el.value.trim()) return;
-    var text=el.value.trim(), id=detId, sb=$("cSend");
-    el.value=""; sb.disabled=true; sb.innerHTML='<span class="spinner dark"></span>';
-    call("addComment",uid,id,text).then(function(r){
-      plans.forEach(function(p){ if(p.id===id) p.comments=r.comments; });
-      renderDetail();
-    }).catch(function(e){
-      toast(e.message); sb.disabled=false; sb.textContent="ส่ง";
-    });
-  }
-
-  /* ---- เข้าสู่ระบบ ---- */
-  function showAuth(){
-    $("loading").classList.add("hide");
-    $("appView").classList.add("hide");
-    $("authView").classList.remove("hide");
-  }
-  function showApp(){
-    $("loading").classList.add("hide");
-    $("authView").classList.add("hide");
-    $("appView").classList.remove("hide");
-  }
-  function doJoin(){
-    var name=$("aName").value.trim();
-    if(!name){ $("authMsg").textContent="ใส่ชื่อเล่นก่อนนะ"; return; }
-    $("btnAuth").disabled=true; $("btnAuth").innerHTML=spin("กำลังเข้าใช้งาน…"); $("authMsg").textContent="";
-    call("joinAs",name).then(function(r){
-      uid=r.user.id; store("tb_uid",uid); me=r.user;
-      showApp(); return reload(true);
-    }).catch(function(e){ $("authMsg").textContent=e.message; })
-      .then(function(){ $("btnAuth").disabled=false; $("btnAuth").textContent="เริ่มใช้งาน"; });
-  }
-
-  /* ---- เหตุการณ์ ---- */
-  $("btnAuth").onclick=doJoin;
-  $("aName").onkeydown=function(e){ if(e.key==="Enter") doJoin(); };
-
-  $("prev").onclick=function(){ view=new Date(view.getFullYear(),view.getMonth()-1,1); selDate=null; renderCalendar(); renderList(); renderOverview(); };
-  $("next").onclick=function(){ view=new Date(view.getFullYear(),view.getMonth()+1,1); selDate=null; renderCalendar(); renderList(); renderOverview(); };
-  $("allScope").onclick=function(e){
-    var b=e.target.closest("button"); if(!b) return;
-    allScope=b.dataset.a;
-    Array.prototype.forEach.call(this.children,function(x){ x.setAttribute("aria-pressed",x===b?"true":"false"); });
-    renderAllList();
-  };
-  $("allPanel").onclick=function(e){
-    var r=e.target.closest(".arow"); if(r) openDetail(r.dataset.id);
-  };
-  $("btnRefresh").onclick=function(){
-    var b=this; b.disabled=true; b.innerHTML='<span class="spinner dark"></span>';
-    document.querySelector(".cal").classList.add("syncing");
-    $("listPanel").classList.add("syncing");
-    reload(false).then(function(){
-      b.disabled=false; b.textContent="รีเฟรช";
-      document.querySelector(".cal").classList.remove("syncing");
-      $("listPanel").classList.remove("syncing");
-    });
-  };
-  $("btnClearDay").onclick=function(){ selDate=null; renderCalendar(); renderList(); };
-  $("fab").onclick=function(){ openForm(selDate||iso(new Date())); };
-  $("filter").onchange=function(){ filter=this.value; renderCalendar(); renderList(); renderOverview(); };
-  $("scope").onclick=function(e){
-    var b=e.target.closest("button"); if(!b) return;
-    scope=b.dataset.s;
-    Array.prototype.forEach.call(this.children,function(x){ x.setAttribute("aria-pressed",x===b?"true":"false"); });
-    renderOverview();
-  };
-  $("grid").onclick=function(e){
-    var c=e.target.closest(".cell"); if(!c||c.classList.contains("dim")) return;
-    selDate=c.dataset.date; renderCalendar(); renderList();
-    document.querySelector("#listTitle").scrollIntoView({behavior:"smooth",block:"start"});
-  };
-  $("listPanel").onclick=function(e){
-    if(e.target.id==="addHere"){ openForm(selDate); return; }
-    var r=e.target.closest(".plan"); if(r) openDetail(r.dataset.id);
-  };
-  $("types").onclick=function(e){ var b=e.target.closest("button"); if(b) setType(b.dataset.t); };
-  $("fBusy").onchange=function(){ toggleBusyMode(); showBusyHint(); };
-  $("fDate").onchange=showBusyHint;
-  $("btnSavePlan").onclick=savePlan;
-  $("btnDelete").onclick=delPlan;
-  $("btnCancelForm").onclick=function(){ $("formBg").classList.remove("open"); };
-  $("formBg").onclick=function(e){ if(e.target===this) this.classList.remove("open"); };
-
-  $("detBody").onclick=function(e){
-    var r=e.target.closest("#rsvp button"); if(r){ pickRsvp(r.dataset.r,r); return; }
-    if(e.target.id==="btnSaveRsvp"){ saveRsvp(); return; }
-    if(e.target.id==="cSend") sendComment();
-  };
-  $("detBody").onkeydown=function(e){ if(e.target.id==="cInput"&&e.key==="Enter") sendComment(); };
-  $("btnEdit").onclick=function(){ $("detBg").classList.remove("open"); openForm(null,detId); };
-  $("btnCloseDet").onclick=function(){
-    if(pendingRsvp!==null && !confirm("ยังไม่ได้กดบันทึกคำตอบ ปิดเลยไหม")) return;
-    pendingRsvp=null; $("detBg").classList.remove("open");
-  };
-  $("detBg").onclick=function(e){ if(e.target===this) this.classList.remove("open"); };
-
-  $("meChip").onclick=function(){
-    $("accName").value=me.name; $("accSub").textContent="กำลังใช้งานในชื่อ "+me.name;
-    $("accMsg").textContent=""; $("accBg").classList.add("open");
-  };
-  $("btnCloseAcc").onclick=function(){ $("accBg").classList.remove("open"); };
-  $("btnLogout").onclick=function(){
-    if(!confirm("ออกจากชื่อนี้แล้วกลับไปหน้าใส่ชื่อเล่นใหม่?")) return;
-    store("tb_uid",null); uid=""; me=null;
-    $("accBg").classList.remove("open"); $("aName").value=""; showAuth();
-  };
-  $("accBg").onclick=function(e){ if(e.target===this) this.classList.remove("open"); };
-
-  // ดึงข้อมูลใหม่เมื่อกลับมาที่หน้าจอ
-  document.addEventListener("visibilitychange",function(){
-    if(!document.hidden && uid && !document.querySelector(".sheet-bg.open")) reload(true);
+  root.querySelectorAll("input,textarea").forEach(el => {
+    if (el._ph === undefined) el._ph = el.placeholder;
+    el.placeholder = state.lang === "en" && EN[el._ph] ? EN[el._ph] : el._ph;
   });
+  const lb = root.querySelector('[data-act="lang"]');
+  if (lb) lb.textContent = state.lang === "en" ? "EN" : "TH";
+  document.documentElement.lang = state.lang === "en" ? "en" : "th";
+}
+function toast(msg){
+  const t = $("toast"); t.textContent = tr(msg); t.classList.add("show");
+  clearTimeout(toast._t); toast._t = setTimeout(() => t.classList.remove("show"), 2400);
+}
 
-  /* ---- เริ่มทำงาน ---- */
-  uid=fetchStore("tb_uid")||"";
-  if(!uid){ showAuth(); }
-  else{
-    call("bootstrap",uid).then(function(d){
-      me=d.me; plans=d.plans||[];
-      members={}; (d.members||[]).forEach(function(m){ members[m.id]=m.name; });
-      showApp(); renderAll();
-    }).catch(function(){ store("tb_uid",null); showAuth(); });
+// ===== Items & progress =====
+function itemsFor(k){
+  const t = state.templates.map(x => ({...x, key: "T" + x.id, src: "T"}));
+  const p = (state.plans[k] || []).map(x => ({...x, key: "P" + x.id, src: "P"}));
+  return [...t, ...p].sort((a, b) => ORDER[a.period] - ORDER[b.period] || (a.time || "99:99").localeCompare(b.time || "99:99"));
+}
+const isDone = (k, it) => !!state.done[`${k}|${it.key}`];
+const stepDone = (k, it, sid) => !!state.done[`${k}|${it.key}|${sid}`];
+function dayStat(k){ const its = itemsFor(k); return { total: its.length, done: its.filter(i => isDone(k, i)).length }; }
+function pctOf(st){ return st.total ? Math.round(st.done / st.total * 100) : null; }
+function findItem(k, key){ return itemsFor(k).find(i => i.key === key); }
+function toggleKey(id){ if (state.done[id]) delete state.done[id]; else state.done[id] = true; }
+
+// ===== Shared pieces =====
+function taskRow(k, it){
+  const dn = isDone(k, it);
+  const steps = (it.steps || []).map(s => {
+    const sd = stepDone(k, it, s.id);
+    return `<label class="step ${sd ? "done" : ""}"><input type="checkbox" data-act="step" data-k="${k}" data-key="${it.key}" data-sid="${s.id}" ${sd ? "checked" : ""}><span>${esc(s.text)}</span></label>`;
+  }).join("");
+  return `<div class="task ${dn ? "done" : ""}">
+    <button class="chk" data-act="toggle" data-k="${k}" data-key="${it.key}" aria-label="ทำเสร็จ">✓</button>
+    <span class="ico">${it.icon || "📌"}</span>
+    <div class="tbody">
+      <div class="tt" data-act="edit" data-k="${k}" data-key="${it.key}">${esc(it.text)}${it.src === "T" ? ' <span class="chip">ทุกวัน</span>' : ""}</div>
+      ${it.time ? `<div class="tm">${esc(it.time)}</div>` : ""}
+      ${steps ? `<div class="steps">${steps}</div>` : ""}
+    </div>
+    <button class="danger sm" data-act="del" data-k="${k}" data-key="${it.key}">ลบ</button>
+  </div>`;
+}
+function groupList(k){
+  const its = itemsFor(k);
+  return PERIODS.map(([p, label]) => {
+    const list = its.filter(i => i.period === p);
+    return `<section class="card"><h3>${label}<span class="muted">${list.filter(i => isDone(k, i)).length}/${list.length}</span></h3>
+      ${list.length ? list.map(i => taskRow(k, i)).join("") : '<p class="muted" style="margin:0">ยังไม่มีรายการ</p>'}</section>`;
+  }).join("");
+}
+function previewRow(k){
+  const its = itemsFor(k);
+  if (!its.length) return '<p class="muted" style="margin:0">ไม่มีรายการในวันนี้</p>';
+  return `<div class="hscroll">${its.map(i => `<div class="pv ${isDone(k, i) ? "done" : ""}"><div class="pv-ico">${i.icon || "📌"}</div><div class="pv-t">${esc(i.text)}</div><div class="pv-m">${esc(i.time || "")}</div></div>`).join("")}</div>`;
+}
+
+// ===== Views =====
+function vToday(){
+  const k = todayKey(), st = dayStat(k), pct = pctOf(st) || 0;
+  return `
+    <section class="weekcard">
+      <div class="lbl">วันนี้ทำสำเร็จ</div>
+      <div><div class="big">${st.done} / ${st.total}</div><div class="lbl">รายการ</div><div class="bar2"><i style="width:${pct}%"></i></div></div>
+      <div class="go"><span>${pct}%</span><span>${pct >= 100 && st.total ? "ยอดเยี่ยม!" : "ทำต่ออีกนิด ›"}</span></div>
+    </section>
+    <section class="card"><h3>วันนี้</h3>${previewRow(k)}</section>
+    <section class="card"><h3>พรุ่งนี้ <span class="muted">เตรียมไว้ล่วงหน้า</span></h3>${previewRow(addDays(k, 1))}</section>
+    ${groupList(k)}`;
+}
+function dayCell(k, blank){
+  if (blank) return '<span class="cd blank"></span>';
+  const cls = ["cd"];
+  if (k === state.sel) cls.push("sel");
+  if (k === todayKey()) cls.push("today");
+  const has = dayStat(k).total > 0;
+  return `<button class="${cls.join(" ")}" data-act="pick" data-k="${k}">${parseKey(k).getDate()}${has ? '<span class="dot"></span>' : ""}</button>`;
+}
+function vSchedule(){
+  const monthTitle = parseKey(state.month + "-01").toLocaleDateString(locale(), {month:"long", year:"numeric"});
+  const head = WEEK.map(w => `<span class="wd">${w}</span>`).join("");
+  let cells;
+  if (state.calOpen) {
+    const first = parseKey(state.month + "-01");
+    const offset = (first.getDay() + 6) % 7;
+    const n = new Date(first.getFullYear(), first.getMonth() + 1, 0).getDate();
+    cells = [...Array(offset)].map(() => dayCell("", true));
+    for (let d = 1; d <= n; d++) cells.push(dayCell(`${state.month}-${pad(d)}`));
+  } else {
+    const mon = addDays(state.sel, -((parseKey(state.sel).getDay() + 6) % 7));
+    cells = [...Array(7)].map((_, i) => dayCell(addDays(mon, i)));
   }
+  return `
+    <section class="card">
+      <div class="cal-head"><button class="sm ghost" data-act="mprev" aria-label="ก่อนหน้า">‹</button><b>${monthTitle}</b><button class="sm ghost" data-act="mnext" aria-label="ถัดไป">›</button></div>
+      <div class="cal">${head}${cells.join("")}</div>
+      <div class="actions" style="justify-content:center"><button class="ghost sm" data-act="calToggle">${state.calOpen ? "พับปฏิทิน" : "กางปฏิทิน"}</button></div>
+    </section>
+    <section class="card"><h3>${dateLabel(state.sel)}<button class="sm" data-act="addHere">+ เพิ่มแผน</button></h3></section>
+    ${groupList(state.sel)}
+    <section class="card"><h3>การแจ้งเตือน<span class="muted">${state.reminders ? "เปิดอยู่" : "ปิดอยู่"}</span></h3>
+      <p class="muted" style="margin:0 0 10px">รับการแจ้งเตือนเมื่อถึงเวลาทำกิจวัตร</p>
+      <button class="${state.reminders ? "ghost" : ""}" data-act="toggleReminders">${state.reminders ? "ปิดการแจ้งเตือน" : "เปิดการแจ้งเตือน"}</button>
+    </section>`;
+}
+function vHistory(){
+  const t = todayKey(), cells = [];
+  for (let i = 27; i >= 0; i--) {
+    const k = addDays(t, -i), p = pctOf(dayStat(k));
+    const lvl = p === null ? "" : p >= 100 ? "l3" : p >= 50 ? "l2" : p > 0 ? "l1" : "";
+    cells.push(`<button class="hcell ${lvl} ${i === 0 ? "today" : ""}" data-act="openDay" data-k="${k}">${parseKey(k).getDate()}</button>`);
+  }
+  let full = 0;
+  for (let i = 0; i < 28; i++) { const st = dayStat(addDays(t, -i)); if (st.total && st.done === st.total) full++; }
+  return `<section class="card"><h3>ย้อนหลัง 28 วัน</h3><div class="hgrid">${cells.join("")}</div>
+    <div class="actions" style="gap:12px;font-size:.8rem;color:var(--muted)"><span>🟩 ครบทั้งหมด</span><span>ครบบางส่วน</span></div></section>
+    <section class="card"><h3>วันที่ทำครบทุกรายการ</h3><p style="margin:0;font-size:1.6rem;font-weight:900">${full} <span class="muted" style="font-size:.9rem;font-weight:600">วัน</span></p></section>`;
+}
+function vSummary(){
+  const t = todayKey(), days = [];
+  for (let i = 6; i >= 0; i--) {
+    const k = addDays(t, -i);
+    days.push({ label: parseKey(k).toLocaleDateString(locale(), {weekday:"short"}), p: pctOf(dayStat(k)) || 0 });
+  }
+  let totalDone = 0, sum = 0, logged = 0;
+  for (let i = 0; i < 28; i++) {
+    const st = dayStat(addDays(t, -i));
+    totalDone += st.done;
+    if (st.total) { logged++; sum += pctOf(st); }
+  }
+  const avg = logged ? Math.round(sum / logged) : 0;
+  return `
+    <section class="card"><h3>ความสำเร็จ 7 วันล่าสุด</h3>
+      <div class="bars">${days.map(d => `<div><i style="height:${Math.max(d.p, 4)}%"></i><span>${d.label}</span></div>`).join("")}</div></section>
+    <section class="stats">
+      <div class="stat"><b>${pctOf(dayStat(t)) || 0}%</b><span>วันนี้</span></div>
+      <div class="stat"><b>${totalDone}</b><span>รายการที่ทำสำเร็จทั้งหมด</span></div>
+      <div class="stat"><b>${avg}%</b><span>เฉลี่ยทุกวันที่บันทึก</span></div>
+      <div class="stat"><b>${itemsFor(t).length}</b><span>รายการวันนี้</span></div>
+    </section>`;
+}
+function vProfile(){
+  const u = state.user;
+  return `
+    <section class="card" style="display:flex;align-items:center;gap:14px">
+      <div class="avatar" style="width:56px;height:56px">${u.picture ? `<img src="${esc(u.picture)}" alt="">` : esc((u.name || "?").charAt(0).toUpperCase())}</div>
+      <div style="min-width:0"><b>${esc(u.name)}</b><div class="muted">${u.provider === "anonymous" ? "โหมดผู้เยี่ยมชม" : esc(u.email)}</div></div>
+    </section>
+    <section class="card"><h3>บัญชี</h3>
+      <div class="actions" style="margin-top:0"><button class="ghost" data-act="toggleReminders">${state.reminders ? "ปิดการแจ้งเตือน" : "เปิดการแจ้งเตือน"}</button></div>
+      <div class="actions"><button class="danger" data-act="logout">ออกจากระบบ</button></div>
+    </section>`;
+}
+const VIEWS = { today: vToday, schedule: vSchedule, history: vHistory, summary: vSummary, profile: vProfile };
+
+function render(){
+  const u = state.user;
+  if (!u) return;
+  const hr = new Date().getHours();
+  $("greet").textContent = hr < 12 ? "Good morning," : hr < 18 ? "Good afternoon," : "Good evening,";
+  $("title").textContent = TITLES[state.tab];
+  $("avatar").innerHTML = u.picture ? `<img src="${esc(u.picture)}" alt="">` : esc((u.name || "?").charAt(0).toUpperCase());
+  document.querySelectorAll(".tabs .pill button[data-tab]").forEach(b => b.classList.toggle("on", b.dataset.tab === state.tab));
+  const head = state.tab === "today" ? `<div><div class="greet">${$("greet").textContent}</div><div class="name">${esc(u.name)}</div></div>` : "";
+  $("view").innerHTML = head + VIEWS[state.tab]();
+  moveIndicator();
+  i18n();
+}
+
+// ===== Add panel =====
+function openSheet(){
+  $("newDate").value = state.sel;
+  $("newRepeat").checked = false;
+  const sh = $("sheet"), bg = $("sheetBg");
+  sh.hidden = false; bg.hidden = false; i18n();
+  requestAnimationFrame(() => { sh.classList.add("open"); bg.classList.add("open"); });
+  setTimeout(() => $("newText").focus(), 350);
+}
+function closeSheet(){
+  const sh = $("sheet"), bg = $("sheetBg");
+  if (sh.hidden) return;
+  sh.classList.remove("open"); bg.classList.remove("open");
+  setTimeout(() => { sh.hidden = true; bg.hidden = true; }, 350);
+}
+function submitAdd(e){
+  e.preventDefault();
+  const text = $("newText").value.trim();
+  if (!text) return toast("กรุณาพิมพ์รายการก่อน");
+  const date = $("newDate").value || state.sel;
+  const item = {
+    id: uid(), text,
+    period: $("newPeriod").value, time: $("newTime").value, icon: $("newIcon").value,
+    steps: $("newSteps").value.split("\n").map(x => x.trim()).filter(Boolean).map(t => ({id: uid(), text: t}))
+  };
+  if ($("newRepeat").checked) state.templates.push(item);
+  else { if (!state.plans[date]) state.plans[date] = []; state.plans[date].push(item); }
+  state.sel = date; state.month = date.slice(0, 7);
+  e.target.reset();
+  closeSheet(); render(); toast("เพิ่มรายการแล้ว");
+}
+
+// ===== Tab bar (liquid indicator) =====
+function popNav(){
+  const i = document.querySelector(".ind"); if (!i) return;
+  i.classList.remove("bounce"); void i.offsetWidth; i.classList.add("bounce");
+}
+function moveIndicator(){
+  const btn = document.querySelector(".tabs .pill button.on");
+  if (!btn) return;
+  const to = btn.offsetLeft + (btn.offsetWidth - 50) / 2;
+  const ind = document.querySelector(".ind"), gb = document.querySelector(".goo-blob");
+  if (ind) ind.style.left = to + "px";
+  if (gb) {
+    const first = !gb._init; gb._init = true;
+    if (first) gb.style.transition = "none";
+    gb.style.left = (to + 32) + "px";
+    if (first) { void gb.offsetWidth; gb.style.transition = ""; }
+  }
+}
+
+// ===== Auth =====
+function renderAuth(){
+  const reg = state.authMode === "register";
+  $("auTitle").textContent = reg ? "สร้างบัญชี" : "เข้าสู่ระบบ";
+  $("auNameWrap").hidden = !reg;
+  $("auPass2Wrap").hidden = !reg;
+  $("auSwitch").hidden = true;
+  $("auRegWrap").innerHTML = reg
+    ? `<span>มีบัญชีอยู่แล้ว?</span> <button class="au-link" type="button" data-act="toggleMode">เข้าสู่ระบบ</button>`
+    : `<span>ยังไม่มีบัญชี?</span> <button class="au-link" type="button" data-act="toggleMode">สมัครสมาชิก</button>`;
+  $("auForgot").hidden = reg;
+  $("auErr").textContent = "";
+  if (window.resetSlider) window.resetSlider();
+  i18n();
+}
+function setScreen(){
+  $("auth").hidden = !!state.user;
+  document.body.classList.toggle("guest", !state.user);
+}
+function login(user){
+  state.user = user;
+  if (user.provider !== "anonymous" && !state.users.some(u => u.email === user.email)) state.users.push(user);
+  state.tab = "today";
+  setScreen(); render(); window.scrollTo(0, 0);
+  $("app").scrollTop = 0;
+}
+function logout(){
+  if (window.google && GOOGLE_CLIENT_ID.indexOf("YOUR_") !== 0) google.accounts.id.disableAutoSelect();
+  state.user = null; state.authMode = "login";
+  ["auEmail","auPass","auPass2","auName"].forEach(id => $(id).value = "");
+  renderAuth(); setScreen();
+  toast("ออกจากระบบแล้ว");
+}
+function authSubmit(){
+  const err = $("auErr"); err.textContent = "";
+  const email = $("auEmail").value.trim().toLowerCase();
+  const pass = $("auPass").value;
+  if (state.authMode === "login") {
+    const u = state.users.find(x => x.email === email && x.pass === pass);
+    if (!u) return err.textContent = tr("อีเมลหรือรหัสผ่านไม่ถูกต้อง");
+    return login({ name: u.name, email: u.email, provider: "email" });
+  }
+  const name = $("auName").value.trim();
+  if (!name) return err.textContent = tr("กรุณากรอกชื่อที่แสดง");
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return err.textContent = tr("รูปแบบอีเมลไม่ถูกต้อง");
+  if (pass.length < 8) return err.textContent = tr("รหัสผ่านต้องมีอย่างน้อย 8 ตัวอักษร");
+  if (pass !== $("auPass2").value) return err.textContent = tr("รหัสผ่านไม่ตรงกัน");
+  if (state.users.some(u => u.email === email)) return err.textContent = tr("อีเมลนี้ถูกใช้งานแล้ว");
+  state.users.push({ name, email, pass, provider: "email" });
+  toast("สมัครสมาชิกสำเร็จ");
+  login({ name, email, provider: "email" });
+}
+function decodeJwt(token){
+  const b64 = token.split(".")[1].replace(/-/g, "+").replace(/_/g, "/");
+  const bytes = Uint8Array.from(atob(b64), c => c.charCodeAt(0));
+  return JSON.parse(new TextDecoder().decode(bytes));
+}
+function onGoogleCredential(res){
+  const p = decodeJwt(res.credential);
+  login({ name: p.name, email: p.email, picture: p.picture, provider: "google" });
+}
+function googleLogin(){
+  if (!window.google || GOOGLE_CLIENT_ID.indexOf("YOUR_") === 0) {
+    toast("ยังไม่ได้ตั้งค่า Google Client ID — เข้าแบบทดสอบแทน");
+    return login({ name: "Google Demo", email: "demo@gmail.com", provider: "google" });
+  }
+  google.accounts.id.prompt();
+}
+function loadGoogle(){
+  const s = document.createElement("script");
+  s.src = "https://accounts.google.com/gsi/client"; s.async = true;
+  s.onload = () => {
+    if (GOOGLE_CLIENT_ID.indexOf("YOUR_") === 0) return;
+    google.accounts.id.initialize({ client_id: GOOGLE_CLIENT_ID, callback: onGoogleCredential });
+  };
+  document.head.appendChild(s);
+}
+
+// ===== Slide-to-sign-in =====
+(function(){
+  const sl = $("slider"), knob = sl.querySelector(".sl-knob"), fill = sl.querySelector(".sl-fill"), txt = $("slText");
+  const ARROW = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';
+  const CHECK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7"/></svg>';
+  let startX = 0, pos = 0, dragging = false, done = false;
+  const maxPos = () => sl.clientWidth - knob.offsetWidth - 8;
+  function setPos(x){
+    pos = Math.max(0, Math.min(maxPos(), x));
+    knob.style.transform = `translateX(${pos}px)`;
+    fill.style.width = (pos + knob.offsetWidth + 4) + "px";
+  }
+  function setLabel(){
+    txt.textContent = tr(state.authMode === "register" ? "เลื่อนเพื่อสมัครสมาชิก" : "เลื่อนเพื่อเข้าสู่ระบบ");
+    i18n();
+  }
+  function reset(){
+    done = false; sl.classList.remove("ok"); knob.innerHTML = ARROW;
+    setLabel();
+    knob.style.transition = "transform .3s ease"; fill.style.transition = "width .3s ease";
+    setPos(0);
+    setTimeout(() => { knob.style.transition = ""; fill.style.transition = ""; }, 320);
+  }
+  window.resetSlider = reset;
+  knob.addEventListener("pointerdown", e => {
+    if (done) return;
+    dragging = true; startX = e.clientX - pos;
+    knob.setPointerCapture(e.pointerId);
+    knob.style.transition = "none"; fill.style.transition = "none";
+  });
+  knob.addEventListener("pointermove", e => { if (dragging) setPos(e.clientX - startX); });
+  const end = () => {
+    if (!dragging) return;
+    dragging = false;
+    if (pos >= maxPos() * 0.9) {
+      done = true; setPos(maxPos());
+      sl.classList.add("ok"); knob.innerHTML = CHECK;
+      txt.textContent = tr("ยินดีต้อนรับ!"); i18n();
+      knob.style.transition = ""; fill.style.transition = "";
+      authSubmit();
+      setTimeout(() => { if (!state.user) reset(); }, 900);
+    } else reset();
+  };
+  knob.addEventListener("pointerup", end);
+  knob.addEventListener("pointercancel", end);
+  window.addEventListener("resize", () => setPos(pos));
+  knob.innerHTML = ARROW;
+  setLabel();
 })();
+
+// ===== Bottom bar slides away on scroll down =====
+(function(){
+  const app = $("app");
+  let last = 0;
+  app.addEventListener("scroll", () => {
+    const y = app.scrollTop;
+    if (Math.abs(y - last) < 6 && y > 40) return;
+    const hide = y > 40 && y > last;
+    document.querySelectorAll(".tabs").forEach(e => e.classList.toggle("hide", hide));
+    last = y;
+  }, { passive: true });
+})();
+
+// ===== Events =====
+document.addEventListener("click", e => {
+  const tabBtn = e.target.closest("[data-tab]");
+  if (tabBtn && tabBtn.closest(".tabs")) { state.tab = tabBtn.dataset.tab; popNav(); return render(); }
+
+  const el = e.target.closest("[data-act]");
+  if (!el) return;
+  const act = el.dataset.act, k = el.dataset.k, key = el.dataset.key;
+  switch (act) {
+    case "toggleMode": state.authMode = state.authMode === "login" ? "register" : "login"; return renderAuth();
+    case "authSubmit": return authSubmit();
+    case "googleLogin": return googleLogin();
+    case "guestLogin": return login({ name: "ผู้เยี่ยมชม", email: "", provider: "anonymous" });
+    case "forgot": return toast("ฟีเจอร์รีเซ็ตรหัสผ่านจะเปิดใช้เร็ว ๆ นี้");
+    case "logout": return logout();
+    case "lang": state.lang = state.lang === "th" ? "en" : "th"; renderAuth(); if (state.user) render(); return;
+    case "bell": return toast("ยังไม่มีการแจ้งเตือนใหม่");
+    case "fab": return openSheet();
+    case "addHere": return openSheet();
+    case "closeSheet": return closeSheet();
+    case "toggle": toggleKey(`${k}|${key}`); return render();
+    case "step": toggleKey(`${k}|${key}|${el.dataset.sid}`); return render();
+    case "del": {
+      if (key.charAt(0) === "T") state.templates = state.templates.filter(x => "T" + x.id !== key);
+      else state.plans[k] = (state.plans[k] || []).filter(x => "P" + x.id !== key);
+      return render();
+    }
+    case "edit": {
+      const it = findItem(k, key); if (!it) return;
+      const v = prompt(tr("แก้ไขรายการ"), it.text);
+      if (v && v.trim()) {
+        const list = it.src === "T" ? state.templates : (state.plans[k] || []);
+        const real = list.find(x => (it.src === "T" ? "T" : "P") + x.id === key);
+        if (real) real.text = v.trim();
+      }
+      return render();
+    }
+    case "pick": state.sel = k; state.month = k.slice(0, 7); return render();
+    case "openDay": state.sel = k; state.month = k.slice(0, 7); state.tab = "schedule"; popNav(); return render();
+    case "mprev":
+    case "mnext": {
+      const d = parseKey(state.month + "-01");
+      d.setMonth(d.getMonth() + (act === "mnext" ? 1 : -1));
+      state.month = keyOf(d).slice(0, 7);
+      return render();
+    }
+    case "calToggle": state.calOpen = !state.calOpen; return render();
+    case "toggleReminders": state.reminders = !state.reminders; toast(state.reminders ? "เปิดการแจ้งเตือนแล้ว" : "ปิดการแจ้งเตือนแล้ว"); return render();
+  }
+});
+document.addEventListener("submit", e => { if (e.target.id === "addForm") submitAdd(e); });
+window.addEventListener("resize", moveIndicator);
+
+// ===== Start =====
+state.sel = todayKey(); state.month = state.sel.slice(0, 7);
+loadGoogle();
+renderAuth();
+setScreen();
+setTimeout(() => $("splash").classList.add("gone"), 2200);
+
 </script>
 </body>
 </html>
