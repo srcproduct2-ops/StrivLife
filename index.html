@@ -233,6 +233,20 @@ body.guest .topbar,body.guest .tabs,body.guest .view{display:none!important}
 .rep{display:flex;gap:8px;align-items:center;font-size:.9rem;color:var(--text)}
 .rep input{width:18px;height:18px;accent-color:#6366f1}
 .sheet-go{margin-top:4px}
+.foodrows{display:flex;flex-direction:column;gap:8px}
+.frw{display:grid;grid-template-columns:minmax(0,1fr) 46px 58px 28px;gap:4px;padding:4px;border-radius:12px;background:var(--soft);align-items:center}
+.addform .frw select,.addform .frw input{background:var(--card);padding:6px 8px;border-radius:9px;min-width:0;font-size:13px!important;height:34px}
+.addform .frw .fr-qty,.addform .frw .fr-kcal{padding:6px 4px;text-align:center}
+.addform .frw .fr-del{width:28px;height:28px;padding:0;border-radius:9px;background:var(--card);color:#ef4444;box-shadow:none;font-size:1rem;line-height:1;display:grid;place-items:center}
+.addform .addfood{width:100%;padding:6px;border-radius:12px;background:transparent;color:var(--accent);border:1.5px dashed var(--accent);box-shadow:none;font-size:.8rem;font-weight:700}
+.foodrows{gap:5px}
+.ipick{grid-template-columns:repeat(7,1fr)!important;gap:4px!important}
+.ipk{padding:4px 0!important;border-radius:10px!important}
+.ipk .ie{font-size:1.1rem!important}
+.ipk small{display:none!important}
+.foodtotal{display:flex;justify-content:space-between;align-items:center;font-size:.85rem;color:var(--text);padding:2px 4px}
+.foodtotal b{color:var(--accent)}
+.tm.fds{margin-top:2px}
 .cal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
 .cal-head b{font-weight:800}
 .cal{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;text-align:center}
@@ -346,9 +360,8 @@ body.guest .topbar,body.guest .tabs,body.guest .view{display:none!important}
 .goo,.goo.goo{filter:none!important}
 .goo-bar{background:#fff;border-radius:30px;box-shadow:0 10px 24px rgba(30,27,75,.14),0 1px 3px rgba(30,27,75,.06)}
 .goo-blob{background:#fff;box-shadow:none}
-.goo-blob::before,.goo-blob::after{content:"";position:absolute;top:15px;width:14px;height:14px;pointer-events:none}
-.goo-blob::before{left:-10px;background:radial-gradient(circle at 0 0,transparent 13.5px,#fff 14.5px)}
-.goo-blob::after{right:-10px;background:radial-gradient(circle at 100% 0,transparent 13.5px,#fff 14.5px)}
+/* plain round bump: no pointed fillet tails */
+.goo-blob::before,.goo-blob::after{content:none;display:none}
 /* Activity panel: spacing, presets, icon picker, cost */
 .frow{gap:18px}
 .presets{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 14px}
@@ -694,17 +707,13 @@ html[data-theme="dark"] .ptr{background:#1b1a2e}
       <label class="fld"><span>วันที่</span><input type="date" id="newDate"></label>
       <label class="fld"><span>เวลา</span><input type="time" id="newTime"></label>
     </div>
-    <div class="frow">
-      <label class="fld"><span>ช่วง</span><select id="newPeriod"><option value="morning">เช้า</option><option value="afternoon">กลางวัน</option><option value="evening">เย็น</option></select></label>
-      <label class="fld"><span>ค่าใช้จ่าย (บาท)</span><input type="number" id="newCost" min="0" step="1" inputmode="decimal" placeholder="0"></label>
+    <label class="fld"><span>ค่าใช้จ่าย (บาท)</span><input type="number" id="newCost" min="0" step="1" inputmode="decimal" placeholder="0"></label>
+    <div class="fld foodfld"><span>อาหาร</span>
+      <div id="foodRows" class="foodrows"></div>
+      <button type="button" class="addfood" data-act="addFoodRow">+ เพิ่มอาหาร</button>
+      <div class="foodtotal"><span>แคลอรี่รวม</span><b><span id="foodTotal">0</span> kcal</b></div>
     </div>
-    <div class="frow">
-      <label class="fld"><span>อาหาร</span><select id="newFood"></select></label>
-      <label class="fld"><span>จำนวน</span><input type="number" id="newQty" min="0.5" step="0.5" value="1" inputmode="decimal"></label>
-    </div>
-    <label class="fld"><span>แคลอรี่ (kcal)</span><input type="number" id="newKcal" min="0" step="1" inputmode="numeric" placeholder="0"></label>
     <div class="fld"><span>ไอคอน</span><div class="ipick" id="ipick"><button type="button" class="ipk" data-act="pickIcon" data-i="💼"><span class="ie">💼</span><small>ทำงาน</small></button><button type="button" class="ipk" data-act="pickIcon" data-i="🍚"><span class="ie">🍚</span><small>กินข้าว</small></button><button type="button" class="ipk" data-act="pickIcon" data-i="☕"><span class="ie">☕</span><small>กาแฟ</small></button><button type="button" class="ipk" data-act="pickIcon" data-i="⛰️"><span class="ie">⛰️</span><small>ภูเขา</small></button><button type="button" class="ipk" data-act="pickIcon" data-i="🧳"><span class="ie">🧳</span><small>เที่ยว</small></button><button type="button" class="ipk" data-act="pickIcon" data-i="🏃"><span class="ie">🏃</span><small>ออกกำลัง</small></button><button type="button" class="ipk" data-act="pickIcon" data-i="📘"><span class="ie">📘</span><small>เรียน</small></button><button type="button" class="ipk" data-act="pickIcon" data-i="🛒"><span class="ie">🛒</span><small>ซื้อของ</small></button><button type="button" class="ipk" data-act="pickIcon" data-i="🚗"><span class="ie">🚗</span><small>เดินทาง</small></button><button type="button" class="ipk" data-act="pickIcon" data-i="🛌"><span class="ie">🛌</span><small>พักผ่อน</small></button><button type="button" class="ipk" data-act="pickIcon" data-i="💧"><span class="ie">💧</span><small>น้ำ</small></button><button type="button" class="ipk" data-act="pickIcon" data-i="🎵"><span class="ie">🎵</span><small>ดนตรี</small></button><button type="button" class="ipk" data-act="pickIcon" data-i="🧹"><span class="ie">🧹</span><small>งานบ้าน</small></button><button type="button" class="ipk" data-act="pickIcon" data-i="📌"><span class="ie">📌</span><small>อื่น ๆ</small></button></div><input type="hidden" id="newIcon" value="📌"></div>
-    <textarea id="newSteps" rows="2" placeholder="ขั้นตอนย่อย (บรรทัดละ 1 ข้อ) ไม่บังคับ"></textarea>
     <label class="rep"><input type="checkbox" id="newRepeat"> ทำทุกวัน</label>
     <button type="submit" class="sheet-go" id="sheetSubmit">เพิ่มรายการ</button>
   </form>
@@ -805,7 +814,7 @@ Object.assign(EN, {
 Object.assign(EN, {"ทำสำเร็จวันนี้":"Done today","ยอดเงินที่ใช้":"Spending","สัปดาห์":"Week","เดือน":"Month","ปี":"Year"});
 Object.assign(EN, {"ความสำเร็จ":"Progress","ค่าใช้จ่าย":"Spending"});
 Object.assign(EN, {"ข้าวผัด":"Fried rice","ข้าวมันไก่":"Chicken rice","ข้าวกะเพราหมูสับไข่ดาว":"Basil pork with egg","ข้าวหมูแดง":"Red pork rice","ข้าวราดแกง":"Rice with curry","ข้าวต้ม":"Rice porridge","ก๋วยเตี๋ยวเรือ":"Boat noodles","ก๋วยเตี๋ยวหมู":"Pork noodles","บะหมี่หมูแดง":"Red pork noodles","ส้มตำไทย":"Thai papaya salad","ไก่ย่าง":"Grilled chicken","ข้าวเหนียว":"Sticky rice","ผัดกะเพรา":"Basil stir-fry","ต้มยำกุ้ง":"Tom yum goong","แกงเขียวหวาน":"Green curry","ข้าวไข่เจียว":"Rice with omelette","ลาบหมู":"Pork larb","แซนด์วิช":"Sandwich","ไข่ต้ม":"Boiled egg","กล้วย":"Banana","แอปเปิ้ล":"Apple","นมจืด":"Plain milk","กาแฟดำ":"Black coffee","กาแฟลาเต้":"Latte","ชาเขียว":"Green tea","น้ำอัดลม":"Soft drink","โยเกิร์ต":"Yogurt","ข้าวโอ๊ต":"Oatmeal","สลัดผัก":"Vegetable salad","โรตี":"Roti","ไอศกรีม":"Ice cream"});
-Object.assign(EN, {"แคลอรี่วันนี้":"Calories today","ตั้งเป้า":"Set goal","ค่าประมาณจากฐานข้อมูล":"Estimates from the food list","แคลอรี่ที่ได้รับ":"Calories eaten","เป้าหมายแคลอรี่ต่อวัน (kcal)":"Daily calorie goal (kcal)","ชื่ออาหาร":"Food name","แคลอรี่ต่อหน่วย (kcal)":"Calories per serving (kcal)","— ไม่เลือก —":"— None —","+ เพิ่มอาหารเอง":"+ Add my own food","อาหาร":"Food","จำนวน":"Qty","แคลอรี่ (kcal)":"Calories (kcal)"});
+Object.assign(EN, {"รายการ":"Items","+ เพิ่มอาหาร":"+ Add food","แคลอรี่รวม":"Total calories","อื่น ๆ":"Other","แคลอรี่วันนี้":"Calories today","ตั้งเป้า":"Set goal","ค่าประมาณจากฐานข้อมูล":"Estimates from the food list","แคลอรี่ที่ได้รับ":"Calories eaten","เป้าหมายแคลอรี่ต่อวัน (kcal)":"Daily calorie goal (kcal)","ชื่ออาหาร":"Food name","แคลอรี่ต่อหน่วย (kcal)":"Calories per serving (kcal)","— ไม่เลือก —":"— None —","+ เพิ่มอาหารเอง":"+ Add my own food","อาหาร":"Food","จำนวน":"Qty","แคลอรี่ (kcal)":"Calories (kcal)"});
 Object.assign(EN, {"ภาษา":"Language","ไทย":"Thai"});
 function tr(s){ return state.lang === "en" && EN[s] ? EN[s] : s; }
 // Walks the app's text nodes and placeholders; keeps the original Thai so it can switch back
@@ -843,7 +852,7 @@ function toast(msg){
 function itemsFor(k){
   const t = state.templates.map(x => ({...x, key: "T" + x.id, src: "T"}));
   const p = (state.plans[k] || []).map(x => ({...x, key: "P" + x.id, src: "P"}));
-  return [...t, ...p].sort((a, b) => ORDER[a.period] - ORDER[b.period] || (a.time || "99:99").localeCompare(b.time || "99:99"));
+  return [...t, ...p].sort((a, b) => (a.time || "99:99").localeCompare(b.time || "99:99"));
 }
 const isDone = (k, it) => !!state.done[`${k}|${it.key}`];
 const stepDone = (k, it, sid) => !!state.done[`${k}|${it.key}|${sid}`];
@@ -864,6 +873,7 @@ function taskRow(k, it){
     <span class="ico">${it.icon || "📌"}</span>
     <div class="tbody">
       <div class="tt" data-act="edit" data-k="${k}" data-key="${it.key}">${esc(it.text)}${it.src === "T" ? ' <span class="chip">ทุกวัน</span>' : ""}${it.kcal ? ` <span class="chip kcal">${it.kcal} kcal</span>` : ""}</div>
+      ${(it.foods && it.foods.length) ? `<div class="tm fds">🍽️ ${it.foods.map(f => esc(f.n ? tr(f.n) + (f.q && f.q !== 1 ? " ×" + f.q : "") : "อื่น ๆ") + " <small>" + f.k + "</small>").join(" · ")}</div>` : ""}
       ${(it.time || it.cost) ? `<div class="tm">${esc(it.time || "")}${it.time && it.cost ? " · " : ""}${it.cost ? "฿" + it.cost : ""}</div>` : ""}
       ${steps ? `<div class="steps">${steps}</div>` : ""}
     </div>
@@ -871,12 +881,9 @@ function taskRow(k, it){
   </div>`;
 }
 function groupList(k){
-  const its = itemsFor(k);
-  return PERIODS.map(([p, label]) => {
-    const list = its.filter(i => i.period === p);
-    return `<section class="card per-${p}"><h3>${label}<span class="muted">${list.filter(i => isDone(k, i)).length}/${list.length}</span></h3>
-      ${list.length ? list.map(i => taskRow(k, i)).join("") : '<p class="muted" style="margin:0">ยังไม่มีรายการ</p>'}</section>`;
-  }).join("");
+  const list = itemsFor(k);
+  return `<section class="card"><h3>รายการ<span class="muted">${list.filter(i => isDone(k, i)).length}/${list.length}</span></h3>
+    ${list.length ? list.map(i => taskRow(k, i)).join("") : '<p class="muted" style="margin:0">ยังไม่มีรายการ</p>'}</section>`;
 }
 function previewRow(k){
   const its = itemsFor(k);
@@ -1064,15 +1071,13 @@ function openSheet(ed){
   $("newDate").value = it ? ed.k : state.sel;
   $("newTime").value = it ? (it.time || "") : "";
   $("newCost").value = it && it.cost ? it.cost : "";
-  $("newPeriod").value = it ? it.period : "morning";
   setIcon(it ? (it.icon || "📌") : "📌");
-  $("newSteps").value = it ? (it.steps || []).map(x => x.text).join("\n") : "";
   $("newRepeat").checked = it ? it.src === "T" : false;
-  fillFoods();
-  refreshFoods().then(fillFoods);
-  $("newFood").value = "";
-  $("newQty").value = 1;
-  $("newKcal").value = it && it.kcal ? it.kcal : "";
+  const rows = !it ? [] : (it.foods && it.foods.length
+    ? it.foods.map(f => ({ name: f.n, icon: f.i, u: f.u, q: f.q, k: f.k }))
+    : (it.kcal ? [{ name: "", q: 1, k: it.kcal }] : []));
+  renderFoodRows(rows);
+  refreshFoods().then(() => { if (!$("sheet").hidden) renderFoodRows(readFoodRows()); });
   const sh = $("sheet"), bg = $("sheetBg");
   sh.hidden = false; bg.hidden = false; i18n();
   requestAnimationFrame(() => { sh.classList.add("open"); bg.classList.add("open"); });
@@ -1088,7 +1093,7 @@ const PRESETS = [
 ];
 function applyPreset(idx){
   const p = PRESETS[idx]; if (!p) return;
-  $("newText").value = p.t; $("newPeriod").value = p.p; setIcon(p.i);
+  $("newText").value = p.t; setIcon(p.i);
   document.querySelectorAll("#presets .preset").forEach((b, i) => b.classList.toggle("on", i === idx));
 }
 function closeSheet(){
@@ -1105,12 +1110,13 @@ function submitAdd(e){
   const ed = state.editing;
   const old = ed ? findItem(ed.k, ed.key) : null;
   const oldSteps = old ? (old.steps || []) : [];
-  const steps = $("newSteps").value.split("\n").map(x => x.trim()).filter(Boolean)
-    .map((t, i) => ({ id: oldSteps[i] ? oldSteps[i].id : uid(), text: t }));
+  const steps = oldSteps;
+  const foods = readFoodRows().filter(r => r.name || r.k > 0)
+    .map(r => ({ n: r.name, i: r.icon || "", u: r.u || 0, q: r.q || 1, k: Math.round(r.k) }));
   const item = {
     id: old ? old.id : uid(), text,
-    period: $("newPeriod").value, time: $("newTime").value, icon: $("newIcon").value,
-    cost: Number($("newCost").value) || 0, kcal: Number($("newKcal").value) || 0, steps
+    time: $("newTime").value, icon: $("newIcon").value,
+    cost: Number($("newCost").value) || 0, kcal: foods.reduce((a, f) => a + f.k, 0), foods, steps
   };
   if (old) {
     const srcList = old.src === "T" ? state.templates : (state.plans[ed.k] || []);
@@ -1134,21 +1140,46 @@ function refreshFoods(){
     state.sharedFoods = [...list, ...state.sharedFoods.filter(f => !ids.has(f.id))];
   }).catch(e => console.warn("foods", e));
 }
-function fillFoods(){
-  $("newFood").innerHTML = `<option value="">${tr("— ไม่เลือก —")}</option>`
-    + allFoods().map((f, i) => `<option value="${i}">${f.icon || "🍽️"} ${tr(f.name)} · ${f.kcal} kcal</option>`).join("")
+let _foodList = [];
+function buildFoodList(rows){
+  _foodList = allFoods().slice();
+  (rows || []).forEach(r => {
+    if (r.name && !_foodList.some(f => f.name === r.name)) _foodList.push({ name: r.name, icon: r.icon || "🍽️", kcal: r.u || 0 });
+  });
+}
+function foodRowHTML(r){
+  const opts = `<option value="">${tr("— ไม่เลือก —")}</option>`
+    + _foodList.map((f, i) => `<option value="${i}" ${f.name === r.name ? "selected" : ""}>${f.icon || "🍽️"} ${esc(tr(f.name))} · ${f.kcal} kcal</option>`).join("")
     + `<option value="__new">${tr("+ เพิ่มอาหารเอง")}</option>`;
+  return `<div class="frw"><select class="fr-food">${opts}</select>
+    <input type="number" class="fr-qty" min="0.5" step="0.5" value="${r.q || 1}" placeholder="จำนวน" inputmode="decimal">
+    <input type="number" class="fr-kcal" min="0" step="1" value="${r.k ? Math.round(r.k) : ""}" placeholder="kcal" inputmode="numeric">
+    <button type="button" class="fr-del" data-act="delFoodRow" aria-label="ลบอาหาร">×</button></div>`;
 }
-function recalcKcal(){
-  const f = allFoods()[Number($("newFood").value)];
-  if (!f) return;
-  $("newKcal").value = Math.round(f.kcal * (Number($("newQty").value) || 1));
+function renderFoodRows(rows){
+  rows = rows && rows.length ? rows : [{ name: "", q: 1, k: 0 }];
+  buildFoodList(rows);
+  $("foodRows").innerHTML = rows.map(foodRowHTML).join("");
+  updateFoodTotal(); i18n();
 }
-function onFoodChange(){
-  const v = $("newFood").value;
-  if (v === "__new") {
+function readFoodRows(){
+  return [...document.querySelectorAll("#foodRows .frw")].map(el => {
+    const v = el.querySelector(".fr-food").value;
+    const f = v === "" || v === "__new" ? null : _foodList[Number(v)];
+    return { name: f ? f.name : "", icon: f ? f.icon : "", u: f ? f.kcal : 0,
+      q: Number(el.querySelector(".fr-qty").value) || 0, k: Number(el.querySelector(".fr-kcal").value) || 0 };
+  });
+}
+function updateFoodTotal(){
+  $("foodTotal").textContent = Math.round(readFoodRows().reduce((a, r) => a + r.k, 0));
+}
+function onFoodChange(sel){
+  const row = sel.closest(".frw");
+  const idx = [...document.querySelectorAll("#foodRows .frw")].indexOf(row);
+  if (sel.value === "__new") {
+    const rows = readFoodRows();
     const name = (prompt(tr("ชื่ออาหาร")) || "").trim();
-    if (!name) { $("newFood").value = ""; return; }
+    if (!name) { renderFoodRows(rows); return; }
     const kcal = Number(prompt(tr("แคลอรี่ต่อหน่วย (kcal)"), "300")) || 0;
     const food = { id: uid(), name, icon: "🍽️", kcal, custom: true };
     state.sharedFoods.push(food);
@@ -1156,13 +1187,24 @@ function onFoodChange(){
       window.FB.addFood(food).then(() => toast("บันทึกอาหารลงฐานข้อมูลแล้ว"))
         .catch(e => { console.error(e); toast("บันทึกอาหารไม่สำเร็จ"); });
     } else toast("เพิ่มอาหารแล้ว (บันทึกเฉพาะในเครื่อง)");
-    fillFoods();
-    $("newFood").value = String(allFoods().length - 1);
+    rows[idx] = { name, icon: food.icon, u: kcal, q: 1, k: kcal };
+    renderFoodRows(rows);
+    if (!$("newText").value.trim()) $("newText").value = name;
+    return;
   }
-  const f = allFoods()[Number($("newFood").value)];
-  if (!f) return;
-  if (!$("newText").value.trim()) $("newText").value = tr(f.name);
-  recalcKcal();
+  const f = sel.value === "" ? null : _foodList[Number(sel.value)];
+  if (f) {
+    const q = Number(row.querySelector(".fr-qty").value) || 1;
+    row.querySelector(".fr-kcal").value = Math.round(f.kcal * q);
+    if (!$("newText").value.trim()) $("newText").value = tr(f.name);
+  }
+  updateFoodTotal();
+}
+function onQtyInput(inp){
+  const row = inp.closest(".frw"), v = row.querySelector(".fr-food").value;
+  const f = v === "" || v === "__new" ? null : _foodList[Number(v)];
+  if (f) row.querySelector(".fr-kcal").value = Math.round(f.kcal * (Number(inp.value) || 0));
+  updateFoodTotal();
 }
 function kcalCard(){
   const k = todayKey(), its = itemsFor(k);
@@ -1172,7 +1214,6 @@ function kcalCard(){
     <div class="kc-top"><div><div class="muted">แคลอรี่วันนี้</div><b class="kc-big">${total} <small>/ ${goal} kcal</small></b></div>
       <button class="ghost sm" data-act="kcalGoal">ตั้งเป้า</button></div>
     <div class="bar3"><i style="width:${pct}%"></i></div>
-    <div class="kc-split">${PERIODS.map(([p, l]) => `<span><b>${sum(p)}</b> ${l}</span>`).join("")}</div>
     <p class="muted" style="margin:6px 0 0;font-size:.7rem">ค่าประมาณจากฐานข้อมูล</p></section>`;
 }
 
@@ -1606,6 +1647,12 @@ document.addEventListener("click", e => {
     case "theme": state.theme = state.theme === "dark" ? "light" : "dark"; applyTheme(); return;
     case "span": state.spanTab = el.dataset.s; return render();
     case "pickIcon": setIcon(el.dataset.i); return;
+    case "addFoodRow": { const rows = readFoodRows(); rows.push({ name: "", q: 1, k: 0 }); renderFoodRows(rows); return; }
+    case "delFoodRow": {
+      const rows = readFoodRows();
+      rows.splice([...document.querySelectorAll("#foodRows .frw")].indexOf(el.closest(".frw")), 1);
+      renderFoodRows(rows); return;
+    }
     case "preset": applyPreset(Number(el.dataset.idx)); return;
     case "ownPreset": $("newText").focus(); return;
     case "edit": openSheet({ k, key }); return;
@@ -1638,8 +1685,12 @@ document.addEventListener("pointerout", e => {
   if (c && !c.contains(e.relatedTarget)) c.style.transform = "";
 });
 window.addEventListener("resize", () => moveIndicator(true));
-document.addEventListener("change", e => { if (e.target.id === "newFood") onFoodChange(); });
-document.addEventListener("input", e => { if (e.target.id === "newQty") recalcKcal(); });
+document.addEventListener("change", e => { if (e.target.classList && e.target.classList.contains("fr-food")) onFoodChange(e.target); });
+document.addEventListener("input", e => {
+  const c = e.target.classList; if (!c) return;
+  if (c.contains("fr-qty")) onQtyInput(e.target);
+  else if (c.contains("fr-kcal")) updateFoodTotal();
+});
 
 // ===== Lock zoom (pinch, double-tap, ctrl+wheel) =====
 ["gesturestart","gesturechange","gestureend"].forEach(ev => document.addEventListener(ev, e => e.preventDefault(), {passive:false}));
@@ -1704,7 +1755,7 @@ document.addEventListener("visibilitychange", () => {
     state.month = state.sel.slice(0, 7);
   }
   render();
-  refreshFoods().then(fillFoods);
+  refreshFoods();
   const u = state.user;
   if (u.uid && window.FB && window.FB.loadData && snapshot() === state.saved) {
     window.FB.loadData(u.uid).then(d => {
