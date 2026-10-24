@@ -504,6 +504,11 @@ button.ghost{background:linear-gradient(135deg,#eef2ff,#fdf2f8);color:#4338ca}
 .kcal .bar3{background:rgba(255,255,255,.3)}
 .kcal .bar3 i{background:#fff}
 .kcal .ghost.sm{background:rgba(255,255,255,.22);color:#fff}
+/* Easier to scroll and tap the preview cards */
+.hscroll{touch-action:pan-x pan-y;overscroll-behavior-x:contain;scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch;scroll-padding:0 16px}
+.hscroll>*{scroll-snap-align:start;flex:none}
+.card:active,.pv:active{transform:none}
+.pv{cursor:pointer}
 </style>
 </head>
 <body class="guest">
@@ -795,7 +800,7 @@ function groupList(k){
 function previewRow(k){
   const its = itemsFor(k);
   if (!its.length) return '<p class="muted" style="margin:0">ไม่มีรายการในวันนี้</p>';
-  return `<div class="hscroll">${its.map(i => `<div class="pv ${isDone(k, i) ? "done" : ""}"><div class="pv-ico">${i.icon || "📌"}</div><div class="pv-t">${esc(i.text)}</div><div class="pv-m">${esc(i.time || "")}</div></div>`).join("")}</div>`;
+  return `<div class="hscroll">${its.map(i => `<div class="pv ${isDone(k, i) ? "done" : ""}" data-act="openDay" data-k="${k}"><div class="pv-ico">${i.icon || "📌"}</div><div class="pv-t">${esc(i.text)}</div><div class="pv-m">${esc(i.time || "")}</div></div>`).join("")}</div>`;
 }
 
 // ===== Views =====
