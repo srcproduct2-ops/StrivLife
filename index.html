@@ -317,6 +317,25 @@ body.guest .topbar,body.guest .tabs,body.guest .view{display:none!important}
 @keyframes lgUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
 @keyframes lgFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
 /* Backup sign-in button, show-password, undo snackbar */
+.au-switch{display:flex;align-items:center;gap:10px;background:none;box-shadow:none;border-radius:10px;padding:6px 2px;color:#c4b5fd;font-weight:700;font-size:.82rem;cursor:pointer}
+.au-switch:hover{transform:none;box-shadow:none}
+.au-switch:active{transform:none}
+.au-switch:focus-visible{outline:3px solid #fff;outline-offset:2px}
+.sw-track{position:relative;width:42px;height:24px;border-radius:999px;background:rgba(255,255,255,.25);flex:none;transition:background .25s ease}
+.sw-track i{position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#fff;box-shadow:0 2px 5px rgba(0,0,0,.3);transition:transform .25s cubic-bezier(.34,1.4,.64,1)}
+.au-switch.on .sw-track{background:#34d399}
+.au-switch.on .sw-track i{transform:translateX(18px)}
+/* Sign-in -> home: the sign-in screen stays on top and fades away to reveal the home page */
+.view.late.enter>*{animation-delay:.35s}
+.view.late.enter>*:nth-child(2){animation-delay:.4s}
+.view.late.enter>*:nth-child(3){animation-delay:.45s}
+.view.late.enter>*:nth-child(4){animation-delay:.5s}
+.view.late.enter>*:nth-child(5){animation-delay:.55s}
+.view.late.enter>*:nth-child(n+6){animation-delay:.6s}
+#auth{transition:opacity .75s ease}
+#auth.over{position:absolute;inset:0;z-index:50}
+#auth.over.leaving{opacity:0;pointer-events:none}
+.au-aux{display:flex;justify-content:space-between;align-items:center;margin:-4px 6px 0}
 .au-link:focus-visible,.au-google:focus-visible,.au-guest:focus-visible{outline:3px solid #fff;outline-offset:2px}
 .snack{position:fixed;left:50%;bottom:110px;transform:translate(-50%,16px);display:flex;align-items:center;gap:14px;background:var(--dark);color:#fff;padding:8px 8px 8px 18px;border-radius:16px;font-size:14px;opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;max-width:92%;z-index:10;box-shadow:0 10px 30px rgba(30,27,75,.3)}
 .snack.show{opacity:1;pointer-events:auto;transform:translate(-50%,0)}
@@ -365,12 +384,14 @@ body.guest .topbar,body.guest .tabs,body.guest .view{display:none!important}
       <div class="au-in">
         <span class="au-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span>
         <input id="auPass" type="password" placeholder="รหัสผ่าน (อย่างน้อย 8 ตัว)" autocomplete="current-password">
-        <button class="au-link" type="button" data-act="togglePass" id="auEye" aria-label="แสดงรหัสผ่าน">แสดง</button>
-        <button class="au-link" type="button" data-act="forgot" id="auForgot">ลืมรหัสผ่าน?</button>
       </div>
       <div class="au-in" id="auPass2Wrap" hidden>
         <span class="au-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span>
         <input id="auPass2" type="password" placeholder="ยืนยันรหัสผ่าน" autocomplete="new-password">
+      </div>
+      <div class="au-aux">
+        <button class="au-switch" type="button" data-act="togglePass" id="auEye" role="switch" aria-checked="false"><span class="sw-track"><i></i></span><span>แสดงรหัสผ่าน</span></button>
+        <button class="au-link" type="button" data-act="forgot" id="auForgot">ลืมรหัสผ่าน?</button>
       </div>
 
       <div class="au-actions">
@@ -518,6 +539,8 @@ const EN = {
   "ไม่มีสิทธิ์เข้าถึงข้อมูล (ตรวจสอบ Firestore rules)":"Permission denied (check Firestore rules)",
   "เกิดข้อผิดพลาด กรุณาลองใหม่":"Something went wrong, please try again",
   "บันทึกข้อมูลไม่สำเร็จ":"Could not save data","แก้ไขชื่อ":"Edit name","เปลี่ยนรูปโปรไฟล์":"Change photo","ลบรูป":"Remove photo","เปลี่ยนรูปโปรไฟล์แล้ว":"Photo updated","ลบรูปแล้ว":"Photo removed","กรุณาเลือกไฟล์รูปภาพ":"Please choose an image file","เปลี่ยนชื่อแล้ว":"Name updated",
+  "ผู้เยี่ยมชม: เก็บข้อมูลไว้ในเครื่องนี้เท่านั้น":"Guest: data is kept on this device only",
+  "ซิงก์ไม่สำเร็จ":"Sync failed","รอซิงก์ขึ้นฐานข้อมูล":"Waiting to sync","ซิงก์ขึ้นฐานข้อมูลแล้ว":"Synced to database",
   "แสดง":"Show","ซ่อน":"Hide","แสดงรหัสผ่าน":"Show password","ซ่อนรหัสผ่าน":"Hide password",
   "ลบรายการแล้ว":"Item deleted","เลิกทำ":"Undo","ติดตั้งแอป":"Install app","ติดตั้งแอปแล้ว":"App installed",
   "บันทึกไม่สำเร็จ กำลังลองใหม่อัตโนมัติ":"Couldn't save, retrying automatically",
@@ -695,6 +718,7 @@ function vProfile(){
     </section>
     <section class="card"><h3>บัญชี</h3>
       <div class="actions" style="margin-top:0">${u.provider !== "anonymous" ? '<button class="ghost" data-act="rename">แก้ไขชื่อ</button><button class="ghost" data-act="pickPhoto">เปลี่ยนรูปโปรไฟล์</button>' + (u.picture ? '<button class="ghost" data-act="removePhoto">ลบรูป</button>' : "") : ""}<button class="ghost" data-act="toggleReminders">${state.reminders ? "ปิดการแจ้งเตือน" : "เปิดการแจ้งเตือน"}</button>${deferredInstall ? '<button class="ghost" data-act="install">ติดตั้งแอป</button>' : ""}</div>
+      <p class="muted" id="syncInfo" style="margin:12px 0 0">${syncText()}</p>
       <div class="actions"><button class="danger" data-act="logout">ออกจากระบบ</button></div>
     </section>`;
 }
@@ -792,14 +816,23 @@ function renderAuth(){
   i18n();
 }
 function setScreen(){
-  $("auth").hidden = !!state.user;
+  const a = $("auth");
+  clearTimeout(setScreen._t1); clearTimeout(setScreen._t2);
   document.body.classList.toggle("guest", !state.user);
+  if (!state.user) { a.classList.remove("over", "leaving"); a.hidden = false; return; }
+  if (a.hidden) return;
+  a.classList.add("over");                                           // cover the home page right away
+  setScreen._t1 = setTimeout(() => a.classList.add("leaving"), 280);  // short beat to show the green check, then fade
+  setScreen._t2 = setTimeout(() => { a.hidden = true; a.classList.remove("over", "leaving"); }, 1100);
 }
 function login(user){
   state.user = user;
   state.tab = "today";
   setScreen(); render(); window.scrollTo(0, 0);
   $("scroller").scrollTop = 0;
+  // home page content rises in as the sign-in screen fades
+  const v = $("view"); v.classList.add("enter", "late");
+  setTimeout(() => v.classList.remove("enter", "late"), 1800);
 }
 
 // ===== Firebase: per-user data (Firestore) =====
@@ -828,20 +861,48 @@ async function enterFirebase(u){
   try {
     const [data, prof] = await Promise.all([FB.loadData(u.uid), FB.loadProfile(u.uid)]);
     applyData(data);
+    const bk = bkRead(u);
+    if (bk && bk.ts > ((data && data.clientUpdated) || 0)) {   // local copy is newer than the server's: keep it and push it up
+      applyData(bk.data); state.saved = ""; setSync("pending");
+    } else setSync("ok");
     if (prof.photo) u.picture = prof.photo;
     login(u);
   } finally { state.entering = false; }
 }
+// ===== Local backup: written synchronously on every change, so nothing is lost if the app is closed or the
+// server write fails / is refused. On sign-in the newer of (server copy, local copy) wins.
+const bkKey = u => "strivlife:data:" + ((u && u.uid) || "guest");
+function bkWrite(u){
+  state.localTs = Date.now();
+  try { localStorage.setItem(bkKey(u), JSON.stringify({ ts: state.localTs, data: JSON.parse(snapshot()) })); } catch (e) {}
+}
+function bkRead(u){
+  try { const r = JSON.parse(localStorage.getItem(bkKey(u)) || "null"); return r && r.data ? r : null; } catch (e) { return null; }
+}
+function syncText(){
+  const sy = state.sync || {};
+  if (!state.user || !state.user.uid) return tr("ผู้เยี่ยมชม: เก็บข้อมูลไว้ในเครื่องนี้เท่านั้น");
+  if (sy.kind === "err") return tr("ซิงก์ไม่สำเร็จ") + (sy.code ? " (" + sy.code + ")" : "");
+  if (sy.kind === "pending") return tr("รอซิงก์ขึ้นฐานข้อมูล");
+  return tr("ซิงก์ขึ้นฐานข้อมูลแล้ว");
+}
+function setSync(kind, code){
+  state.sync = { kind, code: code || "" };
+  const el = $("syncInfo"); if (el) el.textContent = syncText();
+}
 function scheduleSave(){
   const u = state.user;
-  if (!u || !u.uid || !window.FB || snapshot() === state.saved) return;
+  if (!u || snapshot() === state.saved) return;
+  bkWrite(u);
+  if (!u.uid || !window.FB) { state.saved = snapshot(); return; }   // guest: local only
+  setSync("pending");
   clearTimeout(scheduleSave._t);
-  scheduleSave._t = setTimeout(flushSave, 800);
+  scheduleSave._t = setTimeout(flushSave, 400);
 }
 let saveRetries = 0;
-function retrySave(){
+function retrySave(e){
   saveRetries++;
-  if (saveRetries === 1) toast("บันทึกไม่สำเร็จ กำลังลองใหม่อัตโนมัติ");
+  if (saveRetries === 1) toast(e && e.code === "permission-denied" ? fbError(e) : "บันทึกไม่สำเร็จ กำลังลองใหม่อัตโนมัติ");
   clearTimeout(scheduleSave._t);
   scheduleSave._t = setTimeout(flushSave, Math.min(30000, 2000 * 2 ** saveRetries));
 }
@@ -851,18 +912,20 @@ async function flushSave(){
   if (!u || !u.uid || !window.FB) return;
   const snap = snapshot();
   if (snap === state.saved) return;
-  const p = FB.saveData(u.uid, JSON.parse(snap));
-  // Offline, Firestore keeps the write in its local cache and the promise stays pending until the server
-  // confirms. After 4 s treat it as safely queued; a later rejection triggers the retry path below.
-  const outcome = await new Promise(res => {
-    const t = setTimeout(() => res("queued"), 4000);
-    p.then(() => { clearTimeout(t); res("ok"); }, e => { clearTimeout(t); console.error(e); res("failed"); });
+  const p = FB.saveData(u.uid, { ...JSON.parse(snap), clientUpdated: state.localTs || Date.now() });
+  // Offline, Firestore keeps the write in its own cache and the promise stays pending until the server
+  // confirms. After 4 s treat it as queued; a later rejection triggers the retry path below.
+  const out = await new Promise(res => {
+    const t = setTimeout(() => res({ k: "queued" }), 4000);
+    p.then(() => { clearTimeout(t); res({ k: "ok" }); }, e => { clearTimeout(t); console.error(e); res({ k: "failed", e }); });
   });
-  if (outcome === "failed") return retrySave();
+  if (out.k === "failed") { setSync("err", out.e && (out.e.code || out.e.name)); return retrySave(out.e); }
   state.saved = snap; saveRetries = 0;
-  if (outcome === "queued") {
+  if (out.k === "ok") setSync("ok");
+  else {
+    setSync("pending");
     toast("ออฟไลน์: เก็บไว้ในเครื่อง จะซิงก์เมื่อมีเน็ต");
-    p.catch(() => { if (state.saved === snap) state.saved = ""; retrySave(); });
+    p.then(() => setSync("ok"), e => { if (state.saved === snap) state.saved = ""; setSync("err", e && (e.code || e.name)); retrySave(e); });
   }
 }
 window.addEventListener("online", () => { saveRetries = 0; flushSave(); });
@@ -898,12 +961,13 @@ async function logout(){
   state.user = null; state.authMode = "login";
   resetData();
   ["auEmail","auPass","auPass2","auName"].forEach(id => $(id).value = "");
-  $("auPass").type = $("auPass2").type = "password"; $("auEye").textContent = "แสดง";
+  $("auPass").type = $("auPass2").type = "password"; $("auEye").classList.remove("on"); $("auEye").setAttribute("aria-checked", "false");
   renderAuth(); setScreen();
   toast("ออกจากระบบแล้ว");
 }
 function guestLogin(){
   resetData();
+  const bk = bkRead(null); if (bk) applyData(bk.data);
   login({ name: "ผู้เยี่ยมชม", email: "", provider: "anonymous" });
 }
 function resizeImage(file, size = 256){
@@ -972,9 +1036,7 @@ function togglePass(){
   const show = $("auPass").type === "password";
   $("auPass").type = $("auPass2").type = show ? "text" : "password";
   const b = $("auEye");
-  b.textContent = show ? "ซ่อน" : "แสดง";
-  b.setAttribute("aria-label", tr(show ? "ซ่อนรหัสผ่าน" : "แสดงรหัสผ่าน"));
-  i18n();
+  b.classList.toggle("on", show); b.setAttribute("aria-checked", String(show));
 }
 async function authSubmitInner(){
   const err = $("auErr"); err.textContent = "";
