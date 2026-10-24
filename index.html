@@ -4,7 +4,14 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>StrivLife</title>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><text y='20' font-size='20'>🌱</text></svg>">
+<meta name="theme-color" content="#6366f1">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="StrivLife">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%236366f1'/%3E%3Cstop offset='1' stop-color='%238b5cf6'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='100' height='100' rx='28' fill='url(%23g)'/%3E%3Cg fill='%23fff'%3E%3Crect x='20' y='58' width='16' height='20' rx='8'/%3E%3Crect x='42' y='46' width='16' height='32' rx='8'/%3E%3Crect x='64' y='34' width='16' height='44' rx='8'/%3E%3C/g%3E%3Cpath d='M72 32C67 22 75 12 87 14C89 26 81 34 72 32Z' fill='%2386efac'/%3E%3C/svg%3E">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#f6f6fb;--card:#ffffff;--text:#1e1b4b;--muted:#6b6f8a;--soft:#f0f0fa;--border:#e8e8f4;--dark:#1e1b4b;--grad:linear-gradient(135deg,#6366f1 0%,#8b5cf6 100%);--grad-soft:linear-gradient(135deg,#eef2ff,#f5f3ff);--accent:#6366f1;--ok:#10b981;--shadow:0 1px 2px rgba(30,27,75,.04),0 10px 30px rgba(30,27,75,.06);color-scheme:light}
@@ -300,16 +307,23 @@ body.guest .topbar,body.guest .tabs,body.guest .view{display:none!important}
 /* ===== Splash logo (minimal, animated) ===== */
 .logo{width:96px;height:96px;border-radius:0;background:none;box-shadow:none;display:block;animation:lgFloat 3.2s ease-in-out 1.8s infinite}
 .logo svg{display:block;overflow:visible;filter:drop-shadow(0 14px 22px rgba(99,102,241,.32))}
-.lg-bg{fill:#6366f1;transform-box:fill-box;transform-origin:center;animation:lgIn .7s cubic-bezier(.34,1.56,.64,1) both}
-.lg-s{fill:none;stroke:#fff;stroke-width:10;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:100;stroke-dashoffset:100;opacity:0;animation:lgDraw 1.1s cubic-bezier(.65,0,.35,1) .45s forwards}
-.lg-dot{fill:#86efac;transform-box:fill-box;transform-origin:center;transform:scale(0);animation:lgPop .5s cubic-bezier(.34,1.8,.64,1) 1.45s forwards}
+.lg-bg{fill:url(#lgG);transform-box:fill-box;transform-origin:center;animation:lgIn .7s cubic-bezier(.34,1.56,.64,1) both}
+.lg-b{fill:#fff;transform-box:fill-box;transform-origin:50% 100%;transform:scaleY(0);animation:lgGrow .55s cubic-bezier(.34,1.4,.64,1) forwards}
+.lg-b1{animation-delay:.45s}.lg-b2{animation-delay:.65s}.lg-b3{animation-delay:.85s}
+.lg-leaf{fill:#86efac;transform-box:fill-box;transform-origin:0 100%;transform:scale(0) rotate(-20deg);animation:lgLeaf .6s cubic-bezier(.34,1.8,.64,1) 1.35s forwards}
 .splash-name{animation:lgUp .7s ease .9s both}
 .splash-tag{animation:lgUp .7s ease 1.15s both}
 @keyframes lgIn{from{transform:scale(.5) rotate(-10deg);opacity:0}to{transform:none;opacity:1}}
-@keyframes lgDraw{0%{stroke-dashoffset:100;opacity:0}4%{stroke-dashoffset:99;opacity:1}100%{stroke-dashoffset:0;opacity:1}}
-@keyframes lgPop{to{transform:scale(1)}}
+@keyframes lgGrow{to{transform:scaleY(1)}}
+@keyframes lgLeaf{to{transform:scale(1) rotate(0)}}
 @keyframes lgUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
 @keyframes lgFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+/* Backup sign-in button, show-password, undo snackbar */
+.au-link:focus-visible,.au-google:focus-visible,.au-guest:focus-visible{outline:3px solid #fff;outline-offset:2px}
+.snack{position:fixed;left:50%;bottom:110px;transform:translate(-50%,16px);display:flex;align-items:center;gap:14px;background:var(--dark);color:#fff;padding:8px 8px 8px 18px;border-radius:16px;font-size:14px;opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;max-width:92%;z-index:10;box-shadow:0 10px 30px rgba(30,27,75,.3)}
+.snack.show{opacity:1;pointer-events:auto;transform:translate(-50%,0)}
+.snack button{background:rgba(255,255,255,.16);box-shadow:none;border-radius:12px;padding:8px 14px;font-size:.85rem}
+.snack button:hover{background:rgba(255,255,255,.26);box-shadow:none}
 </style>
 </head>
 <body class="guest">
@@ -318,7 +332,7 @@ body.guest .topbar,body.guest .tabs,body.guest .view{display:none!important}
 
   <!-- Splash -->
   <section id="splash" onclick="this.classList.add('gone')">
-    <div class="logo" aria-label="StrivLife"><svg viewBox="0 0 100 100" width="96" height="96" aria-hidden="true"><rect class="lg-bg" width="100" height="100" rx="28"/><path class="lg-s" pathLength="100" d="M68 33 C60 24 36 24 36 39 C36 54 66 46 66 62 C66 77 40 77 32 67"/><circle class="lg-dot" cx="32" cy="67" r="6"/></svg></div>
+    <div class="logo" aria-label="StrivLife"><svg viewBox="0 0 100 100" width="96" height="96" aria-hidden="true"><defs><linearGradient id="lgG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#6366f1"/><stop offset="1" stop-color="#8b5cf6"/></linearGradient></defs><rect class="lg-bg" width="100" height="100" rx="28"/><rect class="lg-b lg-b1" x="20" y="58" width="16" height="20" rx="8"/><rect class="lg-b lg-b2" x="42" y="46" width="16" height="32" rx="8"/><rect class="lg-b lg-b3" x="64" y="34" width="16" height="44" rx="8"/><path class="lg-leaf" d="M72 32C67 22 75 12 87 14C89 26 81 34 72 32Z"/></svg></div>
     <div class="splash-name">StrivLife</div>
     <div class="splash-tag">Small steps, big results.</div>
     <div class="splash-bar"><i></i></div>
@@ -345,6 +359,7 @@ body.guest .topbar,body.guest .tabs,body.guest .view{display:none!important}
       <div class="au-in">
         <span class="au-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span>
         <input id="auPass" type="password" placeholder="รหัสผ่าน (อย่างน้อย 8 ตัว)" autocomplete="current-password">
+        <button class="au-link" type="button" data-act="togglePass" id="auEye" aria-label="แสดงรหัสผ่าน">แสดง</button>
         <button class="au-link" type="button" data-act="forgot" id="auForgot">ลืมรหัสผ่าน?</button>
       </div>
       <div class="au-in" id="auPass2Wrap" hidden>
@@ -376,7 +391,7 @@ body.guest .topbar,body.guest .tabs,body.guest .view{display:none!important}
   <div id="scroller">
   <header class="topbar">
     <div class="brand">
-      <div class="avatar brand-logo" id="avatar">S</div>
+      <div class="avatar brand-logo" id="avatar" data-act="goProfile" role="button" tabindex="0" aria-label="โปรไฟล์" style="cursor:pointer"></div>
       <div><small id="greet"></small><h1 id="title">วันนี้</h1></div>
       <div class="tb-actions">
         <button class="lang-btn" data-act="lang" aria-label="ภาษา">TH</button>
@@ -423,7 +438,8 @@ body.guest .topbar,body.guest .tabs,body.guest .view{display:none!important}
 </div>
 </div>
 <input type="file" id="photoIn" accept="image/*" hidden>
-<div class="toast" id="toast"></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<div class="snack" id="snack" role="status"><span id="snackMsg"></span><button type="button" id="snackBtn" data-act="undo"></button></div>
 
 <script>
 // ===== Config & constants =====
@@ -440,6 +456,7 @@ const state = {
   sel: "", month: "", calOpen: false, reminders: false
 };
 
+let deferredInstall = null;
 const $ = id => document.getElementById(id);
 const esc = s => String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const pad = n => String(n).padStart(2, "0");
@@ -495,6 +512,10 @@ const EN = {
   "ไม่มีสิทธิ์เข้าถึงข้อมูล (ตรวจสอบ Firestore rules)":"Permission denied (check Firestore rules)",
   "เกิดข้อผิดพลาด กรุณาลองใหม่":"Something went wrong, please try again",
   "บันทึกข้อมูลไม่สำเร็จ":"Could not save data","แก้ไขชื่อ":"Edit name","เปลี่ยนรูปโปรไฟล์":"Change photo","ลบรูป":"Remove photo","เปลี่ยนรูปโปรไฟล์แล้ว":"Photo updated","ลบรูปแล้ว":"Photo removed","กรุณาเลือกไฟล์รูปภาพ":"Please choose an image file","เปลี่ยนชื่อแล้ว":"Name updated",
+  "แสดง":"Show","ซ่อน":"Hide","แสดงรหัสผ่าน":"Show password","ซ่อนรหัสผ่าน":"Hide password",
+  "ลบรายการแล้ว":"Item deleted","เลิกทำ":"Undo","ติดตั้งแอป":"Install app","ติดตั้งแอปแล้ว":"App installed",
+  "บันทึกไม่สำเร็จ กำลังลองใหม่อัตโนมัติ":"Couldn't save, retrying automatically",
+  "ออฟไลน์: เก็บไว้ในเครื่อง จะซิงก์เมื่อมีเน็ต":"Offline: saved on this device, will sync when online",
   "ส่งลิงก์รีเซ็ตรหัสผ่านไปที่อีเมลแล้ว":"Password reset link sent to your email",
   "กรอกอีเมลก่อน (บัญชีที่สมัครด้วย User ID ไม่สามารถรีเซ็ตทางอีเมลได้)":"Enter your email first (User ID accounts can't reset by email)"
 };
@@ -517,6 +538,13 @@ function i18n(){
   const lb = root.querySelector('[data-act="lang"]');
   if (lb) lb.textContent = state.lang === "en" ? "EN" : "TH";
   document.documentElement.lang = state.lang === "en" ? "en" : "th";
+}
+function snack(msg, label, fn){
+  const sn = $("snack");
+  $("snackMsg").textContent = tr(msg); $("snackBtn").textContent = tr(label);
+  sn._fn = fn; sn.classList.add("show");
+  clearTimeout(snack._t);
+  snack._t = setTimeout(() => { sn.classList.remove("show"); sn._fn = null; }, 6000);
 }
 function toast(msg){
   const t = $("toast"); t.textContent = tr(msg); t.classList.add("show");
@@ -660,7 +688,7 @@ function vProfile(){
       <div style="min-width:0"><b>${esc(u.name)}</b><div class="muted">${u.provider === "anonymous" ? "โหมดผู้เยี่ยมชม" : esc(u.email)}</div></div>
     </section>
     <section class="card"><h3>บัญชี</h3>
-      <div class="actions" style="margin-top:0">${u.provider !== "anonymous" ? '<button class="ghost" data-act="rename">แก้ไขชื่อ</button><button class="ghost" data-act="pickPhoto">เปลี่ยนรูปโปรไฟล์</button>' + (u.picture ? '<button class="ghost" data-act="removePhoto">ลบรูป</button>' : "") : ""}<button class="ghost" data-act="toggleReminders">${state.reminders ? "ปิดการแจ้งเตือน" : "เปิดการแจ้งเตือน"}</button></div>
+      <div class="actions" style="margin-top:0">${u.provider !== "anonymous" ? '<button class="ghost" data-act="rename">แก้ไขชื่อ</button><button class="ghost" data-act="pickPhoto">เปลี่ยนรูปโปรไฟล์</button>' + (u.picture ? '<button class="ghost" data-act="removePhoto">ลบรูป</button>' : "") : ""}<button class="ghost" data-act="toggleReminders">${state.reminders ? "ปิดการแจ้งเตือน" : "เปิดการแจ้งเตือน"}</button>${deferredInstall ? '<button class="ghost" data-act="install">ติดตั้งแอป</button>' : ""}</div>
       <div class="actions"><button class="danger" data-act="logout">ออกจากระบบ</button></div>
     </section>`;
 }
@@ -672,6 +700,10 @@ function render(){
   const hr = new Date().getHours();
   $("greet").textContent = hr < 12 ? "Good morning," : hr < 18 ? "Good afternoon," : "Good evening,";
   $("title").textContent = TITLES[state.tab];
+  // Top-left badge shows the user's profile photo (or initial / guest icon)
+  $("avatar").innerHTML = u.picture ? `<img src="${esc(u.picture)}" alt="">`
+    : u.provider === "anonymous" ? '<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>'
+    : esc((u.name || "?").charAt(0).toUpperCase());
   document.querySelectorAll(".tabs .pill button[data-tab]").forEach(b => b.classList.toggle("on", b.dataset.tab === state.tab));
   const head = state.tab === "today" ? `<div><div class="greet">${$("greet").textContent}</div><div class="name">${esc(u.name)}</div></div>` : "";
   $("view").innerHTML = head + VIEWS[state.tab]();
@@ -806,15 +838,34 @@ function scheduleSave(){
   clearTimeout(scheduleSave._t);
   scheduleSave._t = setTimeout(flushSave, 800);
 }
+let saveRetries = 0;
+function retrySave(){
+  saveRetries++;
+  if (saveRetries === 1) toast("บันทึกไม่สำเร็จ กำลังลองใหม่อัตโนมัติ");
+  clearTimeout(scheduleSave._t);
+  scheduleSave._t = setTimeout(flushSave, Math.min(30000, 2000 * 2 ** saveRetries));
+}
 async function flushSave(){
   clearTimeout(scheduleSave._t);
   const u = state.user;
   if (!u || !u.uid || !window.FB) return;
   const snap = snapshot();
   if (snap === state.saved) return;
-  try { await FB.saveData(u.uid, JSON.parse(snap)); state.saved = snap; }
-  catch (e) { console.error(e); toast("บันทึกข้อมูลไม่สำเร็จ"); }
+  const p = FB.saveData(u.uid, JSON.parse(snap));
+  // Offline, Firestore keeps the write in its local cache and the promise stays pending until the server
+  // confirms. After 4 s treat it as safely queued; a later rejection triggers the retry path below.
+  const outcome = await new Promise(res => {
+    const t = setTimeout(() => res("queued"), 4000);
+    p.then(() => { clearTimeout(t); res("ok"); }, e => { clearTimeout(t); console.error(e); res("failed"); });
+  });
+  if (outcome === "failed") return retrySave();
+  state.saved = snap; saveRetries = 0;
+  if (outcome === "queued") {
+    toast("ออฟไลน์: เก็บไว้ในเครื่อง จะซิงก์เมื่อมีเน็ต");
+    p.catch(() => { if (state.saved === snap) state.saved = ""; retrySave(); });
+  }
 }
+window.addEventListener("online", () => { saveRetries = 0; flushSave(); });
 document.addEventListener("visibilitychange", () => { if (document.visibilityState === "hidden") flushSave(); });
 window.addEventListener("pagehide", flushSave);
 
@@ -847,6 +898,7 @@ async function logout(){
   state.user = null; state.authMode = "login";
   resetData();
   ["auEmail","auPass","auPass2","auName"].forEach(id => $(id).value = "");
+  $("auPass").type = $("auPass2").type = "password"; $("auEye").textContent = "แสดง";
   renderAuth(); setScreen();
   toast("ออกจากระบบแล้ว");
 }
@@ -905,7 +957,26 @@ async function forgot(){
   try { await FB.resetPassword(id); toast("ส่งลิงก์รีเซ็ตรหัสผ่านไปที่อีเมลแล้ว"); }
   catch (e) { toast(fbError(e)); }
 }
+let authBusy = false;
 async function authSubmit(){
+  if (authBusy) return;
+  authBusy = true;
+  try { await authSubmitInner(); }
+  finally { authBusy = false; }
+}
+// Enter in any sign-in field submits (keyboard / screen-reader alternative to the slider)
+$("auth").addEventListener("keydown", e => {
+  if (e.key === "Enter" && e.target.tagName === "INPUT") { e.preventDefault(); authSubmit(); }
+});
+function togglePass(){
+  const show = $("auPass").type === "password";
+  $("auPass").type = $("auPass2").type = show ? "text" : "password";
+  const b = $("auEye");
+  b.textContent = show ? "ซ่อน" : "แสดง";
+  b.setAttribute("aria-label", tr(show ? "ซ่อนรหัสผ่าน" : "แสดงรหัสผ่าน"));
+  i18n();
+}
+async function authSubmitInner(){
   const err = $("auErr"); err.textContent = "";
   if (!window.FB) return err.textContent = tr("กำลังเชื่อมต่อ Firebase กรุณาลองใหม่");
   const id = $("auEmail").value.trim().toLowerCase();
@@ -1037,9 +1108,32 @@ document.addEventListener("click", e => {
     case "toggle": { const id = `${k}|${key}`; toggleKey(id); state._pop = state.done[id] ? id : null; render(); state._pop = null; return; }
     case "step": toggleKey(`${k}|${key}|${el.dataset.sid}`); return render();
     case "del": {
-      if (key.charAt(0) === "T") state.templates = state.templates.filter(x => "T" + x.id !== key);
-      else state.plans[k] = (state.plans[k] || []).filter(x => "P" + x.id !== key);
-      return render();
+      const isT = key.charAt(0) === "T";
+      const list = isT ? state.templates : (state.plans[k] || []);
+      const idx = list.findIndex(x => (isT ? "T" : "P") + x.id === key);
+      if (idx < 0) return;
+      const removed = list.splice(idx, 1)[0];
+      render();
+      snack("ลบรายการแล้ว", "เลิกทำ", () => {
+        const l = isT ? state.templates : (state.plans[k] || (state.plans[k] = []));
+        l.splice(Math.min(idx, l.length), 0, removed);
+        render();
+      });
+      return;
+    }
+    case "undo": {
+      const sn = $("snack"), fn = sn._fn;
+      sn._fn = null; sn.classList.remove("show"); clearTimeout(snack._t);
+      if (fn) fn();
+      return;
+    }
+    case "togglePass": return togglePass();
+    case "goProfile": return switchTab("profile");
+    case "install": {
+      if (!deferredInstall) return;
+      deferredInstall.prompt();
+      deferredInstall.userChoice.finally(() => { deferredInstall = null; render(); });
+      return;
     }
     case "edit": {
       const it = findItem(k, key); if (!it) return;
@@ -1064,6 +1158,9 @@ document.addEventListener("click", e => {
     case "toggleReminders": state.reminders = !state.reminders; toast(state.reminders ? "เปิดการแจ้งเตือนแล้ว" : "ปิดการแจ้งเตือนแล้ว"); return render();
   }
 });
+document.addEventListener("keydown", e => {
+  if ((e.key === "Enter" || e.key === " ") && e.target.id === "avatar") { e.preventDefault(); switchTab("profile"); }
+});
 document.addEventListener("submit", e => { if (e.target.id === "addForm") submitAdd(e); });
 document.addEventListener("pointermove", e => {
   const c = e.target.closest && e.target.closest(".weekcard");
@@ -1079,6 +1176,17 @@ document.addEventListener("pointerout", e => {
 window.addEventListener("resize", () => moveIndicator(true));
 
 // ===== Start =====
+window.addEventListener("beforeinstallprompt", e => {
+  e.preventDefault(); deferredInstall = e;
+  if (state.user && state.tab === "profile") render();
+});
+window.addEventListener("appinstalled", () => {
+  deferredInstall = null; toast("ติดตั้งแอปแล้ว");
+  if (state.user && state.tab === "profile") render();
+});
+if ("serviceWorker" in navigator && location.protocol.indexOf("http") === 0) {
+  window.addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(err => console.warn("SW", err)));
+}
 state.sel = todayKey(); state.month = state.sel.slice(0, 7);
 renderAuth();
 setScreen();
@@ -1093,7 +1201,8 @@ setTimeout(() => $("splash").classList.add("gone"), 2200);
     signOut, updateProfile, GoogleAuthProvider, signInWithPopup, sendPasswordResetEmail
   } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-auth.js";
   import {
-    getFirestore, doc, getDoc, setDoc, serverTimestamp
+    getFirestore, initializeFirestore, persistentLocalCache, persistentMultipleTabManager,
+    doc, getDoc, setDoc, serverTimestamp
   } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-firestore.js";
 
   const firebaseConfig = {
@@ -1109,7 +1218,11 @@ setTimeout(() => $("splash").classList.add("gone"), 2200);
   const app = initializeApp(firebaseConfig);
   isSupported().then(ok => { if (ok) getAnalytics(app); }).catch(() => {});
   const auth = getAuth(app);
-  const db = getFirestore(app);
+  // Offline persistence: reads and writes work without a connection and sync automatically afterwards
+  let db;
+  try {
+    db = initializeFirestore(app, { localCache: persistentLocalCache({ tabManager: persistentMultipleTabManager() }) });
+  } catch (e) { console.warn("Offline cache unavailable", e); db = getFirestore(app); }
 
   // A User ID without "@" is stored as a synthetic email: <id>@users.strivlife.app
   const DOMAIN = "@users.strivlife.app";
