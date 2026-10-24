@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="StrivLife">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%236366f1'/%3E%3Cstop offset='1' stop-color='%238b5cf6'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='100' height='100' rx='28' fill='url(%23g)'/%3E%3Cg fill='%23fff'%3E%3Crect x='20' y='58' width='16' height='20' rx='8'/%3E%3Crect x='42' y='46' width='16' height='32' rx='8'/%3E%3Crect x='64' y='34' width='16' height='44' rx='8'/%3E%3C/g%3E%3Cpath d='M72 32C67 22 75 12 87 14C89 26 81 34 72 32Z' fill='%2386efac'/%3E%3C/svg%3E">
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Sarabun:wght@400;500;600;700&family=Kanit:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#f6f6fb;--card:#ffffff;--text:#1e1b4b;--muted:#6b6f8a;--soft:#f0f0fa;--border:#e8e8f4;--dark:#1e1b4b;--grad:linear-gradient(135deg,#6366f1 0%,#8b5cf6 100%);--grad-soft:linear-gradient(135deg,#eef2ff,#f5f3ff);--accent:#6366f1;--ok:#10b981;--shadow:0 1px 2px rgba(30,27,75,.04),0 10px 30px rgba(30,27,75,.06);color-scheme:light}
 *{box-sizing:border-box}
@@ -95,6 +95,7 @@ body.guest .topbar,body.guest .tabs,body.guest .view{display:none!important}
 .card h3{margin:0 0 12px;font-size:1rem;font-weight:800;display:flex;justify-content:space-between;align-items:center}
 .muted{color:var(--muted);font-size:.87rem}
 .greet{font-size:.92rem;color:var(--muted);margin:6px 2px 0;font-weight:600}
+.name.dt{font-family:"Kanit","Sarabun",sans-serif;font-weight:500;font-size:1.05rem;letter-spacing:.01em}
 .name{font-size:1.1rem;font-weight:900;letter-spacing:-.03em;margin:0;line-height:1.15;overflow-wrap:anywhere}
 .weekcard{background:radial-gradient(120% 120% at 100% 0%,rgba(196,181,253,.45),transparent 55%),linear-gradient(135deg,#4338ca,#7c3aed);color:#fff;border-radius:24px;padding:20px;min-height:150px;display:flex;flex-direction:column;justify-content:space-between;box-shadow:0 18px 40px rgba(99,102,241,.3)}
 .weekcard .big{font-size:2.6rem;font-weight:900;line-height:1}
@@ -178,8 +179,8 @@ body.guest .topbar,body.guest .tabs,body.guest .view{display:none!important}
 .au-actions{display:block;margin:18px 0 6px}
 .slider{position:relative;height:60px;width:100%;border-radius:999px;background:#fff;overflow:hidden;padding:4px;user-select:none;-webkit-user-select:none;touch-action:none;box-shadow:0 10px 30px rgba(0,0,0,.2);transition:background .4s ease}
 .sl-fill{position:absolute;left:0;top:0;bottom:0;width:0;border-radius:999px;background:linear-gradient(90deg,rgba(99,102,241,.06),rgba(139,92,246,.3));transition:opacity .3s}
-.sl-text{position:absolute;inset:0;display:grid;place-items:center;padding-left:44px;color:#9b9fb8;font-weight:600;font-size:.95rem;pointer-events:none;white-space:nowrap}
-.sl-knob{position:absolute;top:4px;left:4px;width:52px;height:52px;border-radius:50%;background:var(--grad);color:#fff;display:grid;place-items:center;cursor:grab;box-shadow:0 6px 16px rgba(99,102,241,.4);z-index:2;touch-action:none}
+.sl-text{position:absolute;inset:0;display:grid;align-items:center;justify-items:start;padding-left:104px;color:#9b9fb8;font-weight:600;font-size:16px;pointer-events:none;white-space:nowrap}
+.sl-knob{position:absolute;top:4px;left:4px;width:88px;height:52px;border-radius:999px;background:var(--grad);color:#fff;display:grid;place-items:center;cursor:grab;box-shadow:0 6px 16px rgba(99,102,241,.4);z-index:2;touch-action:none}
 .sl-knob:active{cursor:grabbing}
 .sl-knob svg{width:22px;height:22px}
 .slider.ok{background:linear-gradient(135deg,#34d399,#10b981)}
@@ -360,6 +361,49 @@ body.guest .topbar,body.guest .tabs,body.guest .view{display:none!important}
 .goo,.goo.goo{filter:none!important}
 .goo-bar{background:#fff;border-radius:30px;box-shadow:0 10px 24px rgba(30,27,75,.14),0 1px 3px rgba(30,27,75,.06)}
 .goo-blob{background:#fff;box-shadow:none}
+/* streak, budget, health, note, data */
+.streak{display:flex;justify-content:space-between;align-items:center;background:linear-gradient(135deg,#fff7ed,#fdf2f8)}
+html[data-theme="dark"] .streak{background:linear-gradient(135deg,#3b2a14,#3b1b2e)}
+.streak b{font-size:1.4rem}.st-em{font-size:1.3rem}
+.bg-row{margin-bottom:10px}.bg-top{display:flex;justify-content:space-between;font-size:.85rem;margin-bottom:4px}
+.over{color:#ef4444}.bar2 i.over{background:#ef4444}.over.sm{font-size:.72rem;margin-top:3px}
+.water{display:flex;flex-wrap:wrap;gap:4px;font-size:1.3rem}.dr{opacity:.2;transition:opacity .2s}.dr.on{opacity:1}
+.daynote{width:100%;padding:10px 12px;border:1.5px solid transparent;border-radius:14px;background:var(--soft);color:var(--text);font:inherit;font-size:16px;resize:none}
+.fmq,#foodQ{width:100%;padding:8px 12px;border:1.5px solid transparent;border-radius:12px;background:var(--soft);color:var(--text);font:inherit;font-size:14px!important;margin-bottom:8px}
+.fm-list{max-height:260px;overflow:auto;display:flex;flex-direction:column;gap:4px}
+.fm-row{display:flex;align-items:center;gap:6px;padding:4px 6px;border-radius:10px;background:var(--soft);font-size:.85rem}
+.fm-row span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.fm-row small{color:var(--muted)}
+.fm-row .ghost.sm{padding:3px 8px}
+.cel-note{margin:8px 14px 0;padding:10px 12px;border-radius:14px;background:var(--soft);font-size:.82rem;white-space:pre-wrap;word-break:break-word}
+/* Day-complete panel */
+.celebrate{position:fixed;inset:0;z-index:40;display:flex;align-items:center;justify-content:center;padding:18px;opacity:0;transition:opacity .3s}
+.celebrate.open{opacity:1}
+.cel-bg{position:absolute;inset:0;background:rgba(30,27,75,.55);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px)}
+.cel-card{position:relative;width:100%;max-width:400px;max-height:86vh;overflow:auto;border-radius:28px;background:var(--card);color:var(--text);box-shadow:0 24px 60px rgba(30,27,75,.45);transform:scale(.9) translateY(14px);transition:transform .45s cubic-bezier(.34,1.4,.64,1)}
+.celebrate.open .cel-card{transform:none}
+.cel-top{position:relative;overflow:hidden;text-align:center;padding:26px 18px 18px;color:#fff;background:radial-gradient(circle at 12% 20%,rgba(253,224,71,.55) 0 6px,transparent 7px),radial-gradient(circle at 85% 30%,rgba(255,255,255,.5) 0 5px,transparent 6px),radial-gradient(circle at 70% 85%,rgba(134,239,172,.6) 0 7px,transparent 8px),radial-gradient(circle at 25% 80%,rgba(147,197,253,.6) 0 5px,transparent 6px),linear-gradient(135deg,#ec4899,#a855f7 50%,#6366f1)}
+.cel-top .em{font-size:2.6rem;line-height:1;animation:celBounce 1s ease infinite}
+.cel-top h2{margin:8px 0 2px;font-size:1.25rem;font-weight:900}
+.cel-top p{margin:0;font-size:.8rem;opacity:.9}
+.cel-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:14px 14px 4px}
+.cel-stats div{background:var(--soft);border-radius:14px;padding:8px 4px;text-align:center}
+.cel-stats b{display:block;font-size:1.05rem}
+.cel-stats span{font-size:.66rem;color:var(--muted);font-weight:600}
+.cel-list{padding:8px 14px 4px;display:flex;flex-direction:column;gap:6px}
+.cel-row{display:flex;gap:10px;align-items:flex-start;padding:8px 10px;border-radius:14px;background:var(--soft)}
+.cel-row .ck{flex:none;width:22px;height:22px;border-radius:50%;background:#10b981;color:#fff;display:grid;place-items:center;font-size:.75rem;font-weight:900;margin-top:1px}
+.cel-row .tx{flex:1;min-width:0;font-weight:700;font-size:.88rem;word-break:break-word}
+.cel-row .sub{font-size:.7rem;color:var(--muted);font-weight:600;margin-top:2px}
+.cel-card .cel-ok{margin:10px 14px 16px;width:calc(100% - 28px)}
+.cel-conf{position:absolute;top:-12px;width:8px;height:12px;border-radius:2px;opacity:.9;animation:celFall linear forwards;pointer-events:none}
+@keyframes celFall{to{transform:translateY(130px) rotate(540deg);opacity:0}}
+@keyframes celBounce{50%{transform:translateY(-6px) scale(1.08)}}
+.donecard{text-align:center;background:linear-gradient(135deg,#ecfdf5,#fdf2f8)}
+html[data-theme="dark"] .donecard{background:linear-gradient(135deg,#12332a,#2a1b3b)}
+.donecard .dc-em{font-size:2rem}
+.donecard h3{justify-content:center;margin:4px 0}
+.donecard p{margin:0 0 10px;font-size:.8rem}
+.donecard .actions{justify-content:center;margin-top:0}
 /* plain round bump: no pointed fillet tails */
 .goo-blob::before,.goo-blob::after{content:none;display:none}
 /* Activity panel: spacing, presets, icon picker, cost */
@@ -709,6 +753,7 @@ html[data-theme="dark"] .ptr{background:#1b1a2e}
     </div>
     <label class="fld"><span>ค่าใช้จ่าย (บาท)</span><input type="number" id="newCost" min="0" step="1" inputmode="decimal" placeholder="0"></label>
     <div class="fld foodfld"><span>อาหาร</span>
+      <input type="search" id="foodQ" placeholder="ค้นหาอาหาร" autocomplete="off">
       <div id="foodRows" class="foodrows"></div>
       <button type="button" class="addfood" data-act="addFoodRow">+ เพิ่มอาหาร</button>
       <div class="foodtotal"><span>แคลอรี่รวม</span><b><span id="foodTotal">0</span> kcal</b></div>
@@ -718,8 +763,10 @@ html[data-theme="dark"] .ptr{background:#1b1a2e}
     <button type="submit" class="sheet-go" id="sheetSubmit">เพิ่มรายการ</button>
   </form>
 </div>
+<div class="celebrate" id="celebrate" hidden><div class="cel-bg" data-act="closeCelebrate"></div><div class="cel-card" id="celCard"></div></div>
 </div>
 <input type="file" id="photoIn" accept="image/*" hidden>
+<input type="file" id="importIn" accept="application/json,.json" hidden>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <div class="snack" id="snack" role="status"><span id="snackMsg"></span><button type="button" id="snackBtn" data-act="undo"></button></div>
 
@@ -733,7 +780,7 @@ const WEEK = ["จ","อ","พ","พฤ","ศ","ส","อา"];
 
 // templates = items repeated every day; plans = items for one date
 const state = {
-  customFoods: [], sharedFoods: [], kcalGoal: 2000, theme: "light",
+  customFoods: [], completed: {}, foodOv: {}, notes: {}, water: {}, weights: {}, costGoal: 0, costGoalM: 0, fmq: "", sharedFoods: [], kcalGoal: 2000, theme: "light",
   lang: "th", user: null, authMode: "login", tab: "today", users: [], saved: "", entering: false,
   templates: [], plans: {}, done: {},
   sel: "", month: "", calOpen: false, reminders: false
@@ -814,7 +861,7 @@ Object.assign(EN, {
 Object.assign(EN, {"ทำสำเร็จวันนี้":"Done today","ยอดเงินที่ใช้":"Spending","สัปดาห์":"Week","เดือน":"Month","ปี":"Year"});
 Object.assign(EN, {"ความสำเร็จ":"Progress","ค่าใช้จ่าย":"Spending"});
 Object.assign(EN, {"ข้าวผัด":"Fried rice","ข้าวมันไก่":"Chicken rice","ข้าวกะเพราหมูสับไข่ดาว":"Basil pork with egg","ข้าวหมูแดง":"Red pork rice","ข้าวราดแกง":"Rice with curry","ข้าวต้ม":"Rice porridge","ก๋วยเตี๋ยวเรือ":"Boat noodles","ก๋วยเตี๋ยวหมู":"Pork noodles","บะหมี่หมูแดง":"Red pork noodles","ส้มตำไทย":"Thai papaya salad","ไก่ย่าง":"Grilled chicken","ข้าวเหนียว":"Sticky rice","ผัดกะเพรา":"Basil stir-fry","ต้มยำกุ้ง":"Tom yum goong","แกงเขียวหวาน":"Green curry","ข้าวไข่เจียว":"Rice with omelette","ลาบหมู":"Pork larb","แซนด์วิช":"Sandwich","ไข่ต้ม":"Boiled egg","กล้วย":"Banana","แอปเปิ้ล":"Apple","นมจืด":"Plain milk","กาแฟดำ":"Black coffee","กาแฟลาเต้":"Latte","ชาเขียว":"Green tea","น้ำอัดลม":"Soft drink","โยเกิร์ต":"Yogurt","ข้าวโอ๊ต":"Oatmeal","สลัดผัก":"Vegetable salad","โรตี":"Roti","ไอศกรีม":"Ice cream"});
-Object.assign(EN, {"รายการ":"Items","+ เพิ่มอาหาร":"+ Add food","แคลอรี่รวม":"Total calories","อื่น ๆ":"Other","แคลอรี่วันนี้":"Calories today","ตั้งเป้า":"Set goal","ค่าประมาณจากฐานข้อมูล":"Estimates from the food list","แคลอรี่ที่ได้รับ":"Calories eaten","เป้าหมายแคลอรี่ต่อวัน (kcal)":"Daily calorie goal (kcal)","ชื่ออาหาร":"Food name","แคลอรี่ต่อหน่วย (kcal)":"Calories per serving (kcal)","— ไม่เลือก —":"— None —","+ เพิ่มอาหารเอง":"+ Add my own food","อาหาร":"Food","จำนวน":"Qty","แคลอรี่ (kcal)":"Calories (kcal)"});
+Object.assign(EN, {"วันติดต่อกัน":"day streak","งบค่าใช้จ่าย":"Spending budget","วันนี้":"Today","เดือนนี้":"This month","ตั้งงบรายวัน":"Set daily budget","ตั้งงบรายเดือน":"Set monthly budget","น้ำดื่ม":"Water","น้ำหนัก":"Weight","บันทึกน้ำหนักวันนี้":"Log today's weight","บันทึกประจำวัน":"Daily note","ข้อมูลของฉัน":"My data","ส่งออกข้อมูล":"Export data","นำเข้าข้อมูล":"Import data","ล้างข้อมูลทั้งหมด":"Clear all data","จัดการอาหาร":"Manage foods","ค้นหาอาหาร":"Search food","คืนค่าเริ่มต้น":"Reset","ไม่พบอาหาร":"No food found","+ 1 แก้ว":"+ 1 glass","โปรดใส่ username และ password":"Please enter your username and password","กิจกรรมของวันนี้เสร็จสมบูรณ์แล้ว":"Today's activities are all done","ดูสรุป":"View summary","เปิดรายการอีกครั้ง":"Reopen list","ทำครบทุกกิจกรรมแล้ว!":"All activities done!","กิจกรรมเสร็จสมบูรณ์":"Day completed","กิจกรรม":"Activities","ใช้จ่าย":"Spent","เสร็จสิ้น":"Done","รายการ":"Items","+ เพิ่มอาหาร":"+ Add food","แคลอรี่รวม":"Total calories","อื่น ๆ":"Other","แคลอรี่วันนี้":"Calories today","ตั้งเป้า":"Set goal","ค่าประมาณจากฐานข้อมูล":"Estimates from the food list","แคลอรี่ที่ได้รับ":"Calories eaten","เป้าหมายแคลอรี่ต่อวัน (kcal)":"Daily calorie goal (kcal)","ชื่ออาหาร":"Food name","แคลอรี่ต่อหน่วย (kcal)":"Calories per serving (kcal)","— ไม่เลือก —":"— None —","+ เพิ่มอาหารเอง":"+ Add my own food","อาหาร":"Food","จำนวน":"Qty","แคลอรี่ (kcal)":"Calories (kcal)"});
 Object.assign(EN, {"ภาษา":"Language","ไทย":"Thai"});
 function tr(s){ return state.lang === "en" && EN[s] ? EN[s] : s; }
 // Walks the app's text nodes and placeholders; keeps the original Thai so it can switch back
@@ -880,10 +927,160 @@ function taskRow(k, it){
     <button class="danger sm" data-act="del" data-k="${k}" data-key="${it.key}">ลบ</button>
   </div>`;
 }
+function dayAllDone(k){ const its = itemsFor(k); return its.length > 0 && its.every(i => isDone(k, i)); }
+function archiveDay(k){
+  const its = itemsFor(k);
+  state.completed[k] = {
+    at: Date.now(), kcal: its.reduce((a, i) => a + (Number(i.kcal) || 0), 0), cost: its.reduce((a, i) => a + (Number(i.cost) || 0), 0),
+    items: its.map(i => ({ icon: i.icon || "📌", text: i.text, time: i.time || "", cost: Number(i.cost) || 0, kcal: Number(i.kcal) || 0, foods: i.foods || [] }))
+  };
+}
 function groupList(k){
+  if (state.completed[k] && !dayAllDone(k)) delete state.completed[k];   // something new was added or unticked
+  const c = state.completed[k];
+  if (c) {
+    const label = k === todayKey() ? "กิจกรรมของวันนี้เสร็จสมบูรณ์แล้ว" : dateLabel(k);
+    return `<section class="card donecard"><div class="dc-em">🎉</div><h3>${esc(label)}</h3>
+      <p class="muted">${c.items.length} กิจกรรม${c.kcal ? " · " + c.kcal + " kcal" : ""}${c.cost ? " · ฿" + c.cost : ""}</p>
+      <div class="actions"><button data-act="showSummary" data-k="${k}">ดูสรุป</button><button class="ghost" data-act="reopenDay" data-k="${k}">เปิดรายการอีกครั้ง</button></div></section>`;
+  }
   const list = itemsFor(k);
   return `<section class="card"><h3>รายการ<span class="muted">${list.filter(i => isDone(k, i)).length}/${list.length}</span></h3>
     ${list.length ? list.map(i => taskRow(k, i)).join("") : '<p class="muted" style="margin:0">ยังไม่มีรายการ</p>'}</section>`;
+}
+// ===== Streak, budget, health, note, data, food manager =====
+function streakInfo(){
+  const ks = new Set(Object.keys(state.plans)); Object.keys(state.done).forEach(x => ks.add(x.split("|")[0]));
+  let k = [...ks].filter(x => /^\d{4}-\d\d-\d\d$/.test(x)).sort()[0];
+  if (!k) return { cur: 0, best: 0 };
+  const today = todayKey(); let run = 0, best = 0, n = 0;
+  while (k <= today && n++ < 1500) {
+    const t = dayStat(k);
+    if (t.total > 0 && t.done === t.total) { run++; best = Math.max(best, run); } else if (k !== today) run = 0;
+    k = addDays(k, 1);
+  }
+  return { cur: run, best };
+}
+function streakCard(){
+  const s = streakInfo();
+  return `<section class="card streak"><div><span class="st-em">🔥</span> <b>${s.cur}</b> วันติดต่อกัน</div><div class="muted">ดีที่สุด ${s.best} วัน</div></section>`;
+}
+function budgetCard(){
+  const k = todayKey(), d = daySpend(k), mk = k.slice(0, 7);
+  let m = 0; for (let i = 1; i <= Number(k.slice(8)); i++) m += daySpend(`${mk}-${pad(i)}`);
+  const row = (l, v, g) => `<div class="bg-row"><div class="bg-top"><span>${l}</span><b class="${g && v > g ? "over" : ""}">฿${v}${g ? " / ฿" + g : ""}</b></div>${g ? `<div class="bar2"><i class="${v > g ? "over" : ""}" style="width:${Math.min(100, Math.round(v / g * 100))}%"></i></div>` : ""}${g && v > g ? `<div class="over sm">เกินงบ ฿${v - g}</div>` : ""}</div>`;
+  return `<section class="card"><h3>งบค่าใช้จ่าย</h3>${row("วันนี้", d, state.costGoal)}${row("เดือนนี้", m, state.costGoalM)}
+    <div class="actions"><button class="ghost sm" data-act="budgetD">ตั้งงบรายวัน</button><button class="ghost sm" data-act="budgetM">ตั้งงบรายเดือน</button></div></section>`;
+}
+function spark(v){
+  if (v.length < 2) return "";
+  const mn = Math.min(...v), r = (Math.max(...v) - mn) || 1, W = 240, H = 48;
+  const p = v.map((x, i) => `${(i / (v.length - 1) * W).toFixed(1)},${(H - 4 - (x - mn) / r * (H - 8)).toFixed(1)}`).join(" ");
+  return `<svg viewBox="0 0 ${W} ${H}" width="100%" height="${H}" preserveAspectRatio="none"><polyline points="${p}" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+}
+function healthCard(){
+  const k = todayKey(), w = state.water[k] || 0, G = 8;
+  const ws = Object.keys(state.weights).sort(), last = ws.length ? state.weights[ws[ws.length - 1]] : null;
+  return `<section class="card"><h3>น้ำดื่ม<span class="muted">${w} / ${G} แก้ว</span></h3>
+    <div class="water">${Array.from({ length: Math.max(G, w) }, (_, i) => `<span class="dr ${i < w ? "on" : ""}">💧</span>`).join("")}</div>
+    <div class="actions"><button class="ghost sm" data-act="waterSub">−</button><button class="sm" data-act="waterAdd">+ 1 แก้ว</button></div>
+    <h3 style="margin-top:14px">น้ำหนัก<span class="muted">${last ? last + " kg" : "ยังไม่มีข้อมูล"}</span></h3>
+    ${spark(ws.slice(-14).map(x => state.weights[x]))}
+    <div class="actions"><button class="ghost sm" data-act="weightSet">บันทึกน้ำหนักวันนี้</button></div></section>`;
+}
+function noteCard(){
+  return `<section class="card"><h3>บันทึกประจำวัน</h3><textarea id="dayNote" class="daynote" rows="3" placeholder="วันนี้เป็นยังไงบ้าง...">${esc(state.notes[todayKey()] || "")}</textarea></section>`;
+}
+function exportData(){
+  const data = { app: "strivlife", exportedAt: new Date().toISOString(), ...JSON.parse(snapshot()) };
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([JSON.stringify(data, null, 1)], { type: "application/json" }));
+  a.download = `strivlife-${todayKey()}.json`; document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 2000); toast("ส่งออกข้อมูลแล้ว");
+}
+function importData(file){
+  const r = new FileReader();
+  r.onload = () => {
+    try {
+      const d = JSON.parse(r.result);
+      if (!d || typeof d !== "object" || !d.plans || !d.templates) throw 0;
+      if (!confirm(tr("นำเข้าข้อมูลนี้? ข้อมูลปัจจุบันจะถูกแทนที่"))) return;
+      applyData(d); state.saved = ""; render(); toast("นำเข้าข้อมูลแล้ว");
+    } catch (e) { toast("ไฟล์ไม่ถูกต้อง"); }
+  };
+  r.readAsText(file);
+}
+function fmListHTML(){
+  const q = (state.fmq || "").toLowerCase(), l = allFoods().filter(f => !q || f.name.toLowerCase().includes(q));
+  return l.length ? l.map(f => { const o = esc(f._orig || f.name);
+    return `<div class="fm-row"><span>${f.icon || "🍽️"} ${esc(tr(f.name))}</span><small>${f.kcal} kcal</small><button class="ghost sm" data-act="foodEdit" data-n="${o}">✏️</button><button class="ghost sm" data-act="foodDel" data-n="${o}">🗑</button></div>`; }).join("")
+    : '<p class="muted">ไม่พบอาหาร</p>';
+}
+function dataCard(){
+  return `<section class="card"><h3>ข้อมูลของฉัน</h3>
+    <div class="actions" style="margin-top:0"><button class="ghost" data-act="exportData">⬇️ ส่งออกข้อมูล</button><button class="ghost" data-act="importData">⬆️ นำเข้าข้อมูล</button></div>
+    <div class="actions"><button class="danger" data-act="clearData">ล้างข้อมูลทั้งหมด</button></div></section>
+    <section class="card"><h3>จัดการอาหาร</h3>
+    <input type="search" id="fmq" class="fmq" placeholder="ค้นหาอาหาร" value="${esc(state.fmq || "")}" autocomplete="off">
+    <div class="fm-list" id="fmList">${fmListHTML()}</div>
+    <div class="actions"><button class="ghost sm" data-act="foodReset">คืนค่าเริ่มต้น</button></div></section>`;
+}
+// Reminders (fire while the app is open)
+function enablePushUi(){
+  const u = state.user;
+  const local = () => { if ("Notification" in window && Notification.permission === "default") Notification.requestPermission(); };
+  if (u && u.uid && window.FB && FB.enablePush)
+    FB.enablePush(u.uid).then(() => toast("เปิดการแจ้งเตือนแล้ว รับได้แม้ปิดแอป"))
+      .catch(e => { console.warn("push", e); local(); toast(e.message === "no-vapid" ? "เปิดแจ้งเตือนในแอปแล้ว (ยังไม่ได้ตั้งค่า push)" : e.message === "denied" ? "ไม่ได้อนุญาตแจ้งเตือนของเบราว์เซอร์" : "เปิด push ไม่สำเร็จ ใช้แจ้งเตือนในแอปแทน"); });
+  else { local(); toast("เปิดการแจ้งเตือนแล้ว"); }
+}
+const _notified = new Set();
+function notifyItem(it){
+  const body = `${it.icon || "📌"} ${it.text} · ${it.time}`;
+  toast("⏰ " + body);
+  if (!("Notification" in window) || Notification.permission !== "granted") return;
+  const opt = { body, tag: "sl-" + it.key, icon: undefined };
+  const fallback = () => { try { new Notification("StrivLife", opt); } catch (e) {} };
+  if (navigator.serviceWorker && navigator.serviceWorker.getRegistration)
+    navigator.serviceWorker.getRegistration().then(g => g ? g.showNotification("StrivLife", opt) : fallback()).catch(fallback);
+  else fallback();
+}
+function remindTick(){
+  if (!state.user || !state.reminders) return;
+  const k = todayKey(), n = new Date(), hm = pad(n.getHours()) + ":" + pad(n.getMinutes());
+  itemsFor(k).forEach(it => {
+    const id = k + "|" + it.key + "|" + it.time;
+    if (it.time === hm && !isDone(k, it) && !_notified.has(id)) { _notified.add(id); notifyItem(it); }
+  });
+}
+setInterval(remindTick, 15000);
+
+function showSummary(k, fresh){
+  const c = state.completed[k]; if (!c) return;
+  const rows = c.items.map(i => {
+    const foods = (i.foods || []).map(f => esc(f.n ? tr(f.n) + (f.q && f.q !== 1 ? " ×" + f.q : "") : "อื่น ๆ")).join(" · ");
+    const sub = [i.time ? esc(i.time) : "", foods ? "🍽️ " + foods : "", i.kcal ? i.kcal + " kcal" : "", i.cost ? "฿" + i.cost : ""].filter(Boolean).join(" · ");
+    return `<div class="cel-row"><span class="ck">✓</span><div class="tx">${i.icon} ${esc(i.text)}${sub ? `<div class="sub">${sub}</div>` : ""}</div></div>`;
+  }).join("");
+  $("celCard").innerHTML = `<div class="cel-top" id="celTop"><div class="em">🎉</div><h2>${k === todayKey() ? "ทำครบทุกกิจกรรมแล้ว!" : "กิจกรรมเสร็จสมบูรณ์"}</h2><p>${esc(dateLabel(k))}</p></div>
+    <div class="cel-stats"><div><b>${c.items.length}</b><span>กิจกรรม</span></div><div><b>${c.kcal}</b><span>kcal</span></div><div><b>฿${c.cost}</b><span>ใช้จ่าย</span></div></div>
+    <div class="cel-list">${rows}</div>
+    ${state.notes[k] ? `<div class="cel-note">📝 ${esc(state.notes[k])}</div>` : ""}
+    <button class="cel-ok" data-act="closeCelebrate">เสร็จสิ้น</button>`;
+  const el = $("celebrate"); el.hidden = false; i18n();
+  requestAnimationFrame(() => el.classList.add("open"));
+  if (fresh) {
+    const top = $("celTop"), colors = ["#fde047","#86efac","#93c5fd","#fff","#f9a8d4","#fdba74"];
+    for (let n = 0; n < 36; n++) {
+      const p = document.createElement("i"); p.className = "cel-conf";
+      p.style.cssText = `left:${Math.random() * 100}%;background:${colors[n % colors.length]};animation-duration:${(1.6 + Math.random() * 1.6).toFixed(2)}s;animation-delay:${(Math.random() * .8).toFixed(2)}s`;
+      top.appendChild(p);
+    }
+  }
+}
+function closeCelebrate(){
+  const el = $("celebrate"); el.classList.remove("open");
+  setTimeout(() => { el.hidden = true; }, 300);
 }
 function previewRow(k){
   const its = itemsFor(k);
@@ -908,10 +1105,14 @@ function vToday(){
         <div class="lbl">${itemsFor(k).filter(i => Number(i.cost) > 0).length} รายการ</div>
       </div>
     </section>
+    ${streakCard()}
     ${kcalCard()}
+    ${budgetCard()}
     <section class="card day-card today"><h3>วันนี้</h3>${previewRow(k)}</section>
     <section class="card day-card tomorrow"><h3>พรุ่งนี้ <span class="muted">เตรียมไว้ล่วงหน้า</span></h3>${previewRow(addDays(k, 1))}</section>
-    ${groupList(k)}`;
+    ${groupList(k)}
+    ${healthCard()}
+    ${noteCard()}`;
 }
 function dayCell(k, blank){
   if (blank) return '<span class="cd blank"></span>';
@@ -998,7 +1199,7 @@ function vProfile(){
       <div class="actions" style="margin-top:0">${u.provider !== "anonymous" ? '<button class="ghost" data-act="rename">แก้ไขชื่อ</button><button class="ghost" data-act="pickPhoto">เปลี่ยนรูปโปรไฟล์</button>' + (u.picture ? '<button class="ghost" data-act="removePhoto">ลบรูป</button>' : "") : ""}<button class="ghost" data-act="toggleReminders">${state.reminders ? "ปิดการแจ้งเตือน" : "เปิดการแจ้งเตือน"}</button>${deferredInstall ? '<button class="ghost" data-act="install">ติดตั้งแอป</button>' : ""}</div>
       <p class="muted" id="syncInfo" style="margin:12px 0 0">${syncText()}</p>
       <div class="actions"><button class="danger" data-act="logout">ออกจากระบบ</button></div>
-    </section>`;
+    </section>${dataCard()}`;
 }
 function dayVal(k, m){ return itemsFor(k).reduce((a, i) => a + (Number(m === "kcal" ? i.kcal : i.cost) || 0), 0); }
 function daySpend(k){ return dayVal(k, "cost"); }
@@ -1037,7 +1238,7 @@ function vSummaryTab(){
   const sub = state.sumTab || "ach";
   const seg = (k, l) => `<button class="seg ${sub === k ? "on" : ""}" data-act="sumTab" data-s="${k}">${l}</button>`;
   const switcher = `<div class="segs">${seg("ach", "ความสำเร็จ")}${seg("spend", "ค่าใช้จ่าย")}${seg("kcal", "แคลอรี่")}</div>`;
-  return switcher + (sub === "ach" ? vHistory() + vSummary() : spendCard());
+  return switcher + (sub === "ach" ? streakCard() + vHistory() + vSummary() : spendCard());
 }
 const FOODS = [{name:"ข้าวผัด", icon:"🍚", kcal:550},{name:"ข้าวมันไก่", icon:"🍗", kcal:600},{name:"ข้าวกะเพราหมูสับไข่ดาว", icon:"🍳", kcal:650},{name:"ข้าวหมูแดง", icon:"🍖", kcal:580},{name:"ข้าวราดแกง", icon:"🥘", kcal:550},{name:"ข้าวต้ม", icon:"🥣", kcal:300},{name:"ก๋วยเตี๋ยวเรือ", icon:"🍜", kcal:400},{name:"ก๋วยเตี๋ยวหมู", icon:"🍜", kcal:350},{name:"บะหมี่หมูแดง", icon:"🍜", kcal:450},{name:"ส้มตำไทย", icon:"🥗", kcal:150},{name:"ไก่ย่าง", icon:"🍗", kcal:300},{name:"ข้าวเหนียว", icon:"🍚", kcal:300},{name:"ผัดกะเพรา", icon:"🍛", kcal:480},{name:"ต้มยำกุ้ง", icon:"🍲", kcal:150},{name:"แกงเขียวหวาน", icon:"🍛", kcal:250},{name:"ข้าวไข่เจียว", icon:"🍳", kcal:500},{name:"ลาบหมู", icon:"🥗", kcal:280},{name:"แซนด์วิช", icon:"🥪", kcal:250},{name:"ไข่ต้ม", icon:"🥚", kcal:75},{name:"กล้วย", icon:"🍌", kcal:105},{name:"แอปเปิ้ล", icon:"🍎", kcal:95},{name:"นมจืด", icon:"🥛", kcal:130},{name:"กาแฟดำ", icon:"☕", kcal:5},{name:"กาแฟลาเต้", icon:"☕", kcal:190},{name:"ชาเขียว", icon:"🍵", kcal:90},{name:"น้ำอัดลม", icon:"🥤", kcal:140},{name:"โยเกิร์ต", icon:"🥣", kcal:120},{name:"ข้าวโอ๊ต", icon:"🥣", kcal:150},{name:"สลัดผัก", icon:"🥗", kcal:120},{name:"โรตี", icon:"🫓", kcal:300},{name:"ไอศกรีม", icon:"🍨", kcal:200}];
 const VIEWS = { today: vToday, schedule: vSchedule, history: vHistory, summary: vSummaryTab, profile: vProfile };
@@ -1053,7 +1254,7 @@ function render(){
     : u.provider === "anonymous" ? '<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>'
     : esc((u.name || "?").charAt(0).toUpperCase());
   document.querySelectorAll(".tabs .pill button[data-tab]").forEach(b => b.classList.toggle("on", b.dataset.tab === state.tab));
-  const head = state.tab === "today" ? `<div><div class="greet">${hr < 12 ? "Good morning," : hr < 18 ? "Good afternoon," : "Good evening,"}</div><div class="name">${esc(dateNow())}</div></div>` : "";
+  const head = state.tab === "today" ? `<div><div class="greet">${hr < 12 ? "Good morning," : hr < 18 ? "Good afternoon," : "Good evening,"}</div><div class="name dt">${esc(dateNow())}</div></div>` : "";
   $("view").innerHTML = head + VIEWS[state.tab]();
   moveIndicator();
   i18n();
@@ -1076,6 +1277,7 @@ function openSheet(ed){
   const rows = !it ? [] : (it.foods && it.foods.length
     ? it.foods.map(f => ({ name: f.n, icon: f.i, u: f.u, q: f.q, k: f.k }))
     : (it.kcal ? [{ name: "", q: 1, k: it.kcal }] : []));
+  $("foodQ").value = "";
   renderFoodRows(rows);
   refreshFoods().then(() => { if (!$("sheet").hidden) renderFoodRows(readFoodRows()); });
   const sh = $("sheet"), bg = $("sheetBg");
@@ -1132,7 +1334,12 @@ function submitAdd(e){
 }
 
 // ===== Food & calories =====
-function allFoods(){ return [...FOODS, ...(state.sharedFoods || [])]; }
+function allFoods(){
+  return [...FOODS, ...(state.sharedFoods || [])].map(f => {
+    const o = (state.foodOv || {})[f.name];
+    return !o ? f : o.del ? null : { ...f, name: o.n || f.name, kcal: o.k != null ? o.k : f.kcal, _orig: f.name };
+  }).filter(Boolean);
+}
 function refreshFoods(){
   if (!window.FB || !window.FB.loadFoods) return Promise.resolve();
   return window.FB.loadFoods().then(list => {
@@ -1148,8 +1355,9 @@ function buildFoodList(rows){
   });
 }
 function foodRowHTML(r){
+  const fq = (($("foodQ") || {}).value || "").trim().toLowerCase();
   const opts = `<option value="">${tr("— ไม่เลือก —")}</option>`
-    + _foodList.map((f, i) => `<option value="${i}" ${f.name === r.name ? "selected" : ""}>${f.icon || "🍽️"} ${esc(tr(f.name))} · ${f.kcal} kcal</option>`).join("")
+    + _foodList.map((f, i) => (fq && f.name !== r.name && !f.name.toLowerCase().includes(fq)) ? "" : `<option value="${i}" ${f.name === r.name ? "selected" : ""}>${f.icon || "🍽️"} ${esc(tr(f.name))} · ${f.kcal} kcal</option>`).join("")
     + `<option value="__new">${tr("+ เพิ่มอาหารเอง")}</option>`;
   return `<div class="frw"><select class="fr-food">${opts}</select>
     <input type="number" class="fr-qty" min="0.5" step="0.5" value="${r.q || 1}" placeholder="จำนวน" inputmode="decimal">
@@ -1282,19 +1490,19 @@ function login(user){
 // ===== Firebase: per-user data (Firestore) =====
 function snapshot(){
   return JSON.stringify({
-    templates: state.templates, plans: state.plans, customFoods: state.customFoods, kcalGoal: state.kcalGoal,
+    templates: state.templates, plans: state.plans, customFoods: state.customFoods, completed: state.completed, foodOv: state.foodOv, notes: state.notes, water: state.water, weights: state.weights, costGoal: state.costGoal, costGoalM: state.costGoalM, kcalGoal: state.kcalGoal,
     done: Object.keys(state.done), reminders: state.reminders, lang: state.lang
   });
 }
 function resetData(){
-  state.templates = []; state.plans = {}; state.done = {}; state.customFoods = []; state.kcalGoal = 2000;
+  state.templates = []; state.plans = {}; state.done = {}; state.customFoods = []; state.completed = {}; state.foodOv = {}; state.notes = {}; state.water = {}; state.weights = {}; state.costGoal = 0; state.costGoalM = 0; state.kcalGoal = 2000;
   state.reminders = false; state.saved = "";
 }
 function applyData(d){
   resetData();
   d = d || {};
   state.templates = d.templates || [];
-  state.customFoods = d.customFoods || []; state.kcalGoal = d.kcalGoal || 2000;
+  state.customFoods = d.customFoods || []; state.completed = d.completed || {}; state.foodOv = d.foodOv || {}; state.notes = d.notes || {}; state.water = d.water || {}; state.weights = d.weights || {}; state.costGoal = d.costGoal || 0; state.costGoalM = d.costGoalM || 0; state.kcalGoal = d.kcalGoal || 2000;
   state.plans = d.plans || {};
   (d.done || []).forEach(k => state.done[k] = true);
   state.reminders = !!d.reminders;
@@ -1488,9 +1696,9 @@ async function authSubmitInner(){
   if (!window.FB) return err.textContent = tr("กำลังเชื่อมต่อ Firebase กรุณาลองใหม่");
   const id = $("auEmail").value.trim().toLowerCase();
   const pass = $("auPass").value;
+  if (!id || !pass) return err.textContent = tr("โปรดใส่ username และ password");
   try {
     if (state.authMode === "login") {
-      if (!id || !pass) return err.textContent = tr("อีเมลหรือรหัสผ่านไม่ถูกต้อง");
       const u = await FB.login(id, pass);
       return await enterFirebase(u);
     }
@@ -1553,6 +1761,12 @@ async function googleLogin(){
     if (!dragging) return;
     dragging = false;
     if (pos >= maxPos() * 0.9) {
+      const idEl = $("auEmail"), pwEl = $("auPass");
+      if (!idEl.value.trim() || !pwEl.value) {   // slid without filling in the credentials
+        $("auErr").textContent = tr("โปรดใส่ username และ password");
+        reset(); (idEl.value.trim() ? pwEl : idEl).focus();
+        return;
+      }
       done = true; setPos(maxPos());
       sl.classList.add("ok"); knob.innerHTML = CHECK;
       txt.textContent = tr("ยินดีต้อนรับ!"); i18n();
@@ -1612,7 +1826,41 @@ document.addEventListener("click", e => {
     case "fab": return openSheet();
     case "addHere": return openSheet();
     case "closeSheet": return closeSheet();
-    case "toggle": { const id = `${k}|${key}`; toggleKey(id); state._pop = state.done[id] ? id : null; render(); state._pop = null; return; }
+    case "toggle": {
+      const id = `${k}|${key}`; toggleKey(id); state._pop = state.done[id] ? id : null;
+      const justDone = state.done[id] && dayAllDone(k) && !state.completed[k];
+      if (justDone) archiveDay(k);
+      render(); state._pop = null;
+      if (justDone) showSummary(k, true);
+      return;
+    }
+    case "showSummary": return showSummary(k, false);
+    case "closeCelebrate": return closeCelebrate();
+    case "budgetD": case "budgetM": {
+      const f = act === "budgetD" ? "costGoal" : "costGoalM";
+      const v = prompt(tr(act === "budgetD" ? "งบค่าใช้จ่ายต่อวัน (บาท) ใส่ 0 เพื่อปิด" : "งบค่าใช้จ่ายต่อเดือน (บาท) ใส่ 0 เพื่อปิด"), state[f] || "");
+      if (v === null) return; state[f] = Math.max(0, Number(v) || 0); return render();
+    }
+    case "waterAdd": case "waterSub": { const d = todayKey(); state.water[d] = Math.max(0, (state.water[d] || 0) + (act === "waterAdd" ? 1 : -1)); return render(); }
+    case "weightSet": {
+      const d = todayKey(), v = prompt(tr("น้ำหนักวันนี้ (กก.) ใส่ 0 เพื่อลบ"), state.weights[d] || ""); if (v === null) return;
+      const n = Number(v); if (n > 0 && n < 500) state.weights[d] = Math.round(n * 10) / 10; else if (!n) delete state.weights[d];
+      return render();
+    }
+    case "foodEdit": {
+      const f = allFoods().find(x => (x._orig || x.name) === el.dataset.n); if (!f) return;
+      const n = (prompt(tr("ชื่ออาหาร"), f.name) || "").trim(); if (!n) return;
+      const raw = prompt(tr("แคลอรี่ต่อหน่วย (kcal)"), f.kcal); if (raw === null || !(Number(raw) >= 0)) return;
+      state.foodOv[el.dataset.n] = { n, k: Number(raw) }; return render();
+    }
+    case "foodDel": if (!confirm(tr("ลบอาหารนี้ออกจากรายการ?"))) return; state.foodOv[el.dataset.n] = { del: true }; return render();
+    case "foodReset": state.foodOv = {}; return render();
+    case "exportData": return exportData();
+    case "importData": return $("importIn").click();
+    case "clearData":
+      if (!confirm(tr("ล้างข้อมูลทั้งหมด? ย้อนกลับไม่ได้")) || !confirm(tr("ยืนยันอีกครั้ง: ลบข้อมูลทั้งหมดจริงหรือไม่?"))) return;
+      resetData(); render(); toast("ล้างข้อมูลแล้ว"); return;
+    case "reopenDay": delete state.completed[k]; return render();
     case "step": toggleKey(`${k}|${key}|${el.dataset.sid}`); return render();
     case "del": {
       const isT = key.charAt(0) === "T";
@@ -1666,9 +1914,13 @@ document.addEventListener("click", e => {
       return render();
     }
     case "calToggle": state.calOpen = !state.calOpen; return render();
-    case "toggleReminders": state.reminders = !state.reminders; toast(state.reminders ? "เปิดการแจ้งเตือนแล้ว" : "ปิดการแจ้งเตือนแล้ว"); return render();
+    case "toggleReminders":
+      state.reminders = !state.reminders;
+      if (state.reminders) enablePushUi(); else toast("ปิดการแจ้งเตือนแล้ว");
+      return render();
   }
 });
+$("importIn").addEventListener("change", e => { const f = e.target.files[0]; e.target.value = ""; if (f) importData(f); });
 document.addEventListener("keydown", e => {
   if ((e.key === "Enter" || e.key === " ") && e.target.id === "avatar") { e.preventDefault(); switchTab("profile"); }
 });
@@ -1687,6 +1939,10 @@ document.addEventListener("pointerout", e => {
 window.addEventListener("resize", () => moveIndicator(true));
 document.addEventListener("change", e => { if (e.target.classList && e.target.classList.contains("fr-food")) onFoodChange(e.target); });
 document.addEventListener("input", e => {
+  const id = e.target.id;
+  if (id === "dayNote") { const v = e.target.value; if (v.trim()) state.notes[todayKey()] = v; else delete state.notes[todayKey()]; scheduleSave(); return; }
+  if (id === "foodQ") return renderFoodRows(readFoodRows());
+  if (id === "fmq") { state.fmq = e.target.value; $("fmList").innerHTML = fmListHTML(); return; }
   const c = e.target.classList; if (!c) return;
   if (c.contains("fr-qty")) onQtyInput(e.target);
   else if (c.contains("fr-kcal")) updateFoodTotal();
@@ -1775,7 +2031,8 @@ state.theme = window.matchMedia && matchMedia("(prefers-color-scheme: dark)").ma
 applyTheme();
 function dateNow(){
   const d = parseKey(todayKey());
-  return `${d.toLocaleDateString("en-US", {weekday:"short"})}, ${d.getDate()} ${d.toLocaleDateString("en-US", {month:"short"})}`;
+  if (state.lang !== "en") return dateLabel(todayKey());   // Thai: วันเสาร์ที่ 24 ตุลาคม
+  return `${d.toLocaleDateString("en-US", {weekday:"long"})}, ${d.getDate()} ${d.toLocaleDateString("en-US", {month:"long"})}`;
 }
 function timeNow(){ return new Date().toLocaleTimeString(locale(), {hour:"2-digit", minute:"2-digit", second:"2-digit"}); }
 setInterval(() => { if (state.user && $("greet")) $("greet").textContent = timeNow(); }, 1000);
@@ -1807,6 +2064,7 @@ setTimeout(() => $("splash").classList.add("gone"), 2200);
     getFirestore, initializeFirestore, persistentLocalCache, persistentMultipleTabManager,
     doc, getDoc, setDoc, serverTimestamp, collection, getDocs
   } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-firestore.js";
+  import { getMessaging, getToken, isSupported as msgSupported } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-messaging.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyBRFCPqJIcTQaj7PjDUk2ecXPS75QNLdSQ",
@@ -1819,6 +2077,8 @@ setTimeout(() => $("splash").classList.add("gone"), 2200);
   };
 
   const app = initializeApp(firebaseConfig);
+  // Web Push key pair: Firebase console > Project settings > Cloud Messaging > Web Push certificates
+  const VAPID_KEY = "PASTE_YOUR_VAPID_KEY_HERE";
   isSupported().then(ok => { if (ok) getAnalytics(app); }).catch(() => {});
   const auth = getAuth(app);
   // Offline persistence: reads and writes work without a connection and sync automatically afterwards
@@ -1877,6 +2137,16 @@ setTimeout(() => $("splash").classList.add("gone"), 2200);
     async loadData(uid) {
       const snap = await getDoc(dataRef(uid));
       return snap.exists() ? snap.data() : {};
+    },
+    enablePush: async uid => {
+      if (VAPID_KEY.indexOf("PASTE") === 0) throw new Error("no-vapid");
+      if (!(await msgSupported())) throw new Error("unsupported");
+      if (Notification.permission !== "granted" && (await Notification.requestPermission()) !== "granted") throw new Error("denied");
+      const reg = await navigator.serviceWorker.register("firebase-messaging-sw.js", { scope: "./firebase-cloud-messaging-push-scope" });
+      if (!reg.active) await new Promise(res => { const w = reg.installing || reg.waiting; if (!w) return res(); w.addEventListener("statechange", () => w.state === "activated" && res()); });
+      const token = await getToken(getMessaging(app), { vapidKey: VAPID_KEY, serviceWorkerRegistration: reg });
+      await setDoc(doc(db, "users", uid, "tokens", token), { at: serverTimestamp(), tz: Intl.DateTimeFormat().resolvedOptions().timeZone || "Asia/Bangkok" });
+      return token;
     },
     saveData: (uid, data) => setDoc(dataRef(uid), { ...data, updatedAt: serverTimestamp() }),
     addFood: food => setDoc(doc(collection(db, "foods"), food.id), food),
