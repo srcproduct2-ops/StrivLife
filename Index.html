@@ -255,6 +255,35 @@ body.guest .topbar,body.guest .tabs,body.guest .view{display:none!important}
 .step.done span{text-decoration:line-through}
 .hcell{box-shadow:none;padding:0;transform:none}
 .hcell:hover{transform:none;box-shadow:none}
+/* Top-left brand mark: StrivLife logo instead of the user avatar */
+.brand-logo{font-size:1.3rem;font-weight:900;letter-spacing:-.02em;box-shadow:0 8px 20px rgba(99,102,241,.3)}
+/* ---------- Motion ---------- */
+.view.enter>*{animation:enterUp .55s cubic-bezier(.2,.8,.2,1) both}
+.view.enter>*:nth-child(2){animation-delay:.05s}
+.view.enter>*:nth-child(3){animation-delay:.1s}
+.view.enter>*:nth-child(4){animation-delay:.15s}
+.view.enter>*:nth-child(5){animation-delay:.2s}
+.view.enter>*:nth-child(6){animation-delay:.25s}
+.view.enter>*:nth-child(n+7){animation-delay:.3s}
+@keyframes enterUp{from{opacity:0;transform:translateY(16px) scale(.98)}to{opacity:1;transform:none}}
+@keyframes pop{0%{transform:scale(.6)}60%{transform:scale(1.18)}100%{transform:scale(1)}}
+@keyframes logoIn{from{transform:scale(.4) rotate(-12deg);opacity:0}to{transform:none;opacity:1}}
+.logo{animation:logoIn .8s cubic-bezier(.34,1.56,.64,1) both}
+.chk{transition:background .25s ease,border-color .25s ease,transform .2s ease}
+.chk.pop{animation:pop .45s cubic-bezier(.34,1.56,.64,1)}
+.card{transition:transform .2s ease,box-shadow .25s ease}
+.card:active{transform:scale(.985)}
+.pv{transition:transform .2s ease,opacity .3s ease}
+.pv:active{transform:scale(.96)}
+.cal .cd{transition:transform .15s ease,background .2s ease}
+.cal .cd:active{transform:scale(.88)}
+.weekcard{transition:transform .35s cubic-bezier(.2,.8,.2,1);will-change:transform}
+.bar2 i{transition:width .6s cubic-bezier(.2,.8,.2,1)}
+.sheet{transition:transform .45s cubic-bezier(.34,1.3,.64,1)}
+.sheet-backdrop{-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px)}
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-delay:0ms!important;transition-duration:.01ms!important}
+}
 </style>
 </head>
 <body class="guest">
@@ -320,7 +349,7 @@ body.guest .topbar,body.guest .tabs,body.guest .view{display:none!important}
   <!-- Topbar -->
   <header class="topbar">
     <div class="brand">
-      <div class="avatar" id="avatar"></div>
+      <div class="avatar brand-logo" id="avatar">S</div>
       <div><small id="greet"></small><h1 id="title">วันนี้</h1></div>
       <div class="tb-actions">
         <button class="lang-btn" data-act="lang" aria-label="ภาษา">TH</button>
@@ -476,7 +505,7 @@ function taskRow(k, it){
     return `<label class="step ${sd ? "done" : ""}"><input type="checkbox" data-act="step" data-k="${k}" data-key="${it.key}" data-sid="${s.id}" ${sd ? "checked" : ""}><span>${esc(s.text)}</span></label>`;
   }).join("");
   return `<div class="task ${dn ? "done" : ""}">
-    <button class="chk" data-act="toggle" data-k="${k}" data-key="${it.key}" aria-label="ทำเสร็จ">✓</button>
+    <button class="chk ${state._pop === k + "|" + it.key ? "pop" : ""}" data-act="toggle" data-k="${k}" data-key="${it.key}" aria-label="ทำเสร็จ">✓</button>
     <span class="ico">${it.icon || "📌"}</span>
     <div class="tbody">
       <div class="tt" data-act="edit" data-k="${k}" data-key="${it.key}">${esc(it.text)}${it.src === "T" ? ' <span class="chip">ทุกวัน</span>' : ""}</div>
@@ -604,7 +633,6 @@ function render(){
   const hr = new Date().getHours();
   $("greet").textContent = hr < 12 ? "Good morning," : hr < 18 ? "Good afternoon," : "Good evening,";
   $("title").textContent = TITLES[state.tab];
-  $("avatar").innerHTML = u.picture ? `<img src="${esc(u.picture)}" alt="">` : esc((u.name || "?").charAt(0).toUpperCase());
   document.querySelectorAll(".tabs .pill button[data-tab]").forEach(b => b.classList.toggle("on", b.dataset.tab === state.tab));
   const head = state.tab === "today" ? `<div><div class="greet">${$("greet").textContent}</div><div class="name">${esc(u.name)}</div></div>` : "";
   $("view").innerHTML = head + VIEWS[state.tab]();
@@ -804,10 +832,32 @@ function loadGoogle(){
   }, { passive: true });
 })();
 
+// ===== Motion: directional tab transitions =====
+const TAB_ORDER = ["today","schedule","history","summary","profile"];
+function switchTab(next){
+  if (next === state.tab) return;
+  const dir = TAB_ORDER.indexOf(next) > TAB_ORDER.indexOf(state.tab) ? 1 : -1;
+  popNav();
+  const out = $("view").animate(
+    [{opacity:1, transform:"translateX(0)"}, {opacity:0, transform:`translateX(${-dir * 28}px)`}],
+    {duration:170, easing:"ease-in", fill:"forwards"});
+  out.finished.then(() => {
+    state.tab = next;
+    render();
+    out.cancel();
+    const v = $("view");
+    v.animate(
+      [{opacity:0, transform:`translateX(${dir * 28}px)`}, {opacity:1, transform:"translateX(0)"}],
+      {duration:340, easing:"cubic-bezier(.2,.8,.2,1)"});
+    v.classList.add("enter");
+    setTimeout(() => v.classList.remove("enter"), 1000);
+  });
+}
+
 // ===== Events =====
 document.addEventListener("click", e => {
   const tabBtn = e.target.closest("[data-tab]");
-  if (tabBtn && tabBtn.closest(".tabs")) { state.tab = tabBtn.dataset.tab; popNav(); return render(); }
+  if (tabBtn && tabBtn.closest(".tabs")) { return switchTab(tabBtn.dataset.tab); }
 
   const el = e.target.closest("[data-act]");
   if (!el) return;
@@ -824,7 +874,7 @@ document.addEventListener("click", e => {
     case "fab": return openSheet();
     case "addHere": return openSheet();
     case "closeSheet": return closeSheet();
-    case "toggle": toggleKey(`${k}|${key}`); return render();
+    case "toggle": { const id = `${k}|${key}`; toggleKey(id); state._pop = state.done[id] ? id : null; render(); state._pop = null; return; }
     case "step": toggleKey(`${k}|${key}|${el.dataset.sid}`); return render();
     case "del": {
       if (key.charAt(0) === "T") state.templates = state.templates.filter(x => "T" + x.id !== key);
@@ -855,6 +905,17 @@ document.addEventListener("click", e => {
   }
 });
 document.addEventListener("submit", e => { if (e.target.id === "addForm") submitAdd(e); });
+document.addEventListener("pointermove", e => {
+  const c = e.target.closest && e.target.closest(".weekcard");
+  if (!c) return;
+  const r = c.getBoundingClientRect();
+  const x = (e.clientX - r.left) / r.width - 0.5, y = (e.clientY - r.top) / r.height - 0.5;
+  c.style.transform = `perspective(700px) rotateX(${(-y * 8).toFixed(2)}deg) rotateY(${(x * 10).toFixed(2)}deg)`;
+});
+document.addEventListener("pointerout", e => {
+  const c = e.target.closest && e.target.closest(".weekcard");
+  if (c && !c.contains(e.relatedTarget)) c.style.transform = "";
+});
 window.addEventListener("resize", moveIndicator);
 
 // ===== Start =====
