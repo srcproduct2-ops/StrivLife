@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>StrivLife</title>
 <meta name="theme-color" content="#6366f1">
 <meta name="mobile-web-app-capable" content="yes">
@@ -10,11 +10,11 @@
 <meta name="apple-mobile-web-app-title" content="StrivLife">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%236366f1'/%3E%3Cstop offset='1' stop-color='%238b5cf6'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='100' height='100' rx='28' fill='url(%23g)'/%3E%3Cg fill='%23fff'%3E%3Crect x='20' y='58' width='16' height='20' rx='8'/%3E%3Crect x='42' y='46' width='16' height='32' rx='8'/%3E%3Crect x='64' y='34' width='16' height='44' rx='8'/%3E%3C/g%3E%3Cpath d='M72 32C67 22 75 12 87 14C89 26 81 34 72 32Z' fill='%2386efac'/%3E%3C/svg%3E">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#f6f6fb;--card:#ffffff;--text:#1e1b4b;--muted:#6b6f8a;--soft:#f0f0fa;--border:#e8e8f4;--dark:#1e1b4b;--grad:linear-gradient(135deg,#6366f1 0%,#8b5cf6 100%);--grad-soft:linear-gradient(135deg,#eef2ff,#f5f3ff);--accent:#6366f1;--ok:#10b981;--shadow:0 1px 2px rgba(30,27,75,.04),0 10px 30px rgba(30,27,75,.06);color-scheme:light}
 *{box-sizing:border-box}
-html,body{margin:0;height:100%;background:#fff;color:var(--text);font:15px/1.6 "Inter","Sarabun",system-ui,-apple-system,sans-serif;-webkit-font-smoothing:antialiased;overscroll-behavior-y:contain}
+html,body{margin:0;height:100%;background:#fff;color:var(--text);font:15px/1.6 "Outfit","Sarabun",system-ui,-apple-system,sans-serif;-webkit-font-smoothing:antialiased;overscroll-behavior-y:contain}
 body{display:flex;justify-content:center}
 [hidden]{display:none!important}
 
@@ -349,6 +349,161 @@ body.guest .topbar,body.guest .tabs,body.guest .view{display:none!important}
 .goo-blob::before,.goo-blob::after{content:"";position:absolute;top:15px;width:14px;height:14px;pointer-events:none}
 .goo-blob::before{left:-10px;background:radial-gradient(circle at 0 0,transparent 13.5px,#fff 14.5px)}
 .goo-blob::after{right:-10px;background:radial-gradient(circle at 100% 0,transparent 13.5px,#fff 14.5px)}
+/* Activity panel: spacing, presets, icon picker, cost */
+.frow{gap:18px}
+.presets{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 14px}
+.preset{background:var(--soft);color:var(--text);box-shadow:none;padding:8px 12px;border-radius:999px;font-size:.85rem;font-weight:700;display:inline-flex;align-items:center;gap:6px}
+.preset span{font-size:1rem}
+.preset.own{background:none;border:1.5px dashed #c7c9e2}
+.preset.on{background:var(--grad-soft);outline:2px solid #6366f1;outline-offset:-2px}
+.preset:hover{transform:translateY(-1px);box-shadow:none}
+.ipick{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-top:4px}
+.ipk{background:var(--soft);color:var(--text);box-shadow:none;padding:6px 2px;border-radius:14px;display:flex;flex-direction:column;align-items:center;gap:2px;border:1.5px solid transparent}
+.ipk .ie{font-size:1.25rem;line-height:1.2}
+.ipk small{font-size:.62rem;color:var(--muted);font-weight:600}
+.ipk.on{border-color:#6366f1;background:var(--grad-soft)}
+.ipk:hover{transform:none;box-shadow:none}
+.chip.cost{background:#fef3c7;color:#92400e}
+/* Compact add/edit panel */
+.sheet{max-height:78%;overflow-y:auto;padding:8px 16px calc(16px + env(safe-area-inset-bottom,0px))}
+.sheet-grip{margin:0 auto 10px;width:36px}
+.sheet h3{font-size:.92rem;margin:0 0 8px}
+.presets{gap:6px;margin:0 0 10px}
+.preset{padding:5px 10px;font-size:.75rem;gap:4px}
+.preset span{font-size:.85rem}
+.addform{gap:8px}
+.addform input,.addform select,.addform textarea{padding:8px 10px;font-size:14px;border-radius:12px}
+.fld{font-size:.68rem;gap:3px}
+.frow{gap:12px}
+.addform textarea{min-height:0}
+.ipick{gap:4px;margin-top:2px}
+.ipk{padding:4px 1px;border-radius:11px}
+.ipk .ie{font-size:1rem}
+.ipk small{font-size:.56rem}
+.rep{font-size:.8rem}
+.rep input{width:15px;height:15px}
+.sheet-go{padding:9px 16px;font-size:.85rem;border-radius:14px;margin-top:2px}
+/* Top bar: today shows the date; the small greeting is removed from here (the big greeting stays in the body) */
+#greet{display:none}
+.topbar h1{font-size:1rem}
+/* Smaller today card, split into progress and spending */
+.weekcard.split{display:grid;grid-template-columns:1fr 1fr;gap:0;min-height:0;padding:14px 16px}
+.weekcard .half{display:flex;flex-direction:column;gap:2px;min-width:0}
+.weekcard .half:first-child{padding-right:12px;border-right:1px solid rgba(255,255,255,.22)}
+.weekcard .half:last-child{padding-left:14px}
+.weekcard .big.sm{font-size:1.5rem;line-height:1.1}
+.weekcard .bar2{margin:6px 0 4px}
+.segs{display:flex;gap:3px;background:var(--soft);border-radius:12px;padding:3px;margin-bottom:10px}
+.seg{flex:1;background:none;color:var(--muted);box-shadow:none;padding:6px 4px;border-radius:9px;font-size:.8rem;font-weight:700}
+.seg.on{background:#fff;color:var(--text);box-shadow:var(--shadow)}
+.seg:hover{transform:none;box-shadow:none}
+.bars.spend{height:120px;gap:4px}
+.bars.spend span{font-size:.62rem}
+/* Summary now combines progress and spending; the bar has four tabs */
+.tabs .pill{grid-template-columns:repeat(4,1fr)}
+/* Calories */
+.kcal .kc-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:10px}
+.kcal .kc-big{font-size:1.6rem;font-weight:900;letter-spacing:-.02em}
+.kcal .kc-big small{font-size:.8rem;font-weight:600;color:var(--muted)}
+.bar3{height:6px;border-radius:6px;background:var(--soft);overflow:hidden}
+.bar3 i{display:block;height:100%;background:var(--grad);border-radius:6px;transition:width .6s cubic-bezier(.2,.8,.2,1)}
+.kc-split{display:flex;justify-content:space-between;gap:8px;margin-top:10px;font-size:.78rem;color:var(--muted)}
+.kc-split b{color:var(--text);font-weight:800}
+.chip.kcal{background:#dcfce7;color:#166534}
+/* Locked frame: no pinch or double-tap zoom; vertical scrolling only */
+html,body,#app,.sheet,.tabs{touch-action:pan-y;-webkit-user-select:none;user-select:none}
+input,textarea,select{-webkit-user-select:text;user-select:text}
+.addform input,.addform select,.addform textarea,.au-in input{font-size:16px!important}
+/* ---------- Color & depth pass ---------- */
+#app{background:
+  radial-gradient(900px 500px at -10% -10%, rgba(165,180,252,.35), transparent 60%),
+  radial-gradient(700px 420px at 110% 15%, rgba(251,207,232,.40), transparent 60%),
+  radial-gradient(800px 500px at 50% 110%, rgba(167,243,208,.35), transparent 60%),
+  #f7f6ff}
+.topbar{background:rgba(247,246,255,.78)}
+.name{background:linear-gradient(90deg,#312e81,#7c3aed 60%,#db2777);-webkit-background-clip:text;background-clip:text;color:transparent}
+.card{border:0;box-shadow:0 2px 6px rgba(79,70,229,.06),0 14px 34px rgba(79,70,229,.10);position:relative;overflow:hidden}
+.card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--grad);opacity:.9}
+.card.per-morning::before{background:linear-gradient(180deg,#fbbf24,#f97316)}
+.card.per-afternoon::before{background:linear-gradient(180deg,#38bdf8,#6366f1)}
+.card.per-evening::before{background:linear-gradient(180deg,#a855f7,#ec4899)}
+.card h3{font-weight:800}
+.card.per-morning .ico{background:linear-gradient(135deg,#fef3c7,#fed7aa)}
+.card.per-afternoon .ico{background:linear-gradient(135deg,#dbeafe,#bae6fd)}
+.card.per-evening .ico{background:linear-gradient(135deg,#ede9fe,#fbcfe8)}
+.card.per-morning h3 span.muted{color:#b45309}
+.card.per-afternoon h3 span.muted{color:#0369a1}
+.card.per-evening h3 span.muted{color:#7e22ce}
+.pv:nth-child(4n+1) .pv-ico{background:linear-gradient(135deg,#fde68a,#fdba74)}
+.pv:nth-child(4n+2) .pv-ico{background:linear-gradient(135deg,#a7f3d0,#6ee7b7)}
+.pv:nth-child(4n+3) .pv-ico{background:linear-gradient(135deg,#bfdbfe,#a5b4fc)}
+.pv:nth-child(4n+4) .pv-ico{background:linear-gradient(135deg,#fbcfe8,#f0abfc)}
+.pv{background:linear-gradient(180deg,#ffffff,#faf9ff);border-color:#ebe9ff}
+.weekcard{background:radial-gradient(120% 120% at 100% 0%,rgba(253,186,116,.45),transparent 55%),radial-gradient(90% 90% at 0% 100%,rgba(56,189,248,.45),transparent 60%),linear-gradient(135deg,#6366f1 0%,#a855f7 55%,#ec4899 100%);box-shadow:0 20px 44px rgba(168,85,247,.35)}
+.weekcard .half:first-child{border-right-color:rgba(255,255,255,.3)}
+.bar2{background:rgba(255,255,255,.3)}
+.bar2 i{background:linear-gradient(90deg,#fef08a,#ffffff)}
+.kcal{background:linear-gradient(135deg,#ecfdf5 0%,#fff7ed 100%)}
+.kcal .kc-big{background:linear-gradient(90deg,#059669,#ea580c);-webkit-background-clip:text;background-clip:text;color:transparent}
+.bar3 i{background:linear-gradient(90deg,#10b981,#f59e0b)}
+.chip{box-shadow:0 1px 0 rgba(255,255,255,.6) inset}
+.chip.kcal{background:linear-gradient(135deg,#bbf7d0,#fde68a);color:#14532d}
+.chip.cost{background:linear-gradient(135deg,#fde68a,#fdba74);color:#7c2d12}
+.segs{background:linear-gradient(135deg,#eef2ff,#fdf2f8)}
+.seg{color:#6b7280}
+.seg.on{background:var(--grad);color:#fff;box-shadow:0 6px 16px rgba(99,102,241,.35)}
+.cal .cd{color:#312e81}
+.cal .cd.sel{background:linear-gradient(135deg,#6366f1,#ec4899)}
+.cal .cd .dot{background:linear-gradient(90deg,#f59e0b,#ec4899)}
+.cal .cd.sel .dot{background:#fff}
+.bars i{background:linear-gradient(180deg,#a78bfa,#6366f1)}
+.bars.spend i{background:linear-gradient(180deg,#fbbf24,#ef4444)}
+.stat{background:linear-gradient(135deg,#eef2ff,#fdf4ff);border:0}
+.stat:nth-child(2){background:linear-gradient(135deg,#ecfeff,#e0f2fe)}
+.stat:nth-child(3){background:linear-gradient(135deg,#fff7ed,#fef9c3)}
+.stat:nth-child(4){background:linear-gradient(135deg,#fdf2f8,#ffe4e6)}
+.stat b{background:linear-gradient(90deg,#4f46e5,#db2777);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hcell.l1{background:linear-gradient(135deg,#d1fae5,#a7f3d0);color:#065f46}
+.hcell.l2{background:linear-gradient(135deg,#6ee7b7,#34d399);color:#064e3b}
+.hcell.l3{background:linear-gradient(135deg,#10b981,#f59e0b);color:#fff}
+.hcell{background:#f1f0ff}
+.task .chk{border-color:#a5b4fc}
+.task.done .chk{background:linear-gradient(135deg,#34d399,#10b981)}
+.task.done .tt{color:#9ca3af}
+.ipk.on{background:linear-gradient(135deg,#eef2ff,#fdf2f8)}
+.preset{background:linear-gradient(135deg,#eef2ff,#fdf2f8);color:#312e81}
+.preset.own{background:none}
+.au-card{background:linear-gradient(160deg,#1e1b4b 0%,#4c1d95 55%,#831843 100%)}
+.tabs .pill{background:rgba(255,255,255,.85);box-shadow:0 14px 36px rgba(99,102,241,.22),inset 0 1px 0 rgba(255,255,255,.7)}
+.tabs .pill button:not(.on){color:#7c83a6}
+.tabs .pill button.on{color:#312e81}
+.ind{background:linear-gradient(135deg,#e0e7ff,#fae8ff)}
+.tabs .pill button.on .ic{color:#6d28d9}
+.fab{background:linear-gradient(135deg,#1e1b4b,#4c1d95)}
+.toast{background:linear-gradient(135deg,#312e81,#be185d)}
+.sheet{background:linear-gradient(180deg,#ffffff,#fbf9ff)}
+.sheet h3{background:linear-gradient(90deg,#4f46e5,#db2777);-webkit-background-clip:text;background-clip:text;color:transparent}
+button.ghost{background:linear-gradient(135deg,#eef2ff,#fdf2f8);color:#4338ca}
+/* Compact calorie card with a colored frame */
+.kcal{padding:10px 14px;border:2px solid transparent;background:linear-gradient(#ffffff,#ffffff) padding-box,linear-gradient(120deg,#10b981,#f59e0b 50%,#ec4899) border-box;box-shadow:0 6px 18px rgba(16,185,129,.12)}
+.kcal::before{display:none}
+.kcal .kc-top{margin-bottom:6px}
+.kcal .kc-big{font-size:1.15rem}
+.kcal .kc-big small{font-size:.7rem}
+.kcal .muted{font-size:.72rem}
+.kcal .ghost.sm{padding:4px 10px;font-size:.72rem}
+.kcal .bar3{height:4px}
+.kcal .kc-split{margin-top:6px;font-size:.7rem}
+.kcal p{margin:4px 0 0!important;font-size:.6rem!important}
+/* Calorie card matches the top card, colors mirrored left-to-right */
+.kcal{border:0;padding:12px 16px;color:#fff;background:radial-gradient(120% 120% at 0% 0%,rgba(253,186,116,.45),transparent 55%),radial-gradient(90% 90% at 100% 100%,rgba(56,189,248,.45),transparent 60%),linear-gradient(90deg,#ec4899 0%,#a855f7 45%,#6366f1 100%);box-shadow:0 14px 34px rgba(168,85,247,.32)}
+.kcal .kc-big{background:none;-webkit-text-fill-color:#fff;color:#fff}
+.kcal .kc-big small,.kcal .muted,.kcal p{color:rgba(255,255,255,.85)!important}
+.kcal .kc-split{color:rgba(255,255,255,.85)}
+.kcal .kc-split b{color:#fff}
+.kcal .bar3{background:rgba(255,255,255,.3)}
+.kcal .bar3 i{background:#fff}
+.kcal .ghost.sm{background:rgba(255,255,255,.22);color:#fff}
 </style>
 </head>
 <body class="guest">
@@ -438,7 +593,6 @@ body.guest .topbar,body.guest .tabs,body.guest .view{display:none!important}
       <span class="ind" aria-hidden="true"></span>
       <button data-tab="today"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"/></svg></span><span class="lb">หน้าหลัก</span></button>
       <button data-tab="schedule"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg></span><span class="lb">ตารางงาน</span></button>
-      <button data-tab="history"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5M12 7v5l3 2"/></svg></span><span class="lb">ประวัติ</span></button>
       <button data-tab="summary"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 20V10M10 20V4M16 20v-8M22 20H2"/></svg></span><span class="lb">สรุป</span></button>
       <button data-tab="profile"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg></span><span class="lb">โปรไฟล์</span></button>
     </div>
@@ -447,7 +601,8 @@ body.guest .topbar,body.guest .tabs,body.guest .view{display:none!important}
   <div class="sheet-backdrop" data-act="closeSheet" id="sheetBg" hidden></div>
 <div class="sheet" id="sheet" hidden>
   <div class="sheet-grip"></div>
-  <h3>เพิ่มรายการ</h3>
+  <h3 id="sheetTitle">เพิ่มรายการ</h3>
+  <div class="presets" id="presets"><button type="button" class="preset" data-act="preset" data-idx="0"><span>🍚</span> ข้าวเช้า</button><button type="button" class="preset" data-act="preset" data-idx="1"><span>🍚</span> ข้าวเที่ยง</button><button type="button" class="preset" data-act="preset" data-idx="2"><span>🍚</span> ข้าวเย็น</button><button type="button" class="preset" data-act="preset" data-idx="3"><span>☕</span> กินกาแฟ</button><button type="button" class="preset" data-act="preset" data-idx="4"><span>⛰️</span> ไปเที่ยว</button><button type="button" class="preset" data-act="preset" data-idx="5"><span>🏃</span> ออกกำลังกาย</button><button type="button" class="preset own" data-act="ownPreset"><span>✏️</span> สร้างเอง</button></div>
   <form class="addform" id="addForm">
     <input id="newText" placeholder="เช่น อ่านหนังสือ 20 นาที" maxlength="80" autocomplete="off">
     <div class="frow">
@@ -456,11 +611,17 @@ body.guest .topbar,body.guest .tabs,body.guest .view{display:none!important}
     </div>
     <div class="frow">
       <label class="fld"><span>ช่วง</span><select id="newPeriod"><option value="morning">เช้า</option><option value="afternoon">กลางวัน</option><option value="evening">เย็น</option></select></label>
-      <label class="fld"><span>ไอคอน</span><select id="newIcon"><option>📌</option><option>📘</option><option>✏️</option><option>🏃</option><option>💧</option><option>🧘</option><option>🍎</option><option>💻</option><option>🛌</option><option>🎯</option><option>🎵</option><option>🧹</option></select></label>
+      <label class="fld"><span>ค่าใช้จ่าย (บาท)</span><input type="number" id="newCost" min="0" step="1" inputmode="decimal" placeholder="0"></label>
     </div>
+    <div class="frow">
+      <label class="fld"><span>อาหาร</span><select id="newFood"></select></label>
+      <label class="fld"><span>จำนวน</span><input type="number" id="newQty" min="0.5" step="0.5" value="1" inputmode="decimal"></label>
+    </div>
+    <label class="fld"><span>แคลอรี่ (kcal)</span><input type="number" id="newKcal" min="0" step="1" inputmode="numeric" placeholder="0"></label>
+    <div class="fld"><span>ไอคอน</span><div class="ipick" id="ipick"><button type="button" class="ipk" data-act="pickIcon" data-i="💼"><span class="ie">💼</span><small>ทำงาน</small></button><button type="button" class="ipk" data-act="pickIcon" data-i="🍚"><span class="ie">🍚</span><small>กินข้าว</small></button><button type="button" class="ipk" data-act="pickIcon" data-i="☕"><span class="ie">☕</span><small>กาแฟ</small></button><button type="button" class="ipk" data-act="pickIcon" data-i="⛰️"><span class="ie">⛰️</span><small>ภูเขา</small></button><button type="button" class="ipk" data-act="pickIcon" data-i="🧳"><span class="ie">🧳</span><small>เที่ยว</small></button><button type="button" class="ipk" data-act="pickIcon" data-i="🏃"><span class="ie">🏃</span><small>ออกกำลัง</small></button><button type="button" class="ipk" data-act="pickIcon" data-i="📘"><span class="ie">📘</span><small>เรียน</small></button><button type="button" class="ipk" data-act="pickIcon" data-i="🛒"><span class="ie">🛒</span><small>ซื้อของ</small></button><button type="button" class="ipk" data-act="pickIcon" data-i="🚗"><span class="ie">🚗</span><small>เดินทาง</small></button><button type="button" class="ipk" data-act="pickIcon" data-i="🛌"><span class="ie">🛌</span><small>พักผ่อน</small></button><button type="button" class="ipk" data-act="pickIcon" data-i="💧"><span class="ie">💧</span><small>น้ำ</small></button><button type="button" class="ipk" data-act="pickIcon" data-i="🎵"><span class="ie">🎵</span><small>ดนตรี</small></button><button type="button" class="ipk" data-act="pickIcon" data-i="🧹"><span class="ie">🧹</span><small>งานบ้าน</small></button><button type="button" class="ipk" data-act="pickIcon" data-i="📌"><span class="ie">📌</span><small>อื่น ๆ</small></button></div><input type="hidden" id="newIcon" value="📌"></div>
     <textarea id="newSteps" rows="2" placeholder="ขั้นตอนย่อย (บรรทัดละ 1 ข้อ) ไม่บังคับ"></textarea>
     <label class="rep"><input type="checkbox" id="newRepeat"> ทำทุกวัน</label>
-    <button type="submit" class="sheet-go">เพิ่มรายการ</button>
+    <button type="submit" class="sheet-go" id="sheetSubmit">เพิ่มรายการ</button>
   </form>
 </div>
 </div>
@@ -478,6 +639,7 @@ const WEEK = ["จ","อ","พ","พฤ","ศ","ส","อา"];
 
 // templates = items repeated every day; plans = items for one date
 const state = {
+  customFoods: [], sharedFoods: [], kcalGoal: 2000,
   lang: "th", user: null, authMode: "login", tab: "today", users: [], saved: "", entering: false,
   templates: [], plans: {}, done: {},
   sel: "", month: "", calOpen: false, reminders: false
@@ -548,6 +710,17 @@ const EN = {
   "ส่งลิงก์รีเซ็ตรหัสผ่านไปที่อีเมลแล้ว":"Password reset link sent to your email",
   "กรอกอีเมลก่อน (บัญชีที่สมัครด้วย User ID ไม่สามารถรีเซ็ตทางอีเมลได้)":"Enter your email first (User ID accounts can't reset by email)"
 };
+Object.assign(EN, {
+  "ค่าใช้จ่าย (บาท)":"Cost (THB)","ค่าใช้จ่ายวันนี้":"Spending today","บันทึก":"Save","บันทึกแล้ว":"Saved",
+  "ข้าวเช้า":"Breakfast","ข้าวเที่ยง":"Lunch","ข้าวเย็น":"Dinner","กินกาแฟ":"Coffee","ไปเที่ยว":"Day trip",
+  "ออกกำลังกาย":"Workout","สร้างเอง":"Custom","ทำงาน":"Work","กินข้าว":"Eat","กาแฟ":"Coffee","ภูเขา":"Mountain",
+  "เที่ยว":"Travel","ออกกำลัง":"Exercise","เรียน":"Study","ซื้อของ":"Shopping","เดินทาง":"Transport",
+  "พักผ่อน":"Rest","น้ำ":"Water","ดนตรี":"Music","งานบ้าน":"Chores","อื่น ๆ":"Other"
+});
+Object.assign(EN, {"ทำสำเร็จวันนี้":"Done today","ยอดเงินที่ใช้":"Spending","สัปดาห์":"Week","เดือน":"Month","ปี":"Year"});
+Object.assign(EN, {"ความสำเร็จ":"Progress","ค่าใช้จ่าย":"Spending"});
+Object.assign(EN, {"ข้าวผัด":"Fried rice","ข้าวมันไก่":"Chicken rice","ข้าวกะเพราหมูสับไข่ดาว":"Basil pork with egg","ข้าวหมูแดง":"Red pork rice","ข้าวราดแกง":"Rice with curry","ข้าวต้ม":"Rice porridge","ก๋วยเตี๋ยวเรือ":"Boat noodles","ก๋วยเตี๋ยวหมู":"Pork noodles","บะหมี่หมูแดง":"Red pork noodles","ส้มตำไทย":"Thai papaya salad","ไก่ย่าง":"Grilled chicken","ข้าวเหนียว":"Sticky rice","ผัดกะเพรา":"Basil stir-fry","ต้มยำกุ้ง":"Tom yum goong","แกงเขียวหวาน":"Green curry","ข้าวไข่เจียว":"Rice with omelette","ลาบหมู":"Pork larb","แซนด์วิช":"Sandwich","ไข่ต้ม":"Boiled egg","กล้วย":"Banana","แอปเปิ้ล":"Apple","นมจืด":"Plain milk","กาแฟดำ":"Black coffee","กาแฟลาเต้":"Latte","ชาเขียว":"Green tea","น้ำอัดลม":"Soft drink","โยเกิร์ต":"Yogurt","ข้าวโอ๊ต":"Oatmeal","สลัดผัก":"Vegetable salad","โรตี":"Roti","ไอศกรีม":"Ice cream"});
+Object.assign(EN, {"แคลอรี่วันนี้":"Calories today","ตั้งเป้า":"Set goal","ค่าประมาณจากฐานข้อมูล":"Estimates from the food list","แคลอรี่ที่ได้รับ":"Calories eaten","เป้าหมายแคลอรี่ต่อวัน (kcal)":"Daily calorie goal (kcal)","ชื่ออาหาร":"Food name","แคลอรี่ต่อหน่วย (kcal)":"Calories per serving (kcal)","— ไม่เลือก —":"— None —","+ เพิ่มอาหารเอง":"+ Add my own food","อาหาร":"Food","จำนวน":"Qty","แคลอรี่ (kcal)":"Calories (kcal)"});
 function tr(s){ return state.lang === "en" && EN[s] ? EN[s] : s; }
 // Walks the app's text nodes and placeholders; keeps the original Thai so it can switch back
 function i18n(){
@@ -604,8 +777,8 @@ function taskRow(k, it){
     <button class="chk ${state._pop === k + "|" + it.key ? "pop" : ""}" data-act="toggle" data-k="${k}" data-key="${it.key}" aria-label="ทำเสร็จ">✓</button>
     <span class="ico">${it.icon || "📌"}</span>
     <div class="tbody">
-      <div class="tt" data-act="edit" data-k="${k}" data-key="${it.key}">${esc(it.text)}${it.src === "T" ? ' <span class="chip">ทุกวัน</span>' : ""}</div>
-      ${it.time ? `<div class="tm">${esc(it.time)}</div>` : ""}
+      <div class="tt" data-act="edit" data-k="${k}" data-key="${it.key}">${esc(it.text)}${it.src === "T" ? ' <span class="chip">ทุกวัน</span>' : ""}${it.kcal ? ` <span class="chip kcal">${it.kcal} kcal</span>` : ""}</div>
+      ${(it.time || it.cost) ? `<div class="tm">${esc(it.time || "")}${it.time && it.cost ? " · " : ""}${it.cost ? "฿" + it.cost : ""}</div>` : ""}
       ${steps ? `<div class="steps">${steps}</div>` : ""}
     </div>
     <button class="danger sm" data-act="del" data-k="${k}" data-key="${it.key}">ลบ</button>
@@ -615,7 +788,7 @@ function groupList(k){
   const its = itemsFor(k);
   return PERIODS.map(([p, label]) => {
     const list = its.filter(i => i.period === p);
-    return `<section class="card"><h3>${label}<span class="muted">${list.filter(i => isDone(k, i)).length}/${list.length}</span></h3>
+    return `<section class="card per-${p}"><h3>${label}<span class="muted">${list.filter(i => isDone(k, i)).length}/${list.length}</span></h3>
       ${list.length ? list.map(i => taskRow(k, i)).join("") : '<p class="muted" style="margin:0">ยังไม่มีรายการ</p>'}</section>`;
   }).join("");
 }
@@ -629,11 +802,20 @@ function previewRow(k){
 function vToday(){
   const k = todayKey(), st = dayStat(k), pct = pctOf(st) || 0;
   return `
-    <section class="weekcard">
-      <div class="lbl">วันนี้ทำสำเร็จ</div>
-      <div><div class="big">${st.done} / ${st.total}</div><div class="lbl">รายการ</div><div class="bar2"><i style="width:${pct}%"></i></div></div>
-      <div class="go"><span>${pct}%</span><span>${pct >= 100 && st.total ? "ยอดเยี่ยม!" : "ทำต่ออีกนิด ›"}</span></div>
+    <section class="weekcard split">
+      <div class="half">
+        <div class="lbl">ทำสำเร็จวันนี้</div>
+        <div class="big sm">${st.done} / ${st.total}</div>
+        <div class="bar2"><i style="width:${pct}%"></i></div>
+        <div class="lbl">${pct}%</div>
+      </div>
+      <div class="half">
+        <div class="lbl">ค่าใช้จ่ายวันนี้</div>
+        <div class="big sm">฿${daySpend(k).toLocaleString("en-US")}</div>
+        <div class="lbl">${itemsFor(k).filter(i => Number(i.cost) > 0).length} รายการ</div>
+      </div>
     </section>
+    ${kcalCard()}
     <section class="card"><h3>วันนี้</h3>${previewRow(k)}</section>
     <section class="card"><h3>พรุ่งนี้ <span class="muted">เตรียมไว้ล่วงหน้า</span></h3>${previewRow(addDays(k, 1))}</section>
     ${groupList(k)}`;
@@ -707,6 +889,7 @@ function vSummary(){
       <div class="stat"><b>${totalDone}</b><span>รายการที่ทำสำเร็จทั้งหมด</span></div>
       <div class="stat"><b>${avg}%</b><span>เฉลี่ยทุกวันที่บันทึก</span></div>
       <div class="stat"><b>${itemsFor(t).length}</b><span>รายการวันนี้</span></div>
+      <div class="stat"><b>฿${itemsFor(t).reduce((a, i) => a + (Number(i.cost) || 0), 0)}</b><span>ค่าใช้จ่ายวันนี้</span></div>
     </section>`;
 }
 function vProfile(){
@@ -722,20 +905,60 @@ function vProfile(){
       <div class="actions"><button class="danger" data-act="logout">ออกจากระบบ</button></div>
     </section>`;
 }
-const VIEWS = { today: vToday, schedule: vSchedule, history: vHistory, summary: vSummary, profile: vProfile };
+function dayVal(k, m){ return itemsFor(k).reduce((a, i) => a + (Number(m === "kcal" ? i.kcal : i.cost) || 0), 0); }
+function daySpend(k){ return dayVal(k, "cost"); }
+function spendCard(){
+  const metric = state.sumTab === "kcal" ? "kcal" : "cost";
+  const val = k => dayVal(k, metric);
+  const fmt = n => metric === "kcal" ? n.toLocaleString("en-US") + " kcal" : "฿" + n.toLocaleString("en-US");
+  const span = state.spanTab || "week", t = todayKey(), bars = [];
+  let total = 0, n = 0;
+  if (span === "year") {
+    const y = t.slice(0, 4);
+    for (let m = 1; m <= 12; m++) {
+      const mk = `${y}-${pad(m)}`, days = new Date(+y, m, 0).getDate();
+      let v = 0;
+      for (let d = 1; d <= days; d++) { const k = `${mk}-${pad(d)}`; if (k <= t) v += val(k); }
+      bars.push({ label: new Date(+y, m - 1, 1).toLocaleDateString("en-US", {month:"short"}).slice(0, 1), v });
+    }
+  } else if (span === "month") {
+    const mk = t.slice(0, 7), today = parseKey(t).getDate();
+    for (let d = 1; d <= today; d++) bars.push({ label: String(d), v: val(`${mk}-${pad(d)}`) });
+  } else {
+    for (let i = 6; i >= 0; i--) {
+      const k = addDays(t, -i);
+      bars.push({ label: parseKey(k).toLocaleDateString("en-US", {weekday:"short"}).slice(0, 1), v: val(k) });
+    }
+  }
+  bars.forEach(b => total += b.v);
+  const max = Math.max(1, ...bars.map(b => b.v));
+  const segs = [["week","สัปดาห์"],["month","เดือน"],["year","ปี"]]
+    .map(([k, l]) => `<button class="seg ${span === k ? "on" : ""}" data-act="span" data-s="${k}">${l}</button>`).join("");
+  return `<section class="card"><h3>${metric === "kcal" ? "แคลอรี่ที่ได้รับ" : "ยอดเงินที่ใช้"}<span class="muted">${fmt(total)}</span></h3>
+    <div class="segs">${segs}</div>
+    <div class="bars spend">${bars.map(b => `<div><i style="height:${Math.max(4, b.v / max * 100)}%"></i><span>${esc(b.label)}</span></div>`).join("")}</div></section>`;
+}
+function vSummaryTab(){
+  const sub = state.sumTab || "ach";
+  const seg = (k, l) => `<button class="seg ${sub === k ? "on" : ""}" data-act="sumTab" data-s="${k}">${l}</button>`;
+  const switcher = `<div class="segs">${seg("ach", "ความสำเร็จ")}${seg("spend", "ค่าใช้จ่าย")}${seg("kcal", "แคลอรี่")}</div>`;
+  return switcher + (sub === "ach" ? vHistory() + vSummary() : spendCard());
+}
+const FOODS = [{name:"ข้าวผัด", icon:"🍚", kcal:550},{name:"ข้าวมันไก่", icon:"🍗", kcal:600},{name:"ข้าวกะเพราหมูสับไข่ดาว", icon:"🍳", kcal:650},{name:"ข้าวหมูแดง", icon:"🍖", kcal:580},{name:"ข้าวราดแกง", icon:"🥘", kcal:550},{name:"ข้าวต้ม", icon:"🥣", kcal:300},{name:"ก๋วยเตี๋ยวเรือ", icon:"🍜", kcal:400},{name:"ก๋วยเตี๋ยวหมู", icon:"🍜", kcal:350},{name:"บะหมี่หมูแดง", icon:"🍜", kcal:450},{name:"ส้มตำไทย", icon:"🥗", kcal:150},{name:"ไก่ย่าง", icon:"🍗", kcal:300},{name:"ข้าวเหนียว", icon:"🍚", kcal:300},{name:"ผัดกะเพรา", icon:"🍛", kcal:480},{name:"ต้มยำกุ้ง", icon:"🍲", kcal:150},{name:"แกงเขียวหวาน", icon:"🍛", kcal:250},{name:"ข้าวไข่เจียว", icon:"🍳", kcal:500},{name:"ลาบหมู", icon:"🥗", kcal:280},{name:"แซนด์วิช", icon:"🥪", kcal:250},{name:"ไข่ต้ม", icon:"🥚", kcal:75},{name:"กล้วย", icon:"🍌", kcal:105},{name:"แอปเปิ้ล", icon:"🍎", kcal:95},{name:"นมจืด", icon:"🥛", kcal:130},{name:"กาแฟดำ", icon:"☕", kcal:5},{name:"กาแฟลาเต้", icon:"☕", kcal:190},{name:"ชาเขียว", icon:"🍵", kcal:90},{name:"น้ำอัดลม", icon:"🥤", kcal:140},{name:"โยเกิร์ต", icon:"🥣", kcal:120},{name:"ข้าวโอ๊ต", icon:"🥣", kcal:150},{name:"สลัดผัก", icon:"🥗", kcal:120},{name:"โรตี", icon:"🫓", kcal:300},{name:"ไอศกรีม", icon:"🍨", kcal:200}];
+const VIEWS = { today: vToday, schedule: vSchedule, history: vHistory, summary: vSummaryTab, profile: vProfile };
 
 function render(){
   const u = state.user;
   if (!u) return;
   const hr = new Date().getHours();
-  $("greet").textContent = hr < 12 ? "Good morning," : hr < 18 ? "Good afternoon," : "Good evening,";
-  $("title").textContent = TITLES[state.tab];
+  $("greet").textContent = timeNow();
+  $("title").textContent = state.tab === "today" ? u.name : TITLES[state.tab];
   // Top-left badge shows the user's profile photo (or initial / guest icon)
   $("avatar").innerHTML = u.picture ? `<img src="${esc(u.picture)}" alt="">`
     : u.provider === "anonymous" ? '<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>'
     : esc((u.name || "?").charAt(0).toUpperCase());
   document.querySelectorAll(".tabs .pill button[data-tab]").forEach(b => b.classList.toggle("on", b.dataset.tab === state.tab));
-  const head = state.tab === "today" ? `<div><div class="greet">${$("greet").textContent}</div><div class="name">${esc(u.name)}</div></div>` : "";
+  const head = state.tab === "today" ? `<div><div class="greet">${hr < 12 ? "Good morning," : hr < 18 ? "Good afternoon," : "Good evening,"}</div><div class="name">${esc(dateNow())}</div></div>` : "";
   $("view").innerHTML = head + VIEWS[state.tab]();
   moveIndicator();
   i18n();
@@ -743,13 +966,42 @@ function render(){
 }
 
 // ===== Add panel =====
-function openSheet(){
-  $("newDate").value = state.sel;
-  $("newRepeat").checked = false;
+function openSheet(ed){
+  state.editing = ed || null;
+  const it = ed ? findItem(ed.k, ed.key) : null;
+  $("sheetTitle").textContent = tr(it ? "แก้ไขรายการ" : "เพิ่มรายการ");
+  $("sheetSubmit").textContent = tr(it ? "บันทึก" : "เพิ่มรายการ");
+  $("presets").hidden = !!it;
+  $("newText").value = it ? it.text : "";
+  $("newDate").value = it ? ed.k : state.sel;
+  $("newTime").value = it ? (it.time || "") : "";
+  $("newCost").value = it && it.cost ? it.cost : "";
+  $("newPeriod").value = it ? it.period : "morning";
+  setIcon(it ? (it.icon || "📌") : "📌");
+  $("newSteps").value = it ? (it.steps || []).map(x => x.text).join("\n") : "";
+  $("newRepeat").checked = it ? it.src === "T" : false;
+  fillFoods();
+  refreshFoods().then(fillFoods);
+  $("newFood").value = "";
+  $("newQty").value = 1;
+  $("newKcal").value = it && it.kcal ? it.kcal : "";
   const sh = $("sheet"), bg = $("sheetBg");
   sh.hidden = false; bg.hidden = false; i18n();
   requestAnimationFrame(() => { sh.classList.add("open"); bg.classList.add("open"); });
   setTimeout(() => $("newText").focus(), 350);
+}
+function setIcon(e){
+  $("newIcon").value = e;
+  document.querySelectorAll("#ipick .ipk").forEach(b => b.classList.toggle("on", b.dataset.i === e));
+}
+const PRESETS = [
+  {t:"ข้าวเช้า", i:"🍚", p:"morning"}, {t:"ข้าวเที่ยง", i:"🍚", p:"afternoon"}, {t:"ข้าวเย็น", i:"🍚", p:"evening"},
+  {t:"กินกาแฟ", i:"☕", p:"afternoon"}, {t:"ไปเที่ยว", i:"⛰️", p:"afternoon"}, {t:"ออกกำลังกาย", i:"🏃", p:"morning"}
+];
+function applyPreset(idx){
+  const p = PRESETS[idx]; if (!p) return;
+  $("newText").value = p.t; $("newPeriod").value = p.p; setIcon(p.i);
+  document.querySelectorAll("#presets .preset").forEach((b, i) => b.classList.toggle("on", i === idx));
 }
 function closeSheet(){
   const sh = $("sheet"), bg = $("sheetBg");
@@ -762,16 +1014,78 @@ function submitAdd(e){
   const text = $("newText").value.trim();
   if (!text) return toast("กรุณาพิมพ์รายการก่อน");
   const date = $("newDate").value || state.sel;
+  const ed = state.editing;
+  const old = ed ? findItem(ed.k, ed.key) : null;
+  const oldSteps = old ? (old.steps || []) : [];
+  const steps = $("newSteps").value.split("\n").map(x => x.trim()).filter(Boolean)
+    .map((t, i) => ({ id: oldSteps[i] ? oldSteps[i].id : uid(), text: t }));
   const item = {
-    id: uid(), text,
+    id: old ? old.id : uid(), text,
     period: $("newPeriod").value, time: $("newTime").value, icon: $("newIcon").value,
-    steps: $("newSteps").value.split("\n").map(x => x.trim()).filter(Boolean).map(t => ({id: uid(), text: t}))
+    cost: Number($("newCost").value) || 0, kcal: Number($("newKcal").value) || 0, steps
   };
+  if (old) {
+    const srcList = old.src === "T" ? state.templates : (state.plans[ed.k] || []);
+    const idx = srcList.findIndex(x => x.id === old.id);
+    if (idx >= 0) srcList.splice(idx, 1);
+  }
   if ($("newRepeat").checked) state.templates.push(item);
   else { if (!state.plans[date]) state.plans[date] = []; state.plans[date].push(item); }
   state.sel = date; state.month = date.slice(0, 7);
+  state.editing = null;
   e.target.reset();
-  closeSheet(); render(); toast("เพิ่มรายการแล้ว");
+  closeSheet(); render(); toast(old ? "บันทึกแล้ว" : "เพิ่มรายการแล้ว");
+}
+
+// ===== Food & calories =====
+function allFoods(){ return [...FOODS, ...(state.sharedFoods || [])]; }
+function refreshFoods(){
+  if (!window.FB || !window.FB.loadFoods) return Promise.resolve();
+  return window.FB.loadFoods().then(list => {
+    const ids = new Set(list.map(f => f.id));
+    state.sharedFoods = [...list, ...state.sharedFoods.filter(f => !ids.has(f.id))];
+  }).catch(e => console.warn("foods", e));
+}
+function fillFoods(){
+  $("newFood").innerHTML = `<option value="">${tr("— ไม่เลือก —")}</option>`
+    + allFoods().map((f, i) => `<option value="${i}">${f.icon || "🍽️"} ${tr(f.name)} · ${f.kcal} kcal</option>`).join("")
+    + `<option value="__new">${tr("+ เพิ่มอาหารเอง")}</option>`;
+}
+function recalcKcal(){
+  const f = allFoods()[Number($("newFood").value)];
+  if (!f) return;
+  $("newKcal").value = Math.round(f.kcal * (Number($("newQty").value) || 1));
+}
+function onFoodChange(){
+  const v = $("newFood").value;
+  if (v === "__new") {
+    const name = (prompt(tr("ชื่ออาหาร")) || "").trim();
+    if (!name) { $("newFood").value = ""; return; }
+    const kcal = Number(prompt(tr("แคลอรี่ต่อหน่วย (kcal)"), "300")) || 0;
+    const food = { id: uid(), name, icon: "🍽️", kcal, custom: true };
+    state.sharedFoods.push(food);
+    if (window.FB && window.FB.addFood) {
+      window.FB.addFood(food).then(() => toast("บันทึกอาหารลงฐานข้อมูลแล้ว"))
+        .catch(e => { console.error(e); toast("บันทึกอาหารไม่สำเร็จ"); });
+    } else toast("เพิ่มอาหารแล้ว (บันทึกเฉพาะในเครื่อง)");
+    fillFoods();
+    $("newFood").value = String(allFoods().length - 1);
+  }
+  const f = allFoods()[Number($("newFood").value)];
+  if (!f) return;
+  if (!$("newText").value.trim()) $("newText").value = tr(f.name);
+  recalcKcal();
+}
+function kcalCard(){
+  const k = todayKey(), its = itemsFor(k);
+  const sum = p => its.filter(i => !p || i.period === p).reduce((a, i) => a + (Number(i.kcal) || 0), 0);
+  const total = sum(), goal = state.kcalGoal || 2000, pct = Math.min(100, Math.round(total / goal * 100));
+  return `<section class="card kcal">
+    <div class="kc-top"><div><div class="muted">แคลอรี่วันนี้</div><b class="kc-big">${total} <small>/ ${goal} kcal</small></b></div>
+      <button class="ghost sm" data-act="kcalGoal">ตั้งเป้า</button></div>
+    <div class="bar3"><i style="width:${pct}%"></i></div>
+    <div class="kc-split">${PERIODS.map(([p, l]) => `<span><b>${sum(p)}</b> ${l}</span>`).join("")}</div>
+    <p class="muted" style="margin:6px 0 0;font-size:.7rem">ค่าประมาณจากฐานข้อมูล</p></section>`;
 }
 
 // ===== Tab bar (liquid indicator) =====
@@ -826,6 +1140,7 @@ function setScreen(){
   setScreen._t2 = setTimeout(() => { a.hidden = true; a.classList.remove("over", "leaving"); }, 1100);
 }
 function login(user){
+  refreshFoods();
   state.user = user;
   state.tab = "today";
   setScreen(); render(); window.scrollTo(0, 0);
@@ -838,18 +1153,19 @@ function login(user){
 // ===== Firebase: per-user data (Firestore) =====
 function snapshot(){
   return JSON.stringify({
-    templates: state.templates, plans: state.plans,
+    templates: state.templates, plans: state.plans, customFoods: state.customFoods, kcalGoal: state.kcalGoal,
     done: Object.keys(state.done), reminders: state.reminders, lang: state.lang
   });
 }
 function resetData(){
-  state.templates = []; state.plans = {}; state.done = {};
+  state.templates = []; state.plans = {}; state.done = {}; state.customFoods = []; state.kcalGoal = 2000;
   state.reminders = false; state.saved = "";
 }
 function applyData(d){
   resetData();
   d = d || {};
   state.templates = d.templates || [];
+  state.customFoods = d.customFoods || []; state.kcalGoal = d.kcalGoal || 2000;
   state.plans = d.plans || {};
   (d.done || []).forEach(k => state.done[k] = true);
   state.reminders = !!d.reminders;
@@ -1123,7 +1439,7 @@ async function googleLogin(){
 })();
 
 // ===== Motion: directional tab transitions =====
-const TAB_ORDER = ["today","schedule","history","summary","profile"];
+const TAB_ORDER = ["today","schedule","summary","profile"];
 function switchTab(next){
   if (next === state.tab) return;
   const dir = TAB_ORDER.indexOf(next) > TAB_ORDER.indexOf(state.tab) ? 1 : -1;
@@ -1197,16 +1513,13 @@ document.addEventListener("click", e => {
       deferredInstall.userChoice.finally(() => { deferredInstall = null; render(); });
       return;
     }
-    case "edit": {
-      const it = findItem(k, key); if (!it) return;
-      const v = prompt(tr("แก้ไขรายการ"), it.text);
-      if (v && v.trim()) {
-        const list = it.src === "T" ? state.templates : (state.plans[k] || []);
-        const real = list.find(x => (it.src === "T" ? "T" : "P") + x.id === key);
-        if (real) real.text = v.trim();
-      }
-      return render();
-    }
+    case "sumTab": state.sumTab = el.dataset.s; return render();
+    case "kcalGoal": { const v = Number(prompt(tr("เป้าหมายแคลอรี่ต่อวัน (kcal)"), state.kcalGoal || 2000)); if (v > 0) state.kcalGoal = v; return render(); }
+    case "span": state.spanTab = el.dataset.s; return render();
+    case "pickIcon": setIcon(el.dataset.i); return;
+    case "preset": applyPreset(Number(el.dataset.idx)); return;
+    case "ownPreset": $("newText").focus(); return;
+    case "edit": openSheet({ k, key }); return;
     case "pick": state.sel = k; state.month = k.slice(0, 7); return render();
     case "openDay": state.sel = k; state.month = k.slice(0, 7); state.tab = "schedule"; popNav(); return render();
     case "mprev":
@@ -1236,8 +1549,24 @@ document.addEventListener("pointerout", e => {
   if (c && !c.contains(e.relatedTarget)) c.style.transform = "";
 });
 window.addEventListener("resize", () => moveIndicator(true));
+document.addEventListener("change", e => { if (e.target.id === "newFood") onFoodChange(); });
+document.addEventListener("input", e => { if (e.target.id === "newQty") recalcKcal(); });
+
+// ===== Lock zoom (pinch, double-tap, ctrl+wheel) =====
+["gesturestart","gesturechange","gestureend"].forEach(ev => document.addEventListener(ev, e => e.preventDefault(), {passive:false}));
+document.addEventListener("touchmove", e => { if (e.touches.length > 1) e.preventDefault(); }, {passive:false});
+document.addEventListener("wheel", e => { if (e.ctrlKey) e.preventDefault(); }, {passive:false});
+document.addEventListener("keydown", e => { if ((e.ctrlKey || e.metaKey) && ["+","-","=","0"].includes(e.key)) e.preventDefault(); });
+let _lastTouchEnd = 0;
+document.addEventListener("touchend", e => { const now = Date.now(); if (now - _lastTouchEnd < 300) e.preventDefault(); _lastTouchEnd = now; }, {passive:false});
 
 // ===== Start =====
+function dateNow(){
+  const d = parseKey(todayKey());
+  return `${d.toLocaleDateString("en-US", {weekday:"short"})}, ${d.getDate()} ${d.toLocaleDateString("en-US", {month:"short"})}`;
+}
+function timeNow(){ return new Date().toLocaleTimeString(locale(), {hour:"2-digit", minute:"2-digit", second:"2-digit"}); }
+setInterval(() => { if (state.user && $("greet")) $("greet").textContent = timeNow(); }, 1000);
 window.addEventListener("beforeinstallprompt", e => {
   e.preventDefault(); deferredInstall = e;
   if (state.user && state.tab === "profile") render();
@@ -1264,7 +1593,7 @@ setTimeout(() => $("splash").classList.add("gone"), 2200);
   } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-auth.js";
   import {
     getFirestore, initializeFirestore, persistentLocalCache, persistentMultipleTabManager,
-    doc, getDoc, setDoc, serverTimestamp
+    doc, getDoc, setDoc, serverTimestamp, collection, getDocs
   } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-firestore.js";
 
   const firebaseConfig = {
@@ -1337,7 +1666,9 @@ setTimeout(() => $("splash").classList.add("gone"), 2200);
       const snap = await getDoc(dataRef(uid));
       return snap.exists() ? snap.data() : {};
     },
-    saveData: (uid, data) => setDoc(dataRef(uid), { ...data, updatedAt: serverTimestamp() })
+    saveData: (uid, data) => setDoc(dataRef(uid), { ...data, updatedAt: serverTimestamp() }),
+    addFood: food => setDoc(doc(collection(db, "foods"), food.id), food),
+    loadFoods: async () => (await getDocs(collection(db, "foods"))).docs.map(d => d.data())
   };
 
   // Restore the session after a page reload
