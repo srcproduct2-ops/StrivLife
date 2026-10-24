@@ -314,7 +314,7 @@ body.guest .topbar,body.guest .tabs,body.guest .view{display:none!important}
       </div>
       <div class="au-in">
         <span class="au-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="m4 7 8 6 8-6"/></svg></span>
-        <input id="auEmail" type="email" placeholder="User ID (หรืออีเมล)" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false">
+        <input id="auEmail" type="text" inputmode="email" placeholder="User ID (หรืออีเมล)" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false">
       </div>
       <div class="au-in">
         <span class="au-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span>
@@ -398,7 +398,6 @@ body.guest .topbar,body.guest .tabs,body.guest .view{display:none!important}
 
 <script>
 // ===== Config & constants =====
-const GOOGLE_CLIENT_ID = "YOUR_CLIENT_ID.apps.googleusercontent.com";
 const PERIODS = [["morning","เช้า"],["afternoon","กลางวัน"],["evening","เย็น"]];
 const ORDER = {morning:0, afternoon:1, evening:2};
 const ICONS = ["📌","📘","✏️","🏃","💧","🧘","🍎","💻","🛌","🎯","🎵","🧹"];
@@ -407,7 +406,7 @@ const WEEK = ["จ","อ","พ","พฤ","ศ","ส","อา"];
 
 // templates = items repeated every day; plans = items for one date
 const state = {
-  lang: "th", user: null, authMode: "login", tab: "today", users: [],
+  lang: "th", user: null, authMode: "login", tab: "today", users: [], saved: "", entering: false,
   templates: [], plans: {}, done: {},
   sel: "", month: "", calOpen: false, reminders: false
 };
@@ -457,7 +456,18 @@ const EN = {
   "ยังไม่ได้ตั้งค่า Google Client ID — เข้าแบบทดสอบแทน":"Google Client ID not set — using demo sign-in",
   "อีเมลหรือรหัสผ่านไม่ถูกต้อง":"Incorrect email or password","กรุณากรอกชื่อที่แสดง":"Please enter a display name",
   "รูปแบบอีเมลไม่ถูกต้อง":"Invalid email format","รหัสผ่านต้องมีอย่างน้อย 8 ตัวอักษร":"Password must be at least 8 characters",
-  "รหัสผ่านไม่ตรงกัน":"Passwords do not match","อีเมลนี้ถูกใช้งานแล้ว":"This email is already in use"
+  "รหัสผ่านไม่ตรงกัน":"Passwords do not match","อีเมลนี้ถูกใช้งานแล้ว":"This email is already in use",
+  "กำลังเชื่อมต่อ Firebase กรุณาลองใหม่":"Connecting to Firebase, please try again",
+  "User ID ใช้ได้เฉพาะ a-z 0-9 . _ - (3–30 ตัว) หรือกรอกอีเมลให้ถูกต้อง":"User ID may only use a-z 0-9 . _ - (3–30 chars), or enter a valid email",
+  "ลองผิดหลายครั้งเกินไป กรุณารอสักครู่":"Too many attempts, please wait a moment",
+  "ไม่มีการเชื่อมต่ออินเทอร์เน็ต":"No internet connection",
+  "ยังไม่ได้เปิดใช้วิธีเข้าสู่ระบบนี้ใน Firebase Console":"This sign-in method is not enabled in Firebase Console",
+  "โดเมนนี้ยังไม่ได้เพิ่มใน Authorized domains ของ Firebase":"This domain is not in Firebase Authorized domains",
+  "ไม่มีสิทธิ์เข้าถึงข้อมูล (ตรวจสอบ Firestore rules)":"Permission denied (check Firestore rules)",
+  "เกิดข้อผิดพลาด กรุณาลองใหม่":"Something went wrong, please try again",
+  "บันทึกข้อมูลไม่สำเร็จ":"Could not save data",
+  "ส่งลิงก์รีเซ็ตรหัสผ่านไปที่อีเมลแล้ว":"Password reset link sent to your email",
+  "กรอกอีเมลก่อน (บัญชีที่สมัครด้วย User ID ไม่สามารถรีเซ็ตทางอีเมลได้)":"Enter your email first (User ID accounts can't reset by email)"
 };
 function tr(s){ return state.lang === "en" && EN[s] ? EN[s] : s; }
 // Walks the app's text nodes and placeholders; keeps the original Thai so it can switch back
@@ -638,6 +648,7 @@ function render(){
   $("view").innerHTML = head + VIEWS[state.tab]();
   moveIndicator();
   i18n();
+  scheduleSave();
 }
 
 // ===== Add panel =====
@@ -712,61 +723,133 @@ function setScreen(){
 }
 function login(user){
   state.user = user;
-  if (user.provider !== "anonymous" && !state.users.some(u => u.email === user.email)) state.users.push(user);
   state.tab = "today";
   setScreen(); render(); window.scrollTo(0, 0);
   $("app").scrollTop = 0;
 }
-function logout(){
-  if (window.google && GOOGLE_CLIENT_ID.indexOf("YOUR_") !== 0) google.accounts.id.disableAutoSelect();
+
+// ===== Firebase: per-user data (Firestore) =====
+function snapshot(){
+  return JSON.stringify({
+    templates: state.templates, plans: state.plans,
+    done: Object.keys(state.done), reminders: state.reminders, lang: state.lang
+  });
+}
+function resetData(){
+  state.templates = []; state.plans = {}; state.done = {};
+  state.reminders = false; state.saved = "";
+}
+function applyData(d){
+  resetData();
+  d = d || {};
+  state.templates = d.templates || [];
+  state.plans = d.plans || {};
+  (d.done || []).forEach(k => state.done[k] = true);
+  state.reminders = !!d.reminders;
+  if (d.lang === "th" || d.lang === "en") state.lang = d.lang;
+  state.saved = snapshot();
+}
+async function enterFirebase(u){
+  state.entering = true;
+  try {
+    applyData(await FB.loadData(u.uid));
+    login(u);
+  } finally { state.entering = false; }
+}
+function scheduleSave(){
+  const u = state.user;
+  if (!u || !u.uid || !window.FB || snapshot() === state.saved) return;
+  clearTimeout(scheduleSave._t);
+  scheduleSave._t = setTimeout(flushSave, 800);
+}
+async function flushSave(){
+  clearTimeout(scheduleSave._t);
+  const u = state.user;
+  if (!u || !u.uid || !window.FB) return;
+  const snap = snapshot();
+  if (snap === state.saved) return;
+  try { await FB.saveData(u.uid, JSON.parse(snap)); state.saved = snap; }
+  catch (e) { console.error(e); toast("บันทึกข้อมูลไม่สำเร็จ"); }
+}
+document.addEventListener("visibilitychange", () => { if (document.visibilityState === "hidden") flushSave(); });
+window.addEventListener("pagehide", flushSave);
+
+// Restore session after reload
+window.addEventListener("fb-session", async e => {
+  if (state.user || state.entering || !e.detail) return;
+  try { await enterFirebase(e.detail); }
+  catch (err) { console.error(err); toast(fbError(err)); }
+});
+
+function fbError(e){
+  switch (e && e.code) {
+    case "auth/invalid-credential":
+    case "auth/user-not-found":
+    case "auth/wrong-password":
+    case "auth/invalid-email": return "อีเมลหรือรหัสผ่านไม่ถูกต้อง";
+    case "auth/email-already-in-use": return "อีเมลนี้ถูกใช้งานแล้ว";
+    case "auth/weak-password": return "รหัสผ่านต้องมีอย่างน้อย 8 ตัวอักษร";
+    case "auth/too-many-requests": return "ลองผิดหลายครั้งเกินไป กรุณารอสักครู่";
+    case "auth/network-request-failed": return "ไม่มีการเชื่อมต่ออินเทอร์เน็ต";
+    case "auth/operation-not-allowed": return "ยังไม่ได้เปิดใช้วิธีเข้าสู่ระบบนี้ใน Firebase Console";
+    case "auth/unauthorized-domain": return "โดเมนนี้ยังไม่ได้เพิ่มใน Authorized domains ของ Firebase";
+    case "permission-denied": return "ไม่มีสิทธิ์เข้าถึงข้อมูล (ตรวจสอบ Firestore rules)";
+    default: return "เกิดข้อผิดพลาด กรุณาลองใหม่";
+  }
+}
+async function logout(){
+  await flushSave();
+  if (window.FB) { try { await FB.signOut(); } catch (e) {} }
   state.user = null; state.authMode = "login";
+  resetData();
   ["auEmail","auPass","auPass2","auName"].forEach(id => $(id).value = "");
   renderAuth(); setScreen();
   toast("ออกจากระบบแล้ว");
 }
-function authSubmit(){
+function guestLogin(){
+  resetData();
+  login({ name: "ผู้เยี่ยมชม", email: "", provider: "anonymous" });
+}
+async function forgot(){
+  const id = $("auEmail").value.trim();
+  if (!window.FB) return;
+  if (id.indexOf("@") < 0) return toast("กรอกอีเมลก่อน (บัญชีที่สมัครด้วย User ID ไม่สามารถรีเซ็ตทางอีเมลได้)");
+  try { await FB.resetPassword(id); toast("ส่งลิงก์รีเซ็ตรหัสผ่านไปที่อีเมลแล้ว"); }
+  catch (e) { toast(fbError(e)); }
+}
+async function authSubmit(){
   const err = $("auErr"); err.textContent = "";
-  const email = $("auEmail").value.trim().toLowerCase();
+  if (!window.FB) return err.textContent = tr("กำลังเชื่อมต่อ Firebase กรุณาลองใหม่");
+  const id = $("auEmail").value.trim().toLowerCase();
   const pass = $("auPass").value;
-  if (state.authMode === "login") {
-    const u = state.users.find(x => x.email === email && x.pass === pass);
-    if (!u) return err.textContent = tr("อีเมลหรือรหัสผ่านไม่ถูกต้อง");
-    return login({ name: u.name, email: u.email, provider: "email" });
+  try {
+    if (state.authMode === "login") {
+      if (!id || !pass) return err.textContent = tr("อีเมลหรือรหัสผ่านไม่ถูกต้อง");
+      const u = await FB.login(id, pass);
+      return await enterFirebase(u);
+    }
+    const name = $("auName").value.trim();
+    if (!name) return err.textContent = tr("กรุณากรอกชื่อที่แสดง");
+    const okId = id.indexOf("@") >= 0 ? /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(id) : /^[a-z0-9._-]{3,30}$/.test(id);
+    if (!okId) return err.textContent = tr("User ID ใช้ได้เฉพาะ a-z 0-9 . _ - (3–30 ตัว) หรือกรอกอีเมลให้ถูกต้อง");
+    if (pass.length < 8) return err.textContent = tr("รหัสผ่านต้องมีอย่างน้อย 8 ตัวอักษร");
+    if (pass !== $("auPass2").value) return err.textContent = tr("รหัสผ่านไม่ตรงกัน");
+    const u = await FB.register(id, pass, name);
+    await enterFirebase(u);
+    toast("สมัครสมาชิกสำเร็จ");
+  } catch (e) {
+    console.error(e);
+    err.textContent = tr(fbError(e));
   }
-  const name = $("auName").value.trim();
-  if (!name) return err.textContent = tr("กรุณากรอกชื่อที่แสดง");
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return err.textContent = tr("รูปแบบอีเมลไม่ถูกต้อง");
-  if (pass.length < 8) return err.textContent = tr("รหัสผ่านต้องมีอย่างน้อย 8 ตัวอักษร");
-  if (pass !== $("auPass2").value) return err.textContent = tr("รหัสผ่านไม่ตรงกัน");
-  if (state.users.some(u => u.email === email)) return err.textContent = tr("อีเมลนี้ถูกใช้งานแล้ว");
-  state.users.push({ name, email, pass, provider: "email" });
-  toast("สมัครสมาชิกสำเร็จ");
-  login({ name, email, provider: "email" });
 }
-function decodeJwt(token){
-  const b64 = token.split(".")[1].replace(/-/g, "+").replace(/_/g, "/");
-  const bytes = Uint8Array.from(atob(b64), c => c.charCodeAt(0));
-  return JSON.parse(new TextDecoder().decode(bytes));
-}
-function onGoogleCredential(res){
-  const p = decodeJwt(res.credential);
-  login({ name: p.name, email: p.email, picture: p.picture, provider: "google" });
-}
-function googleLogin(){
-  if (!window.google || GOOGLE_CLIENT_ID.indexOf("YOUR_") === 0) {
-    toast("ยังไม่ได้ตั้งค่า Google Client ID — เข้าแบบทดสอบแทน");
-    return login({ name: "Google Demo", email: "demo@gmail.com", provider: "google" });
+async function googleLogin(){
+  if (!window.FB) return toast("กำลังเชื่อมต่อ Firebase กรุณาลองใหม่");
+  try { await enterFirebase(await FB.google()); }
+  catch (e) {
+    if (e && (e.code === "auth/popup-closed-by-user" || e.code === "auth/cancelled-popup-request")) return;
+    console.error(e);
+    $("auErr").textContent = tr(fbError(e));
   }
-  google.accounts.id.prompt();
-}
-function loadGoogle(){
-  const s = document.createElement("script");
-  s.src = "https://accounts.google.com/gsi/client"; s.async = true;
-  s.onload = () => {
-    if (GOOGLE_CLIENT_ID.indexOf("YOUR_") === 0) return;
-    google.accounts.id.initialize({ client_id: GOOGLE_CLIENT_ID, callback: onGoogleCredential });
-  };
-  document.head.appendChild(s);
 }
 
 // ===== Slide-to-sign-in =====
@@ -808,8 +891,7 @@ function loadGoogle(){
       sl.classList.add("ok"); knob.innerHTML = CHECK;
       txt.textContent = tr("ยินดีต้อนรับ!"); i18n();
       knob.style.transition = ""; fill.style.transition = "";
-      authSubmit();
-      setTimeout(() => { if (!state.user) reset(); }, 900);
+      Promise.resolve(authSubmit()).then(() => setTimeout(() => { if (!state.user) reset(); }, 900));
     } else reset();
   };
   knob.addEventListener("pointerup", end);
@@ -866,8 +948,8 @@ document.addEventListener("click", e => {
     case "toggleMode": state.authMode = state.authMode === "login" ? "register" : "login"; return renderAuth();
     case "authSubmit": return authSubmit();
     case "googleLogin": return googleLogin();
-    case "guestLogin": return login({ name: "ผู้เยี่ยมชม", email: "", provider: "anonymous" });
-    case "forgot": return toast("ฟีเจอร์รีเซ็ตรหัสผ่านจะเปิดใช้เร็ว ๆ นี้");
+    case "guestLogin": return guestLogin();
+    case "forgot": return forgot();
     case "logout": return logout();
     case "lang": state.lang = state.lang === "th" ? "en" : "th"; renderAuth(); if (state.user) render(); return;
     case "bell": return toast("ยังไม่มีการแจ้งเตือนใหม่");
@@ -920,12 +1002,87 @@ window.addEventListener("resize", moveIndicator);
 
 // ===== Start =====
 state.sel = todayKey(); state.month = state.sel.slice(0, 7);
-loadGoogle();
 renderAuth();
 setScreen();
 setTimeout(() => $("splash").classList.add("gone"), 2200);
 
 </script>
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-app.js";
+  import { getAnalytics, isSupported } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-analytics.js";
+  import {
+    getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword,
+    signOut, updateProfile, GoogleAuthProvider, signInWithPopup, sendPasswordResetEmail
+  } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-auth.js";
+  import {
+    getFirestore, doc, getDoc, setDoc, serverTimestamp
+  } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyBRFCPqJIcTQaj7PjDUk2ecXPS75QNLdSQ",
+    authDomain: "strivlife.firebaseapp.com",
+    projectId: "strivlife",
+    storageBucket: "strivlife.firebasestorage.app",
+    messagingSenderId: "320035381429",
+    appId: "1:320035381429:web:3d26e5341e5b2051579efc",
+    measurementId: "G-DGJK5EK4MB"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  isSupported().then(ok => { if (ok) getAnalytics(app); }).catch(() => {});
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  // A User ID without "@" is stored as a synthetic email: <id>@users.strivlife.app
+  const DOMAIN = "@users.strivlife.app";
+  const toEmail = id => id.indexOf("@") >= 0 ? id : id + DOMAIN;
+  const shownEmail = e => (e || "").endsWith(DOMAIN) ? e.slice(0, -DOMAIN.length) : (e || "");
+  const info = (u, name) => ({
+    uid: u.uid,
+    name: name || u.displayName || shownEmail(u.email).split("@")[0] || "User",
+    email: shownEmail(u.email),
+    picture: u.photoURL || "",
+    provider: u.providerData[0] && u.providerData[0].providerId === "google.com" ? "google" : "email"
+  });
+  const dataRef = uid => doc(db, "users", uid, "data", "main");
+
+  let busy = false;
+  const guard = async fn => { busy = true; try { return await fn(); } finally { busy = false; } };
+
+  window.FB = {
+    register: (id, pass, name) => guard(async () => {
+      const cred = await createUserWithEmailAndPassword(auth, toEmail(id), pass);
+      await updateProfile(cred.user, { displayName: name });
+      await setDoc(doc(db, "users", cred.user.uid), {
+        name, userId: id, email: cred.user.email, createdAt: serverTimestamp()
+      }, { merge: true });
+      return info(cred.user, name);
+    }),
+    login: (id, pass) => guard(async () => {
+      const cred = await signInWithEmailAndPassword(auth, toEmail(id), pass);
+      return info(cred.user);
+    }),
+    google: () => guard(async () => {
+      const cred = await signInWithPopup(auth, new GoogleAuthProvider());
+      await setDoc(doc(db, "users", cred.user.uid), {
+        name: cred.user.displayName || "", email: cred.user.email || "", lastLogin: serverTimestamp()
+      }, { merge: true });
+      return info(cred.user);
+    }),
+    resetPassword: email => sendPasswordResetEmail(auth, email),
+    signOut: () => signOut(auth),
+    async loadData(uid) {
+      const snap = await getDoc(dataRef(uid));
+      return snap.exists() ? snap.data() : {};
+    },
+    saveData: (uid, data) => setDoc(dataRef(uid), { ...data, updatedAt: serverTimestamp() })
+  };
+
+  // Restore the session after a page reload
+  onAuthStateChanged(auth, u => {
+    if (busy || !u) return;
+    window.dispatchEvent(new CustomEvent("fb-session", { detail: info(u) }));
+  });
+</script>
 </body>
 </html>
-
