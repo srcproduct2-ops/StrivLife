@@ -1641,6 +1641,28 @@ let _lastTouchEnd = 0;
 document.addEventListener("touchend", e => { const now = Date.now(); if (now - _lastTouchEnd < 300) e.preventDefault(); _lastTouchEnd = now; }, {passive:false});
 
 // ===== Start =====
+state.today = todayKey();
+// When the app comes back to the foreground: move to the new day, refresh foods, and pull the latest saved data
+document.addEventListener("visibilitychange", () => {
+  if (document.visibilityState !== "visible" || !state.user) return;
+  const k = todayKey();
+  if (state.today !== k) {
+    if (state.sel === state.today) state.sel = k;
+    state.today = k;
+    state.month = state.sel.slice(0, 7);
+  }
+  render();
+  refreshFoods().then(fillFoods);
+  const u = state.user;
+  if (u.uid && window.FB && window.FB.loadData && snapshot() === state.saved) {
+    window.FB.loadData(u.uid).then(d => {
+      if (!d || snapshot() !== state.saved) return;   // keep unsaved local changes
+      applyData(d);
+      state.saved = snapshot();
+      render();
+    }).catch(e => console.warn("resume sync", e));
+  }
+});
 function applyTheme(){
   document.documentElement.dataset.theme = state.theme;
   const m = document.querySelector('meta[name="theme-color"]');
