@@ -646,6 +646,10 @@ html[data-theme="dark"] .day-card.tomorrow h3{color:#fdba74}
 .ptr.spin .ptr-dot{animation:ptrSpin .8s linear infinite}
 @keyframes ptrSpin{to{transform:rotate(360deg)}}
 html[data-theme="dark"] .ptr{background:#1b1a2e}
+/* Several expenses per record */
+.frw.exp{grid-template-columns:minmax(0,1fr) 78px 28px}
+.frw.exp .ex-name{min-width:0}
+.frw.exp .ex-amt{text-align:right}
 </style>
 </head>
 <body class="guest">
@@ -751,7 +755,11 @@ html[data-theme="dark"] .ptr{background:#1b1a2e}
       <label class="fld"><span>วันที่</span><input type="date" id="newDate"></label>
       <label class="fld"><span>เวลา</span><input type="time" id="newTime"></label>
     </div>
-    <label class="fld"><span>ค่าใช้จ่าย (บาท)</span><input type="number" id="newCost" min="0" step="1" inputmode="decimal" placeholder="0"></label>
+    <div class="fld"><span>ค่าใช้จ่าย (บาท)</span>
+      <div id="expRows" class="foodrows"></div>
+      <button type="button" class="addfood" data-act="addExpRow">+ เพิ่มค่าใช้จ่าย</button>
+      <div class="foodtotal"><span>รวม</span><b>฿<span id="expTotal">0</span></b></div>
+    </div>
     <div class="fld foodfld"><span>อาหาร</span>
       <input type="search" id="foodQ" placeholder="ค้นหาอาหาร" autocomplete="off">
       <div id="foodRows" class="foodrows"></div>
@@ -863,6 +871,21 @@ Object.assign(EN, {"ความสำเร็จ":"Progress","ค่าใช�
 Object.assign(EN, {"ข้าวผัด":"Fried rice","ข้าวมันไก่":"Chicken rice","ข้าวกะเพราหมูสับไข่ดาว":"Basil pork with egg","ข้าวหมูแดง":"Red pork rice","ข้าวราดแกง":"Rice with curry","ข้าวต้ม":"Rice porridge","ก๋วยเตี๋ยวเรือ":"Boat noodles","ก๋วยเตี๋ยวหมู":"Pork noodles","บะหมี่หมูแดง":"Red pork noodles","ส้มตำไทย":"Thai papaya salad","ไก่ย่าง":"Grilled chicken","ข้าวเหนียว":"Sticky rice","ผัดกะเพรา":"Basil stir-fry","ต้มยำกุ้ง":"Tom yum goong","แกงเขียวหวาน":"Green curry","ข้าวไข่เจียว":"Rice with omelette","ลาบหมู":"Pork larb","แซนด์วิช":"Sandwich","ไข่ต้ม":"Boiled egg","กล้วย":"Banana","แอปเปิ้ล":"Apple","นมจืด":"Plain milk","กาแฟดำ":"Black coffee","กาแฟลาเต้":"Latte","ชาเขียว":"Green tea","น้ำอัดลม":"Soft drink","โยเกิร์ต":"Yogurt","ข้าวโอ๊ต":"Oatmeal","สลัดผัก":"Vegetable salad","โรตี":"Roti","ไอศกรีม":"Ice cream"});
 Object.assign(EN, {"วันติดต่อกัน":"day streak","งบค่าใช้จ่าย":"Spending budget","วันนี้":"Today","เดือนนี้":"This month","ตั้งงบรายวัน":"Set daily budget","ตั้งงบรายเดือน":"Set monthly budget","น้ำดื่ม":"Water","น้ำหนัก":"Weight","บันทึกน้ำหนักวันนี้":"Log today's weight","บันทึกประจำวัน":"Daily note","ข้อมูลของฉัน":"My data","ส่งออกข้อมูล":"Export data","นำเข้าข้อมูล":"Import data","ล้างข้อมูลทั้งหมด":"Clear all data","จัดการอาหาร":"Manage foods","ค้นหาอาหาร":"Search food","คืนค่าเริ่มต้น":"Reset","ไม่พบอาหาร":"No food found","+ 1 แก้ว":"+ 1 glass","โปรดใส่ username และ password":"Please enter your username and password","กิจกรรมของวันนี้เสร็จสมบูรณ์แล้ว":"Today's activities are all done","ดูสรุป":"View summary","เปิดรายการอีกครั้ง":"Reopen list","ทำครบทุกกิจกรรมแล้ว!":"All activities done!","กิจกรรมเสร็จสมบูรณ์":"Day completed","กิจกรรม":"Activities","ใช้จ่าย":"Spent","เสร็จสิ้น":"Done","รายการ":"Items","+ เพิ่มอาหาร":"+ Add food","แคลอรี่รวม":"Total calories","อื่น ๆ":"Other","แคลอรี่วันนี้":"Calories today","ตั้งเป้า":"Set goal","ค่าประมาณจากฐานข้อมูล":"Estimates from the food list","แคลอรี่ที่ได้รับ":"Calories eaten","เป้าหมายแคลอรี่ต่อวัน (kcal)":"Daily calorie goal (kcal)","ชื่ออาหาร":"Food name","แคลอรี่ต่อหน่วย (kcal)":"Calories per serving (kcal)","— ไม่เลือก —":"— None —","+ เพิ่มอาหารเอง":"+ Add my own food","อาหาร":"Food","จำนวน":"Qty","แคลอรี่ (kcal)":"Calories (kcal)"});
 Object.assign(EN, {"ภาษา":"Language","ไทย":"Thai"});
+// ===== Several expenses per record =====
+function addExpRow(name = "", amount = ""){
+  const row = document.createElement("div");
+  row.className = "frw exp";
+  row.innerHTML = `<input class="ex-name" placeholder="${tr("ชื่อรายการ")}" value="${esc(name)}">`
+    + `<input type="number" class="ex-amt" min="0" step="1" inputmode="decimal" placeholder="0" value="${amount}">`
+    + `<button type="button" class="fr-del" data-act="delExpRow" aria-label="ลบ">×</button>`;
+  $("expRows").appendChild(row);
+  updateExpTotal();
+}
+function updateExpTotal(){
+  const total = [...document.querySelectorAll("#expRows .ex-amt")].reduce((a, i) => a + (Number(i.value) || 0), 0);
+  $("expTotal").textContent = total.toLocaleString("en-US");
+}
+Object.assign(EN, {"+ เพิ่มค่าใช้จ่าย":"+ Add expense","ชื่อรายการ":"Item name","รวม":"Total"});
 function tr(s){ return state.lang === "en" && EN[s] ? EN[s] : s; }
 // Walks the app's text nodes and placeholders; keeps the original Thai so it can switch back
 function i18n(){
@@ -921,7 +944,7 @@ function taskRow(k, it){
     <div class="tbody">
       <div class="tt" data-act="edit" data-k="${k}" data-key="${it.key}">${esc(it.text)}${it.src === "T" ? ' <span class="chip">ทุกวัน</span>' : ""}${it.kcal ? ` <span class="chip kcal">${it.kcal} kcal</span>` : ""}</div>
       ${(it.foods && it.foods.length) ? `<div class="tm fds">🍽️ ${it.foods.map(f => esc(f.n ? tr(f.n) + (f.q && f.q !== 1 ? " ×" + f.q : "") : "อื่น ๆ") + " <small>" + f.k + "</small>").join(" · ")}</div>` : ""}
-      ${(it.time || it.cost) ? `<div class="tm">${esc(it.time || "")}${it.time && it.cost ? " · " : ""}${it.cost ? "฿" + it.cost : ""}</div>` : ""}
+      ${(it.time || it.cost) ? `<div class="tm">${esc(it.time || "")}${it.time && it.cost ? " · " : ""}${it.cost ? "฿" + it.cost + (it.expenses && it.expenses.length > 1 ? " (" + it.expenses.map(x => esc(x.name || "-") + " " + x.amount).join(" + ") + ")" : "") : ""}</div>` : ""}
       ${steps ? `<div class="steps">${steps}</div>` : ""}
     </div>
     <button class="danger sm" data-act="del" data-k="${k}" data-key="${it.key}">ลบ</button>
@@ -1271,7 +1294,10 @@ function openSheet(ed){
   $("newText").value = it ? it.text : "";
   $("newDate").value = it ? ed.k : state.sel;
   $("newTime").value = it ? (it.time || "") : "";
-  $("newCost").value = it && it.cost ? it.cost : "";
+  $("expRows").innerHTML = "";
+  if (it && it.expenses && it.expenses.length) it.expenses.forEach(x => addExpRow(x.name, x.amount));
+  else if (it && it.cost) addExpRow("", it.cost);
+  else addExpRow();
   setIcon(it ? (it.icon || "📌") : "📌");
   $("newRepeat").checked = it ? it.src === "T" : false;
   const rows = !it ? [] : (it.foods && it.foods.length
@@ -1315,10 +1341,15 @@ function submitAdd(e){
   const steps = oldSteps;
   const foods = readFoodRows().filter(r => r.name || r.k > 0)
     .map(r => ({ n: r.name, i: r.icon || "", u: r.u || 0, q: r.q || 1, k: Math.round(r.k) }));
+  const expenses = [...document.querySelectorAll("#expRows .frw")].map(el => ({
+    name: el.querySelector(".ex-name").value.trim(),
+    amount: Number(el.querySelector(".ex-amt").value) || 0
+  })).filter(x => x.amount > 0 || x.name);
+  const costTotal = expenses.reduce((a, x) => a + x.amount, 0);
   const item = {
     id: old ? old.id : uid(), text,
     time: $("newTime").value, icon: $("newIcon").value,
-    cost: Number($("newCost").value) || 0, kcal: foods.reduce((a, f) => a + f.k, 0), foods, steps
+    cost: costTotal, expenses, kcal: foods.reduce((a, f) => a + f.k, 0), foods, steps
   };
   if (old) {
     const srcList = old.src === "T" ? state.templates : (state.plans[ed.k] || []);
@@ -1895,6 +1926,8 @@ document.addEventListener("click", e => {
     case "theme": state.theme = state.theme === "dark" ? "light" : "dark"; applyTheme(); return;
     case "span": state.spanTab = el.dataset.s; return render();
     case "pickIcon": setIcon(el.dataset.i); return;
+    case "addExpRow": addExpRow(); return;
+    case "delExpRow": el.closest(".frw").remove(); updateExpTotal(); return;
     case "addFoodRow": { const rows = readFoodRows(); rows.push({ name: "", q: 1, k: 0 }); renderFoodRows(rows); return; }
     case "delFoodRow": {
       const rows = readFoodRows();
@@ -1937,6 +1970,7 @@ document.addEventListener("pointerout", e => {
   if (c && !c.contains(e.relatedTarget)) c.style.transform = "";
 });
 window.addEventListener("resize", () => moveIndicator(true));
+document.addEventListener("input", e => { if (e.target.classList.contains("ex-amt")) updateExpTotal(); });
 document.addEventListener("change", e => { if (e.target.classList && e.target.classList.contains("fr-food")) onFoodChange(e.target); });
 document.addEventListener("input", e => {
   const id = e.target.id;
