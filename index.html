@@ -676,6 +676,13 @@ html[data-theme="dark"] .ptr{background:#1b1a2e}
 /* Work / overtime inputs */
 .kindrow{background:var(--soft);border-radius:14px;padding:8px}
 .kindrow .fld input{background:var(--card)}
+/* Five tabs now: income has its own tab */
+.tabs .pill{grid-template-columns:repeat(5,1fr)}
+/* Time picker */
+.tpick{display:flex;align-items:center;gap:4px}
+.tpick select{flex:1;min-width:0;padding:8px 6px;border-radius:12px;border:1.5px solid transparent;background:var(--soft);color:var(--text);font:inherit;font-size:16px;font-variant-numeric:tabular-nums}
+.tpick select:focus{outline:none;border-color:#6366f1;background:var(--card)}
+.tp-sep,.tp-u{font-weight:800;color:var(--text);font-size:.9rem}
 </style>
 </head>
 <body class="guest">
@@ -766,6 +773,7 @@ html[data-theme="dark"] .ptr{background:#1b1a2e}
       <button data-tab="today"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"/></svg></span><span class="lb">หน้าหลัก</span></button>
       <button data-tab="schedule"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg></span><span class="lb">ตารางงาน</span></button>
       <button data-tab="summary"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 20V10M10 20V4M16 20v-8M22 20H2"/></svg></span><span class="lb">สรุป</span></button>
+      <button data-tab="income"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M15 9.5c-.5-1-1.6-1.5-3-1.5-1.8 0-3 .9-3 2.2 0 3 6 1.5 6 4.3 0 1.3-1.3 2.2-3 2.2-1.5 0-2.6-.6-3-1.6M12 6v2m0 8v2"/></svg></span><span class="lb">รายได้</span></button>
       <button data-tab="profile"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg></span><span class="lb">โปรไฟล์</span></button>
     </div>
     <button class="fab" data-act="fab" aria-label="เพิ่มรายการ"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button>
@@ -780,15 +788,15 @@ html[data-theme="dark"] .ptr{background:#1b1a2e}
     <input id="newText" placeholder="เช่น อ่านหนังสือ 20 นาที" maxlength="80" autocomplete="off">
     <div class="frow">
       <label class="fld"><span>วันที่</span><input type="date" id="newDate"></label>
-      <label class="fld"><span>เวลา</span><input type="time" id="newTime"></label>
+      <label class="fld"><span>เวลา</span><input type="hidden" id="newTime"><div class="tpick" data-for="newTime"></div></label>
     </div>
     <div class="kindrow" id="kindRow" hidden>
       <input type="hidden" id="newKind" value="">
       <div class="frow">
-        <label class="fld" id="fWorkStart"><span>เริ่มงาน</span><input type="time" id="wStart"></label>
-        <label class="fld" id="fWorkEnd"><span>เลิกงาน</span><input type="time" id="wEnd"></label>
+        <label class="fld" id="fWorkStart"><span>เริ่มงาน</span><input type="hidden" id="wStart"><div class="tpick" data-for="wStart"></div></label>
+        <label class="fld" id="fWorkEnd"><span>เลิกงาน</span><input type="hidden" id="wEnd"><div class="tpick" data-for="wEnd"></div></label>
       </div>
-      <label class="fld" id="fOt"><span>ชั่วโมงโอที</span><input type="number" id="wOt" min="0" step="0.5" inputmode="decimal" placeholder="0"></label>
+      <div class="frow" id="fOt"><label class="fld"><span>เริ่มโอที</span><input type="hidden" id="oStart"><div class="tpick" data-for="oStart"></div></label><label class="fld"><span>เลิกโอที</span><input type="hidden" id="oEnd"><div class="tpick" data-for="oEnd"></div></label></div>
     </div>
     <div class="fld"><span>ค่าใช้จ่าย (บาท)</span>
       <div id="expRows" class="foodrows"></div>
@@ -907,6 +915,31 @@ Object.assign(EN, {"ความสำเร็จ":"Progress","ค่าใช�
 Object.assign(EN, {"ข้าวผัด":"Fried rice","ข้าวมันไก่":"Chicken rice","ข้าวกะเพราหมูสับไข่ดาว":"Basil pork with egg","ข้าวหมูแดง":"Red pork rice","ข้าวราดแกง":"Rice with curry","ข้าวต้ม":"Rice porridge","ก๋วยเตี๋ยวเรือ":"Boat noodles","ก๋วยเตี๋ยวหมู":"Pork noodles","บะหมี่หมูแดง":"Red pork noodles","ส้มตำไทย":"Thai papaya salad","ไก่ย่าง":"Grilled chicken","ข้าวเหนียว":"Sticky rice","ผัดกะเพรา":"Basil stir-fry","ต้มยำกุ้ง":"Tom yum goong","แกงเขียวหวาน":"Green curry","ข้าวไข่เจียว":"Rice with omelette","ลาบหมู":"Pork larb","แซนด์วิช":"Sandwich","ไข่ต้ม":"Boiled egg","กล้วย":"Banana","แอปเปิ้ล":"Apple","นมจืด":"Plain milk","กาแฟดำ":"Black coffee","กาแฟลาเต้":"Latte","ชาเขียว":"Green tea","น้ำอัดลม":"Soft drink","โยเกิร์ต":"Yogurt","ข้าวโอ๊ต":"Oatmeal","สลัดผัก":"Vegetable salad","โรตี":"Roti","ไอศกรีม":"Ice cream"});
 Object.assign(EN, {"วันติดต่อกัน":"day streak","งบค่าใช้จ่าย":"Spending budget","วันนี้":"Today","เดือนนี้":"This month","ตั้งงบรายวัน":"Set daily budget","ตั้งงบรายเดือน":"Set monthly budget","น้ำดื่ม":"Water","น้ำหนัก":"Weight","บันทึกน้ำหนักวันนี้":"Log today's weight","บันทึกประจำวัน":"Daily note","ข้อมูลของฉัน":"My data","ส่งออกข้อมูล":"Export data","นำเข้าข้อมูล":"Import data","ล้างข้อมูลทั้งหมด":"Clear all data","จัดการอาหาร":"Manage foods","ค้นหาอาหาร":"Search food","คืนค่าเริ่มต้น":"Reset","ไม่พบอาหาร":"No food found","+ 1 แก้ว":"+ 1 glass","โปรดใส่ username และ password":"Please enter your username and password","กิจกรรมของวันนี้เสร็จสมบูรณ์แล้ว":"Today's activities are all done","ดูสรุป":"View summary","เปิดรายการอีกครั้ง":"Reopen list","ทำครบทุกกิจกรรมแล้ว!":"All activities done!","กิจกรรมเสร็จสมบูรณ์":"Day completed","กิจกรรม":"Activities","ใช้จ่าย":"Spent","เสร็จสิ้น":"Done","รายการ":"Items","+ เพิ่มอาหาร":"+ Add food","แคลอรี่รวม":"Total calories","อื่น ๆ":"Other","แคลอรี่วันนี้":"Calories today","ตั้งเป้า":"Set goal","ค่าประมาณจากฐานข้อมูล":"Estimates from the food list","แคลอรี่ที่ได้รับ":"Calories eaten","เป้าหมายแคลอรี่ต่อวัน (kcal)":"Daily calorie goal (kcal)","ชื่ออาหาร":"Food name","แคลอรี่ต่อหน่วย (kcal)":"Calories per serving (kcal)","— ไม่เลือก —":"— None —","+ เพิ่มอาหารเอง":"+ Add my own food","อาหาร":"Food","จำนวน":"Qty","แคลอรี่ (kcal)":"Calories (kcal)"});
 Object.assign(EN, {"ภาษา":"Language","ไทย":"Thai"});
+// ===== Time picker: Thai 24-hour style, AM/PM only in English =====
+function buildTP(id){
+  const box = document.querySelector(`.tpick[data-for="${id}"]`); if (!box) return;
+  const v = $(id).value || "", en = state.lang === "en";
+  let h = "", m = "", ap = "AM";
+  if (v) {
+    const [H, M] = v.split(":").map(Number); m = pad(M);
+    if (en) { ap = H >= 12 ? "PM" : "AM"; h = String(H % 12 || 12); } else h = pad(H);
+  }
+  const hours = en ? Array.from({length: 12}, (_, i) => String(i + 1)) : Array.from({length: 24}, (_, i) => pad(i));
+  const hOpts = `<option value="">--</option>` + hours.map(x => `<option value="${x}" ${x === h ? "selected" : ""}>${x}</option>`).join("");
+  const mOpts = `<option value="">--</option>` + Array.from({length: 60}, (_, i) => pad(i)).map(x => `<option value="${x}" ${x === m ? "selected" : ""}>${x}</option>`).join("");
+  const apSel = en ? `<select class="tp-ap" aria-label="AM/PM"><option ${ap === "AM" ? "selected" : ""}>AM</option><option ${ap === "PM" ? "selected" : ""}>PM</option></select>` : "";
+  box.innerHTML = `<select class="tp-h" aria-label="ชั่วโมง">${hOpts}</select><span class="tp-sep">${en ? ":" : "."}</span><select class="tp-m" aria-label="นาที">${mOpts}</select>${apSel}${en ? "" : '<span class="tp-u">น.</span>'}`;
+}
+function buildAllTP(){ document.querySelectorAll(".tpick").forEach(b => buildTP(b.dataset.for)); }
+document.addEventListener("change", e => {
+  const box = e.target.closest && e.target.closest(".tpick"); if (!box) return;
+  const id = box.dataset.for, hSel = box.querySelector(".tp-h"), mSel = box.querySelector(".tp-m"), apSel = box.querySelector(".tp-ap");
+  if (!hSel.value) { $(id).value = ""; return; }
+  if (!mSel.value) mSel.value = "00";
+  let H = Number(hSel.value);
+  if (apSel) H = (H % 12) + (apSel.value === "PM" ? 12 : 0);
+  $(id).value = `${pad(H)}:${mSel.value}`;
+});
 // ===== Work & overtime kinds =====
 function setKind(k){
   $("newKind").value = k;
@@ -914,7 +947,7 @@ function setKind(k){
   $("fWorkStart").hidden = $("fWorkEnd").hidden = k !== "work";
   $("fOt").hidden = k !== "ot";
   if (k === "work") { if (!$("wStart").value) $("wStart").value = "08:00"; if (!$("wEnd").value) $("wEnd").value = "17:00"; }
-  if (k === "ot" && !$("wOt").value) $("wOt").value = 2;
+  if (k === "ot") { if (!$("oStart").value) $("oStart").value = "18:00"; if (!$("oEnd").value) $("oEnd").value = "21:00"; }
 }
 // ===== Several expenses per record =====
 function addExpRow(name = "", amount = ""){
@@ -933,6 +966,8 @@ function updateExpTotal(){
 Object.assign(EN, {"+ เพิ่มค่าใช้จ่าย":"+ Add expense","ชื่อรายการ":"Item name","รวม":"Total"});
 Object.assign(EN, {"รายได้":"Income","รายได้เดือนนี้ (ประมาณ)":"Income this month (est.)","เงินเดือนประจำ":"Base salary","ค่าบ้าน":"Housing","ค่าตำแหน่ง":"Position","รวมต่อเดือน":"Monthly total","ต่อวัน (÷30)":"per day (÷30)","ต่อชั่วโมง (÷8)":"per hour (÷8)","บันทึกเงินเดือน":"Save salary","บันทึกเวลาทำงาน":"Log work time","เวลาเริ่ม":"Start","เวลาเลิก":"End","รายได้ต่อวัน":"Daily income","วันหยุด":"Weekend","รายได้วันนี้":"Income today","รายได้เพิ่มเติมเดือนนี้":"Extra income this month","ยังไม่ได้บันทึกเวลาวันนี้":"No work time logged today","ยังไม่มีวันที่บันทึกเวลา":"No work days logged yet","บันทึก":"Save","เงินเดือน":"Salary","บันทึกเงินเดือนแล้ว":"Salary saved","บันทึกเวลาทำงานแล้ว":"Work time saved"});
 Object.assign(EN, {"โอที":"Overtime","เริ่มงาน":"Start work","เลิกงาน":"End work","ชั่วโมงโอที":"Overtime hours","กรุณาใส่เวลาเริ่มและเลิกงาน":"Enter start and end time","กรุณาใส่ชั่วโมงโอที":"Enter overtime hours"});
+Object.assign(EN, {"รายได้":"Income"});
+Object.assign(EN, {"เริ่มโอที":"Overtime start","เลิกโอที":"Overtime end","กรุณาใส่เวลาเริ่มและเลิกโอทีให้ถูกต้อง":"Enter valid overtime start and end"});
 function tr(s){ return state.lang === "en" && EN[s] ? EN[s] : s; }
 // Walks the app's text nodes and placeholders; keeps the original Thai so it can switch back
 function i18n(){
@@ -952,6 +987,7 @@ function i18n(){
   const lb = root.querySelector('[data-act="lang"]');
   if (lb) lb.textContent = state.lang === "en" ? "EN" : "TH";
   document.documentElement.lang = state.lang === "en" ? "en" : "th";
+  buildAllTP();
 }
 function snack(msg, label, fn){
   const sn = $("snack");
@@ -1307,8 +1343,8 @@ function spendCard(){
 function vSummaryTab(){
   const sub = state.sumTab || "ach";
   const seg = (k, l) => `<button class="seg ${sub === k ? "on" : ""}" data-act="sumTab" data-s="${k}">${l}</button>`;
-  const switcher = `<div class="segs">${seg("ach", "ความสำเร็จ")}${seg("spend", "ค่าใช้จ่าย")}${seg("kcal", "แคลอรี่")}${seg("pay", "รายได้")}</div>`;
-  return switcher + (sub === "pay" ? payCard() : sub === "ach" ? vHistory() + vSummary() : spendCard());
+  const switcher = `<div class="segs">${seg("ach", "ความสำเร็จ")}${seg("spend", "ค่าใช้จ่าย")}${seg("kcal", "แคลอรี่")}</div>`;
+  return switcher + (sub === "ach" ? vHistory() + vSummary() : spendCard());
 }
 const FOODS = [{name:"ข้าวผัด", icon:"🍚", kcal:550},{name:"ข้าวมันไก่", icon:"🍗", kcal:600},{name:"ข้าวกะเพราหมูสับไข่ดาว", icon:"🍳", kcal:650},{name:"ข้าวหมูแดง", icon:"🍖", kcal:580},{name:"ข้าวราดแกง", icon:"🥘", kcal:550},{name:"ข้าวต้ม", icon:"🥣", kcal:300},{name:"ก๋วยเตี๋ยวเรือ", icon:"🍜", kcal:400},{name:"ก๋วยเตี๋ยวหมู", icon:"🍜", kcal:350},{name:"บะหมี่หมูแดง", icon:"🍜", kcal:450},{name:"ส้มตำไทย", icon:"🥗", kcal:150},{name:"ไก่ย่าง", icon:"🍗", kcal:300},{name:"ข้าวเหนียว", icon:"🍚", kcal:300},{name:"ผัดกะเพรา", icon:"🍛", kcal:480},{name:"ต้มยำกุ้ง", icon:"🍲", kcal:150},{name:"แกงเขียวหวาน", icon:"🍛", kcal:250},{name:"ข้าวไข่เจียว", icon:"🍳", kcal:500},{name:"ลาบหมู", icon:"🥗", kcal:280},{name:"แซนด์วิช", icon:"🥪", kcal:250},{name:"ไข่ต้ม", icon:"🥚", kcal:75},{name:"กล้วย", icon:"🍌", kcal:105},{name:"แอปเปิ้ล", icon:"🍎", kcal:95},{name:"นมจืด", icon:"🥛", kcal:130},{name:"กาแฟดำ", icon:"☕", kcal:5},{name:"กาแฟลาเต้", icon:"☕", kcal:190},{name:"ชาเขียว", icon:"🍵", kcal:90},{name:"น้ำอัดลม", icon:"🥤", kcal:140},{name:"โยเกิร์ต", icon:"🥣", kcal:120},{name:"ข้าวโอ๊ต", icon:"🥣", kcal:150},{name:"สลัดผัก", icon:"🥗", kcal:120},{name:"โรตี", icon:"🫓", kcal:300},{name:"ไอศกรีม", icon:"🍨", kcal:200}];
 // ===== Income panel: per day and per month, from logged days only =====
@@ -1317,7 +1353,7 @@ function dayIncome(k){
   if (!w) return { total: 0, hours: 0, days: 0 };
   const r = calcDay(k, w.start, w.end, w.ot);
   if (!r.hasWork) return { total: 0, hours: 0, days: 0 };
-  return { total: r.baseDay + r.extra, hours: w.start && w.end ? (toMin(w.end) - toMin(w.start)) / 60 : (Number(w.ot) || 0), days: 1 };
+  return { total: r.baseDay + r.extra, hours: w.start && w.end ? (toMin(w.end) - toMin(w.start)) / 60 : (w.ot && w.ot.start && w.ot.end && toMin(w.ot.end) > toMin(w.ot.start) ? (toMin(w.ot.end) - toMin(w.ot.start)) / 60 : 0), days: 1 };
 }
 function incomePanel(){
   const t = todayKey(), ym = t.slice(0, 7);
@@ -1332,6 +1368,7 @@ function incomePanel(){
       <div><span>รายได้เดือนนี้</span><b>${fmtBaht(month)}</b><small>${days} วันที่บันทึก</small></div>
     </div></section>`;
 }
+TITLES.income = "รายได้";
 // ===== Income: monthly pay + overtime / weekend work =====
 function monthlyPay(){ const p = state.pay || {}; return (p.salary || 0) + (p.housing || 0) + (p.position || 0); }
 function toMin(t){ const [h, m] = t.split(":").map(Number); return h * 60 + m; }
@@ -1340,7 +1377,7 @@ function calcDay(k, start, end, ot){
   const dow = parseKey(k).getDay(), weekend = dow === 0 || dow === 6;
   const r = { dailyBase, hourly, weekend, baseDay: 0, otH: 0, otPay: 0, wkH: 0, wkPay: 0, extra: 0, hasWork: false };
   const hasTimes = !!(start && end) && toMin(end) > toMin(start);
-  const otHours = Number(ot) || 0;
+  const otHours = ot && ot.start && ot.end && toMin(ot.end) > toMin(ot.start) ? (toMin(ot.end) - toMin(ot.start)) / 60 : 0;
   if (!hasTimes && otHours <= 0) return r;
   r.hasWork = true;
   if (!weekend) {
@@ -1391,8 +1428,8 @@ function payCard(){
     <section class="card"><h3>บันทึกเวลาทำงาน</h3>
       <label class="fld"><span>วันที่</span><input type="date" id="wkDate" value="${k}"></label>
       <div class="frow" style="margin-top:8px">
-        <label class="fld"><span>เวลาเริ่ม</span><input type="time" id="wkStart" value="${w.start || ""}"></label>
-        <label class="fld"><span>เวลาเลิก</span><input type="time" id="wkEnd" value="${w.end || ""}"></label>
+        <label class="fld"><span>เวลาเริ่ม</span><input type="hidden" id="wkStart"><div class="tpick" data-for="wkStart"></div></label>
+        <label class="fld"><span>เวลาเลิก</span><input type="hidden" id="wkEnd"><div class="tpick" data-for="wkEnd"></div></label>
       </div>
       <div class="actions"><button class="sm" data-act="saveWork">บันทึก</button>${w.start ? '<button class="ghost sm" data-act="clearWork">ลบ</button>' : ""}</div>
       ${c.hasWork ? `<div class="pay-detail">
@@ -1407,6 +1444,7 @@ function payCard(){
       ${rows || '<p class="muted" style="margin:0">ยังไม่มีวันที่บันทึกเวลา</p>'}</section>`;
 }
 const VIEWS = { today: vToday, schedule: vSchedule, history: vHistory, summary: vSummaryTab, profile: vProfile };
+VIEWS.income = payCard;
 
 function render(){
   const u = state.user;
@@ -1492,9 +1530,13 @@ function submitAdd(e){
     workPatch = { start: st, end: en };
   }
   if (kind === "ot") {
-    const ot = Number($("wOt").value) || 0;
-    if (ot <= 0) return toast("กรุณาใส่ชั่วโมงโอที");
-    workPatch = { ot };
+    const os = $("oStart").value, oe = $("oEnd").value;
+    if (!os || !oe || toMin(oe) <= toMin(os)) return toast("กรุณาใส่เวลาเริ่มและเลิกโอทีให้ถูกต้อง");
+    workPatch = { ot: { start: os, end: oe } };
+  }
+  if (kind) {
+    const dup = (state.plans[date] || []).some(x => x.kind === kind && (!old || x.id !== old.id));
+    if (dup) return toast(kind === "work" ? "วันนี้มีรายการทำงานแล้ว (ได้วันละ 1 รายการ)" : "วันนี้มีรายการโอทีแล้ว (ได้วันละ 1 รายการ)");
   }
   if (workPatch) state.work[date] = { ...(state.work[date] || {}), ...workPatch };
   const expenses = [...document.querySelectorAll("#expRows .frw")].map(el => ({
@@ -1517,6 +1559,7 @@ function submitAdd(e){
   state.sel = date; state.month = date.slice(0, 7);
   state.editing = null;
   e.target.reset();
+  ["newTime", "wStart", "wEnd", "oStart", "oEnd"].forEach(id => { $(id).value = ""; });
   closeSheet(); render(); toast(old ? "บันทึกแล้ว" : "เพิ่มรายการแล้ว");
 }
 
@@ -1970,7 +2013,7 @@ async function googleLogin(){
 })();
 
 // ===== Motion: directional tab transitions =====
-const TAB_ORDER = ["today","schedule","summary","profile"];
+const TAB_ORDER = ["today","schedule","summary","income","profile"];
 function switchTab(next){
   if (next === state.tab) return;
   const dir = TAB_ORDER.indexOf(next) > TAB_ORDER.indexOf(state.tab) ? 1 : -1;
