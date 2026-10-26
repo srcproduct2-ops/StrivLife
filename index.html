@@ -650,6 +650,32 @@ html[data-theme="dark"] .ptr{background:#1b1a2e}
 .frw.exp{grid-template-columns:minmax(0,1fr) 78px 28px}
 .frw.exp .ex-name{min-width:0}
 .frw.exp .ex-amt{text-align:right}
+/* Income */
+.pay-hero{background:linear-gradient(135deg,#ecfdf5,#eef2ff);text-align:left}
+.pay-hero .big{font-size:2rem;font-weight:900;color:#065f46}
+.pay-sum{display:block;font-size:1.05rem;padding:10px 4px;color:var(--text)}
+.pay-rates{display:flex;gap:10px;margin-top:12px}
+.pay-rates>div{flex:1;background:var(--soft);border-radius:14px;padding:10px;display:flex;flex-direction:column;gap:2px}
+.pay-rates b{font-size:1rem;font-weight:800}
+.pay-rates span{font-size:.7rem;color:var(--muted)}
+.pay-detail{margin-top:10px;border-top:1px dashed var(--border);padding-top:6px}
+.pay-row{display:flex;justify-content:space-between;align-items:center;padding:6px 2px;font-size:.85rem;border-bottom:1px solid var(--border)}
+.pay-row:last-child{border-bottom:0}
+.pay-row.total{font-weight:800;color:#065f46}
+.pay-row b{font-weight:800}
+/* Income panel on the home page */
+.income-panel{padding:14px 16px;border:0;background:linear-gradient(135deg,#059669 0%,#0d9488 50%,#2563eb 100%);color:#fff;box-shadow:0 14px 30px rgba(13,148,136,.3)}
+.income-panel::before{display:none}
+.inc-grid{display:grid;grid-template-columns:1fr 1fr;gap:0}
+.inc-grid>div{display:flex;flex-direction:column;gap:2px;min-width:0}
+.inc-grid>div:first-child{padding-right:12px;border-right:1px solid rgba(255,255,255,.3)}
+.inc-grid>div:last-child{padding-left:14px}
+.inc-grid span{font-size:.72rem;opacity:.9;font-weight:600}
+.inc-grid b{font-size:1.4rem;font-weight:900;letter-spacing:-.02em;line-height:1.15}
+.inc-grid small{font-size:.7rem;opacity:.85}
+/* Work / overtime inputs */
+.kindrow{background:var(--soft);border-radius:14px;padding:8px}
+.kindrow .fld input{background:var(--card)}
 </style>
 </head>
 <body class="guest">
@@ -748,12 +774,21 @@ html[data-theme="dark"] .ptr{background:#1b1a2e}
 <div class="sheet" id="sheet" hidden>
   <div class="sheet-grip"></div>
   <h3 id="sheetTitle">เพิ่มรายการ</h3>
-  <div class="presets" id="presets"><button type="button" class="preset" data-act="preset" data-idx="0"><span>🍚</span> ข้าวเช้า</button><button type="button" class="preset" data-act="preset" data-idx="1"><span>🍚</span> ข้าวเที่ยง</button><button type="button" class="preset" data-act="preset" data-idx="2"><span>🍚</span> ข้าวเย็น</button><button type="button" class="preset" data-act="preset" data-idx="3"><span>☕</span> กินกาแฟ</button><button type="button" class="preset" data-act="preset" data-idx="4"><span>⛰️</span> ไปเที่ยว</button><button type="button" class="preset" data-act="preset" data-idx="5"><span>🏃</span> ออกกำลังกาย</button><button type="button" class="preset own" data-act="ownPreset"><span>✏️</span> สร้างเอง</button></div>
+  <div class="presets" id="presets"><button type="button" class="preset" data-act="preset" data-idx="0"><span>🍚</span> ข้าวเช้า</button><button type="button" class="preset" data-act="preset" data-idx="1"><span>🍚</span> ข้าวเที่ยง</button><button type="button" class="preset" data-act="preset" data-idx="2"><span>🍚</span> ข้าวเย็น</button><button type="button" class="preset" data-act="preset" data-idx="3"><span>☕</span> กินกาแฟ</button><button type="button" class="preset" data-act="preset" data-idx="4"><span>⛰️</span> ไปเที่ยว</button><button type="button" class="preset" data-act="preset" data-idx="5"><span>🏃</span> ออกกำลังกาย</button><button type="button" class="preset" data-act="preset" data-idx="6"><span>💼</span> ทำงาน</button><button type="button" class="preset" data-act="preset" data-idx="7"><span>🔥</span> โอที</button>
+      <button type="button" class="preset own" data-act="ownPreset"><span>✏️</span> สร้างเอง</button></div>
   <form class="addform" id="addForm">
     <input id="newText" placeholder="เช่น อ่านหนังสือ 20 นาที" maxlength="80" autocomplete="off">
     <div class="frow">
       <label class="fld"><span>วันที่</span><input type="date" id="newDate"></label>
       <label class="fld"><span>เวลา</span><input type="time" id="newTime"></label>
+    </div>
+    <div class="kindrow" id="kindRow" hidden>
+      <input type="hidden" id="newKind" value="">
+      <div class="frow">
+        <label class="fld" id="fWorkStart"><span>เริ่มงาน</span><input type="time" id="wStart"></label>
+        <label class="fld" id="fWorkEnd"><span>เลิกงาน</span><input type="time" id="wEnd"></label>
+      </div>
+      <label class="fld" id="fOt"><span>ชั่วโมงโอที</span><input type="number" id="wOt" min="0" step="0.5" inputmode="decimal" placeholder="0"></label>
     </div>
     <div class="fld"><span>ค่าใช้จ่าย (บาท)</span>
       <div id="expRows" class="foodrows"></div>
@@ -788,6 +823,7 @@ const WEEK = ["จ","อ","พ","พฤ","ศ","ส","อา"];
 
 // templates = items repeated every day; plans = items for one date
 const state = {
+  pay: {salary:30400, housing:2500, position:800}, work: {},
   customFoods: [], completed: {}, foodOv: {}, notes: {}, water: {}, weights: {}, costGoal: 0, costGoalM: 0, fmq: "", sharedFoods: [], kcalGoal: 2000, theme: "light",
   lang: "th", user: null, authMode: "login", tab: "today", users: [], saved: "", entering: false,
   templates: [], plans: {}, done: {},
@@ -871,6 +907,15 @@ Object.assign(EN, {"ความสำเร็จ":"Progress","ค่าใช�
 Object.assign(EN, {"ข้าวผัด":"Fried rice","ข้าวมันไก่":"Chicken rice","ข้าวกะเพราหมูสับไข่ดาว":"Basil pork with egg","ข้าวหมูแดง":"Red pork rice","ข้าวราดแกง":"Rice with curry","ข้าวต้ม":"Rice porridge","ก๋วยเตี๋ยวเรือ":"Boat noodles","ก๋วยเตี๋ยวหมู":"Pork noodles","บะหมี่หมูแดง":"Red pork noodles","ส้มตำไทย":"Thai papaya salad","ไก่ย่าง":"Grilled chicken","ข้าวเหนียว":"Sticky rice","ผัดกะเพรา":"Basil stir-fry","ต้มยำกุ้ง":"Tom yum goong","แกงเขียวหวาน":"Green curry","ข้าวไข่เจียว":"Rice with omelette","ลาบหมู":"Pork larb","แซนด์วิช":"Sandwich","ไข่ต้ม":"Boiled egg","กล้วย":"Banana","แอปเปิ้ล":"Apple","นมจืด":"Plain milk","กาแฟดำ":"Black coffee","กาแฟลาเต้":"Latte","ชาเขียว":"Green tea","น้ำอัดลม":"Soft drink","โยเกิร์ต":"Yogurt","ข้าวโอ๊ต":"Oatmeal","สลัดผัก":"Vegetable salad","โรตี":"Roti","ไอศกรีม":"Ice cream"});
 Object.assign(EN, {"วันติดต่อกัน":"day streak","งบค่าใช้จ่าย":"Spending budget","วันนี้":"Today","เดือนนี้":"This month","ตั้งงบรายวัน":"Set daily budget","ตั้งงบรายเดือน":"Set monthly budget","น้ำดื่ม":"Water","น้ำหนัก":"Weight","บันทึกน้ำหนักวันนี้":"Log today's weight","บันทึกประจำวัน":"Daily note","ข้อมูลของฉัน":"My data","ส่งออกข้อมูล":"Export data","นำเข้าข้อมูล":"Import data","ล้างข้อมูลทั้งหมด":"Clear all data","จัดการอาหาร":"Manage foods","ค้นหาอาหาร":"Search food","คืนค่าเริ่มต้น":"Reset","ไม่พบอาหาร":"No food found","+ 1 แก้ว":"+ 1 glass","โปรดใส่ username และ password":"Please enter your username and password","กิจกรรมของวันนี้เสร็จสมบูรณ์แล้ว":"Today's activities are all done","ดูสรุป":"View summary","เปิดรายการอีกครั้ง":"Reopen list","ทำครบทุกกิจกรรมแล้ว!":"All activities done!","กิจกรรมเสร็จสมบูรณ์":"Day completed","กิจกรรม":"Activities","ใช้จ่าย":"Spent","เสร็จสิ้น":"Done","รายการ":"Items","+ เพิ่มอาหาร":"+ Add food","แคลอรี่รวม":"Total calories","อื่น ๆ":"Other","แคลอรี่วันนี้":"Calories today","ตั้งเป้า":"Set goal","ค่าประมาณจากฐานข้อมูล":"Estimates from the food list","แคลอรี่ที่ได้รับ":"Calories eaten","เป้าหมายแคลอรี่ต่อวัน (kcal)":"Daily calorie goal (kcal)","ชื่ออาหาร":"Food name","แคลอรี่ต่อหน่วย (kcal)":"Calories per serving (kcal)","— ไม่เลือก —":"— None —","+ เพิ่มอาหารเอง":"+ Add my own food","อาหาร":"Food","จำนวน":"Qty","แคลอรี่ (kcal)":"Calories (kcal)"});
 Object.assign(EN, {"ภาษา":"Language","ไทย":"Thai"});
+// ===== Work & overtime kinds =====
+function setKind(k){
+  $("newKind").value = k;
+  $("kindRow").hidden = !k;
+  $("fWorkStart").hidden = $("fWorkEnd").hidden = k !== "work";
+  $("fOt").hidden = k !== "ot";
+  if (k === "work") { if (!$("wStart").value) $("wStart").value = "08:00"; if (!$("wEnd").value) $("wEnd").value = "17:00"; }
+  if (k === "ot" && !$("wOt").value) $("wOt").value = 2;
+}
 // ===== Several expenses per record =====
 function addExpRow(name = "", amount = ""){
   const row = document.createElement("div");
@@ -886,6 +931,8 @@ function updateExpTotal(){
   $("expTotal").textContent = total.toLocaleString("en-US");
 }
 Object.assign(EN, {"+ เพิ่มค่าใช้จ่าย":"+ Add expense","ชื่อรายการ":"Item name","รวม":"Total"});
+Object.assign(EN, {"รายได้":"Income","รายได้เดือนนี้ (ประมาณ)":"Income this month (est.)","เงินเดือนประจำ":"Base salary","ค่าบ้าน":"Housing","ค่าตำแหน่ง":"Position","รวมต่อเดือน":"Monthly total","ต่อวัน (÷30)":"per day (÷30)","ต่อชั่วโมง (÷8)":"per hour (÷8)","บันทึกเงินเดือน":"Save salary","บันทึกเวลาทำงาน":"Log work time","เวลาเริ่ม":"Start","เวลาเลิก":"End","รายได้ต่อวัน":"Daily income","วันหยุด":"Weekend","รายได้วันนี้":"Income today","รายได้เพิ่มเติมเดือนนี้":"Extra income this month","ยังไม่ได้บันทึกเวลาวันนี้":"No work time logged today","ยังไม่มีวันที่บันทึกเวลา":"No work days logged yet","บันทึก":"Save","เงินเดือน":"Salary","บันทึกเงินเดือนแล้ว":"Salary saved","บันทึกเวลาทำงานแล้ว":"Work time saved"});
+Object.assign(EN, {"โอที":"Overtime","เริ่มงาน":"Start work","เลิกงาน":"End work","ชั่วโมงโอที":"Overtime hours","กรุณาใส่เวลาเริ่มและเลิกงาน":"Enter start and end time","กรุณาใส่ชั่วโมงโอที":"Enter overtime hours"});
 function tr(s){ return state.lang === "en" && EN[s] ? EN[s] : s; }
 // Walks the app's text nodes and placeholders; keeps the original Thai so it can switch back
 function i18n(){
@@ -1128,7 +1175,7 @@ function vToday(){
         <div class="lbl">${itemsFor(k).filter(i => Number(i.cost) > 0).length} รายการ</div>
       </div>
     </section>
-    ${streakCard()}
+    ${incomePanel()}
     ${kcalCard()}
     ${budgetCard()}
     <section class="card day-card today"><h3>วันนี้</h3>${previewRow(k)}</section>
@@ -1260,10 +1307,105 @@ function spendCard(){
 function vSummaryTab(){
   const sub = state.sumTab || "ach";
   const seg = (k, l) => `<button class="seg ${sub === k ? "on" : ""}" data-act="sumTab" data-s="${k}">${l}</button>`;
-  const switcher = `<div class="segs">${seg("ach", "ความสำเร็จ")}${seg("spend", "ค่าใช้จ่าย")}${seg("kcal", "แคลอรี่")}</div>`;
-  return switcher + (sub === "ach" ? streakCard() + vHistory() + vSummary() : spendCard());
+  const switcher = `<div class="segs">${seg("ach", "ความสำเร็จ")}${seg("spend", "ค่าใช้จ่าย")}${seg("kcal", "แคลอรี่")}${seg("pay", "รายได้")}</div>`;
+  return switcher + (sub === "pay" ? payCard() : sub === "ach" ? vHistory() + vSummary() : spendCard());
 }
 const FOODS = [{name:"ข้าวผัด", icon:"🍚", kcal:550},{name:"ข้าวมันไก่", icon:"🍗", kcal:600},{name:"ข้าวกะเพราหมูสับไข่ดาว", icon:"🍳", kcal:650},{name:"ข้าวหมูแดง", icon:"🍖", kcal:580},{name:"ข้าวราดแกง", icon:"🥘", kcal:550},{name:"ข้าวต้ม", icon:"🥣", kcal:300},{name:"ก๋วยเตี๋ยวเรือ", icon:"🍜", kcal:400},{name:"ก๋วยเตี๋ยวหมู", icon:"🍜", kcal:350},{name:"บะหมี่หมูแดง", icon:"🍜", kcal:450},{name:"ส้มตำไทย", icon:"🥗", kcal:150},{name:"ไก่ย่าง", icon:"🍗", kcal:300},{name:"ข้าวเหนียว", icon:"🍚", kcal:300},{name:"ผัดกะเพรา", icon:"🍛", kcal:480},{name:"ต้มยำกุ้ง", icon:"🍲", kcal:150},{name:"แกงเขียวหวาน", icon:"🍛", kcal:250},{name:"ข้าวไข่เจียว", icon:"🍳", kcal:500},{name:"ลาบหมู", icon:"🥗", kcal:280},{name:"แซนด์วิช", icon:"🥪", kcal:250},{name:"ไข่ต้ม", icon:"🥚", kcal:75},{name:"กล้วย", icon:"🍌", kcal:105},{name:"แอปเปิ้ล", icon:"🍎", kcal:95},{name:"นมจืด", icon:"🥛", kcal:130},{name:"กาแฟดำ", icon:"☕", kcal:5},{name:"กาแฟลาเต้", icon:"☕", kcal:190},{name:"ชาเขียว", icon:"🍵", kcal:90},{name:"น้ำอัดลม", icon:"🥤", kcal:140},{name:"โยเกิร์ต", icon:"🥣", kcal:120},{name:"ข้าวโอ๊ต", icon:"🥣", kcal:150},{name:"สลัดผัก", icon:"🥗", kcal:120},{name:"โรตี", icon:"🫓", kcal:300},{name:"ไอศกรีม", icon:"🍨", kcal:200}];
+// ===== Income panel: per day and per month, from logged days only =====
+function dayIncome(k){
+  const w = state.work[k];
+  if (!w) return { total: 0, hours: 0, days: 0 };
+  const r = calcDay(k, w.start, w.end, w.ot);
+  if (!r.hasWork) return { total: 0, hours: 0, days: 0 };
+  return { total: r.baseDay + r.extra, hours: w.start && w.end ? (toMin(w.end) - toMin(w.start)) / 60 : (Number(w.ot) || 0), days: 1 };
+}
+function incomePanel(){
+  const t = todayKey(), ym = t.slice(0, 7);
+  const today = dayIncome(t);
+  let month = 0, days = 0;
+  Object.keys(state.work).filter(x => x.startsWith(ym)).forEach(x => {
+    const d = dayIncome(x); month += d.total; days += d.days;
+  });
+  return `<section class="card income-panel">
+    <div class="inc-grid">
+      <div><span>รายได้วันนี้</span><b>${fmtBaht(today.total)}</b><small>${today.days ? today.hours.toFixed(1) + " ชม." : "ยังไม่ได้บันทึก"}</small></div>
+      <div><span>รายได้เดือนนี้</span><b>${fmtBaht(month)}</b><small>${days} วันที่บันทึก</small></div>
+    </div></section>`;
+}
+// ===== Income: monthly pay + overtime / weekend work =====
+function monthlyPay(){ const p = state.pay || {}; return (p.salary || 0) + (p.housing || 0) + (p.position || 0); }
+function toMin(t){ const [h, m] = t.split(":").map(Number); return h * 60 + m; }
+function calcDay(k, start, end, ot){
+  const dailyBase = monthlyPay() / 30, hourly = dailyBase / 8;
+  const dow = parseKey(k).getDay(), weekend = dow === 0 || dow === 6;
+  const r = { dailyBase, hourly, weekend, baseDay: 0, otH: 0, otPay: 0, wkH: 0, wkPay: 0, extra: 0, hasWork: false };
+  const hasTimes = !!(start && end) && toMin(end) > toMin(start);
+  const otHours = Number(ot) || 0;
+  if (!hasTimes && otHours <= 0) return r;
+  r.hasWork = true;
+  if (!weekend) {
+    if (hasTimes) r.baseDay = dailyBase;
+    // Mon-Fri: overtime from 18:00 at x1.5 (manual OT hours override the time-based calculation)
+    r.otH = otHours > 0 ? otHours : Math.max(0, toMin(end) - Math.max(toMin(start), 18 * 60)) / 60;
+    r.otPay = r.otH * hourly * 1.5;
+  } else {
+    if (hasTimes) {
+      // Sat-Sun: before 17:30 x1, from 17:30 x3
+      const s = toMin(start), e = toMin(end), cut = 17 * 60 + 30;
+      const normal = Math.max(0, Math.min(e, cut) - s), extra = Math.max(0, e - Math.max(s, cut));
+      r.wkH += (normal + extra) / 60;
+      r.wkPay += normal / 60 * hourly + extra / 60 * hourly * 3;
+    }
+    if (otHours > 0) { r.wkH += otHours; r.wkPay += otHours * hourly * 3; }
+  }
+  r.extra = r.otPay + r.wkPay;
+  return r;
+}
+const fmtBaht = n => "฿" + Math.round(n).toLocaleString("en-US");
+function payCard(){
+  const k = state.sel, w = state.work[k] || {}, c = calcDay(k, w.start, w.end, w.ot);
+  const ym = k.slice(0, 7);
+  let mExtra = 0, mDays = 0;
+  const rows = Object.keys(state.work).filter(x => x.startsWith(ym)).sort().map(x => {
+    const r = calcDay(x, state.work[x].start, state.work[x].end, state.work[x].ot);
+    mExtra += r.extra; if (r.hasWork) mDays++;
+    return r.hasWork ? `<div class="pay-row"><span>${parseKey(x).getDate()}</span><b>${fmtBaht(r.extra)}</b></div>` : "";
+  }).join("");
+  const p = state.pay || {};
+  return `
+    <section class="card pay-hero"><div class="lbl">รายได้เดือนนี้ (ประมาณ)</div>
+      <div class="big">${fmtBaht(monthlyPay() + mExtra)}</div>
+      <div class="muted">เงินเดือนประจำ ${fmtBaht(monthlyPay())} + โอที/วันหยุด ${fmtBaht(mExtra)} · ${mDays} วัน</div></section>
+    <section class="card"><h3>เงินเดือนประจำ</h3>
+      <div class="frow">
+        <label class="fld"><span>เงินเดือน</span><input type="number" id="paySal" value="${p.salary || 0}" inputmode="numeric"></label>
+        <label class="fld"><span>ค่าบ้าน</span><input type="number" id="payHouse" value="${p.housing || 0}" inputmode="numeric"></label>
+      </div>
+      <div class="frow" style="margin-top:8px">
+        <label class="fld"><span>ค่าตำแหน่ง</span><input type="number" id="payPos" value="${p.position || 0}" inputmode="numeric"></label>
+        <div class="fld"><span>รวมต่อเดือน</span><b class="pay-sum">${fmtBaht(monthlyPay())}</b></div>
+      </div>
+      <div class="actions"><button class="sm" data-act="savePay">บันทึกเงินเดือน</button></div>
+      <div class="pay-rates"><div><b>${fmtBaht(c.dailyBase)}</b><span>ต่อวัน (÷30)</span></div><div><b>${fmtBaht(c.hourly)}</b><span>ต่อชั่วโมง (÷8)</span></div></div>
+    </section>
+    <section class="card"><h3>บันทึกเวลาทำงาน</h3>
+      <label class="fld"><span>วันที่</span><input type="date" id="wkDate" value="${k}"></label>
+      <div class="frow" style="margin-top:8px">
+        <label class="fld"><span>เวลาเริ่ม</span><input type="time" id="wkStart" value="${w.start || ""}"></label>
+        <label class="fld"><span>เวลาเลิก</span><input type="time" id="wkEnd" value="${w.end || ""}"></label>
+      </div>
+      <div class="actions"><button class="sm" data-act="saveWork">บันทึก</button>${w.start ? '<button class="ghost sm" data-act="clearWork">ลบ</button>' : ""}</div>
+      ${c.hasWork ? `<div class="pay-detail">
+        <div class="pay-row"><span>${c.weekend ? "วันหยุด" : "รายได้ต่อวัน"}</span><b>${fmtBaht(c.baseDay)}</b></div>
+        ${c.weekend ? "" : `<div class="pay-row"><span>โอที ${c.otH.toFixed(1)} ชม. (×1.5)</span><b>${fmtBaht(c.otPay)}</b></div>`}
+        ${c.weekend ? `<div class="pay-row"><span>วันหยุด ${c.wkH.toFixed(1)} ชม.</span><b>${fmtBaht(c.wkPay)}</b></div>` : ""}
+        <div class="pay-row total"><span>รายได้วันนี้</span><b>${fmtBaht((c.baseDay) + c.extra)}</b></div>
+      </div>` : '<p class="muted" style="margin:6px 0 0">ยังไม่ได้บันทึกเวลาวันนี้</p>'}
+      <p class="muted" style="margin:8px 0 0;font-size:.7rem">จันทร์–ศุกร์ โอทีตั้งแต่ 18:00 ×1.5 · เสาร์–อาทิตย์ ก่อน 17:30 ×1 และตั้งแต่ 17:30 ×3</p>
+    </section>
+    <section class="card"><h3>รายได้เพิ่มเติมเดือนนี้<span class="muted">${fmtBaht(mExtra)}</span></h3>
+      ${rows || '<p class="muted" style="margin:0">ยังไม่มีวันที่บันทึกเวลา</p>'}</section>`;
+}
 const VIEWS = { today: vToday, schedule: vSchedule, history: vHistory, summary: vSummaryTab, profile: vProfile };
 
 function render(){
@@ -1294,6 +1436,7 @@ function openSheet(ed){
   $("newText").value = it ? it.text : "";
   $("newDate").value = it ? ed.k : state.sel;
   $("newTime").value = it ? (it.time || "") : "";
+  setKind("");
   $("expRows").innerHTML = "";
   if (it && it.expenses && it.expenses.length) it.expenses.forEach(x => addExpRow(x.name, x.amount));
   else if (it && it.cost) addExpRow("", it.cost);
@@ -1318,10 +1461,10 @@ function setIcon(e){
 const PRESETS = [
   {t:"ข้าวเช้า", i:"🍚", p:"morning"}, {t:"ข้าวเที่ยง", i:"🍚", p:"afternoon"}, {t:"ข้าวเย็น", i:"🍚", p:"evening"},
   {t:"กินกาแฟ", i:"☕", p:"afternoon"}, {t:"ไปเที่ยว", i:"⛰️", p:"afternoon"}, {t:"ออกกำลังกาย", i:"🏃", p:"morning"}
-];
+, {t:"ทำงาน", i:"💼", p:"morning", kind:"work"}, {t:"โอที", i:"🔥", p:"evening", kind:"ot"}];
 function applyPreset(idx){
   const p = PRESETS[idx]; if (!p) return;
-  $("newText").value = p.t; setIcon(p.i);
+  $("newText").value = p.t; setIcon(p.i); setKind(p.kind || "");
   document.querySelectorAll("#presets .preset").forEach((b, i) => b.classList.toggle("on", i === idx));
 }
 function closeSheet(){
@@ -1341,6 +1484,19 @@ function submitAdd(e){
   const steps = oldSteps;
   const foods = readFoodRows().filter(r => r.name || r.k > 0)
     .map(r => ({ n: r.name, i: r.icon || "", u: r.u || 0, q: r.q || 1, k: Math.round(r.k) }));
+  const kind = $("newKind").value;
+  let workPatch = null;
+  if (kind === "work") {
+    const st = $("wStart").value, en = $("wEnd").value;
+    if (!st || !en) return toast("กรุณาใส่เวลาเริ่มและเลิกงาน");
+    workPatch = { start: st, end: en };
+  }
+  if (kind === "ot") {
+    const ot = Number($("wOt").value) || 0;
+    if (ot <= 0) return toast("กรุณาใส่ชั่วโมงโอที");
+    workPatch = { ot };
+  }
+  if (workPatch) state.work[date] = { ...(state.work[date] || {}), ...workPatch };
   const expenses = [...document.querySelectorAll("#expRows .frw")].map(el => ({
     name: el.querySelector(".ex-name").value.trim(),
     amount: Number(el.querySelector(".ex-amt").value) || 0
@@ -1349,7 +1505,7 @@ function submitAdd(e){
   const item = {
     id: old ? old.id : uid(), text,
     time: $("newTime").value, icon: $("newIcon").value,
-    cost: costTotal, expenses, kcal: foods.reduce((a, f) => a + f.k, 0), foods, steps
+    cost: costTotal, expenses, kind, kcal: foods.reduce((a, f) => a + f.k, 0), foods, steps
   };
   if (old) {
     const srcList = old.src === "T" ? state.templates : (state.plans[ed.k] || []);
@@ -1521,17 +1677,18 @@ function login(user){
 // ===== Firebase: per-user data (Firestore) =====
 function snapshot(){
   return JSON.stringify({
-    templates: state.templates, plans: state.plans, customFoods: state.customFoods, completed: state.completed, foodOv: state.foodOv, notes: state.notes, water: state.water, weights: state.weights, costGoal: state.costGoal, costGoalM: state.costGoalM, kcalGoal: state.kcalGoal,
+    templates: state.templates, plans: state.plans, pay: state.pay, work: state.work, customFoods: state.customFoods, completed: state.completed, foodOv: state.foodOv, notes: state.notes, water: state.water, weights: state.weights, costGoal: state.costGoal, costGoalM: state.costGoalM, kcalGoal: state.kcalGoal,
     done: Object.keys(state.done), reminders: state.reminders, lang: state.lang
   });
 }
 function resetData(){
-  state.templates = []; state.plans = {}; state.done = {}; state.customFoods = []; state.completed = {}; state.foodOv = {}; state.notes = {}; state.water = {}; state.weights = {}; state.costGoal = 0; state.costGoalM = 0; state.kcalGoal = 2000;
+  state.pay = {salary:30400, housing:2500, position:800}; state.work = {}; state.templates = []; state.plans = {}; state.done = {}; state.customFoods = []; state.completed = {}; state.foodOv = {}; state.notes = {}; state.water = {}; state.weights = {}; state.costGoal = 0; state.costGoalM = 0; state.kcalGoal = 2000;
   state.reminders = false; state.saved = "";
 }
 function applyData(d){
   resetData();
   d = d || {};
+  state.pay = d.pay || {salary:30400, housing:2500, position:800}; state.work = d.work || {};
   state.templates = d.templates || [];
   state.customFoods = d.customFoods || []; state.completed = d.completed || {}; state.foodOv = d.foodOv || {}; state.notes = d.notes || {}; state.water = d.water || {}; state.weights = d.weights || {}; state.costGoal = d.costGoal || 0; state.costGoalM = d.costGoalM || 0; state.kcalGoal = d.kcalGoal || 2000;
   state.plans = d.plans || {};
@@ -1924,6 +2081,18 @@ document.addEventListener("click", e => {
     case "sumTab": state.sumTab = el.dataset.s; return render();
     case "kcalGoal": { const v = Number(prompt(tr("เป้าหมายแคลอรี่ต่อวัน (kcal)"), state.kcalGoal || 2000)); if (v > 0) state.kcalGoal = v; return render(); }
     case "theme": state.theme = state.theme === "dark" ? "light" : "dark"; applyTheme(); return;
+    case "savePay": {
+      state.pay = { salary: Number($("paySal").value) || 0, housing: Number($("payHouse").value) || 0, position: Number($("payPos").value) || 0 };
+      toast("บันทึกเงินเดือนแล้ว"); return render();
+    }
+    case "saveWork": {
+      const st = $("wkStart").value, en = $("wkEnd").value;
+      const prev = state.work[state.sel] || {}, next = { ...prev, start: st, end: en };
+      if (!st && !en && !next.ot) delete state.work[state.sel];
+      else state.work[state.sel] = next;
+      toast("บันทึกเวลาทำงานแล้ว"); return render();
+    }
+    case "clearWork": delete state.work[state.sel]; return render();
     case "span": state.spanTab = el.dataset.s; return render();
     case "pickIcon": setIcon(el.dataset.i); return;
     case "addExpRow": addExpRow(); return;
@@ -1970,6 +2139,7 @@ document.addEventListener("pointerout", e => {
   if (c && !c.contains(e.relatedTarget)) c.style.transform = "";
 });
 window.addEventListener("resize", () => moveIndicator(true));
+document.addEventListener("change", e => { if (e.target.id === "wkDate" && e.target.value) { state.sel = e.target.value; state.month = state.sel.slice(0, 7); render(); } });
 document.addEventListener("input", e => { if (e.target.classList.contains("ex-amt")) updateExpTotal(); });
 document.addEventListener("change", e => { if (e.target.classList && e.target.classList.contains("fr-food")) onFoodChange(e.target); });
 document.addEventListener("input", e => {
