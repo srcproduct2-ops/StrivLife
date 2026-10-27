@@ -734,6 +734,13 @@ html[data-theme="dark"] .ic-cell small{background:#064e3b;color:#a7f3d0}
   .tpick select{font-size:14px;padding:7px 2px}
   .fld input[type="date"]{font-size:14px}
 }
+/* Phone layout: one full-width column, no side-by-side copies */
+html,body{width:100%;max-width:100vw;overflow:hidden}
+@media (max-width:599px){
+  body{display:block}
+  #app{width:100vw;max-width:100vw;margin:0;left:0;right:0;border-radius:0;box-shadow:none}
+  #splash{left:0;right:0;width:100%;height:100%}
+}
 </style>
 </head>
 <body class="guest">
