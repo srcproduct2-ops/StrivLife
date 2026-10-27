@@ -741,6 +741,46 @@ html,body{width:100%;max-width:100vw;overflow:hidden}
   #app{width:100vw;max-width:100vw;margin:0;left:0;right:0;border-radius:0;box-shadow:none}
   #splash{left:0;right:0;width:100%;height:100%}
 }
+/* Running */
+.run-card{background:linear-gradient(135deg,#ecfdf5 0%,#e0f2fe 100%);border:0}
+.run-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.run-top>div>span{font-size:.72rem;color:var(--muted);font-weight:700}
+.run-top b{display:block;font-size:1.5rem;font-weight:900;color:#065f46;line-height:1.1}
+.run-top b small{font-size:.8rem;font-weight:700}
+.run-stats{display:flex;gap:14px}
+.run-stats>div{text-align:right}
+.run-stats b{font-size:1.05rem;color:#0c4a6e}
+.run-stats small{display:block;font-size:.62rem;color:var(--muted);font-weight:700}
+.run-bars{display:flex;align-items:flex-end;gap:6px;height:90px;margin-top:10px}
+.run-bars>div{flex:1;height:100%;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:3px}
+.run-bars i{display:block;width:100%;border-radius:8px 8px 3px 3px;background:linear-gradient(180deg,#34d399,#0ea5e9)}
+.run-bars span{font-size:.62rem;color:var(--muted);font-weight:700}
+.run-bars small{font-size:.58rem;color:#065f46;font-weight:800}
+.chip.run{background:linear-gradient(135deg,#bbf7d0,#bae6fd);color:#0c4a6e}
+html[data-theme="dark"] .run-card{background:linear-gradient(135deg,#0c2a24,#0c2536)}
+html[data-theme="dark"] .run-top b{color:#6ee7b7}
+html[data-theme="dark"] .run-stats b{color:#7dd3fc}
+/* Smaller today card */
+.weekcard.split{padding:10px 14px;border-radius:20px}
+.weekcard .half:first-child{padding-right:10px}
+.weekcard .half:last-child{padding-left:12px}
+.weekcard .lbl{font-size:.72rem}
+.weekcard .big.sm{font-size:1.15rem}
+.weekcard .bar2{height:4px;margin:4px 0 2px}
+.weekcard .half{gap:1px}
+/* Smaller running card */
+.run-card{padding:10px 14px;border-radius:20px}
+.run-card::before{width:3px}
+.run-top b{font-size:1.1rem}
+.run-top b small{font-size:.68rem}
+.run-top>div>span{font-size:.66rem}
+.run-stats b{font-size:.9rem}
+.run-stats small{font-size:.56rem}
+.run-stats{gap:10px}
+.run-bars{height:44px;gap:4px;margin-top:6px}
+.run-bars span{font-size:.56rem}
+.run-bars small{font-size:.52rem}
+.run-card .muted{font-size:.6rem!important;margin-top:4px!important}
 </style>
 </head>
 <body class="guest">
@@ -843,6 +883,7 @@ html,body{width:100%;max-width:100vw;overflow:hidden}
   <div class="sheet-grip"></div>
   <h3 id="sheetTitle">เพิ่มรายการ</h3>
   <div class="presets" id="presets"><button type="button" class="preset" data-act="preset" data-idx="0"><span>🍚</span> ข้าวเช้า</button><button type="button" class="preset" data-act="preset" data-idx="1"><span>🍚</span> ข้าวเที่ยง</button><button type="button" class="preset" data-act="preset" data-idx="2"><span>🍚</span> ข้าวเย็น</button><button type="button" class="preset" data-act="preset" data-idx="3"><span>☕</span> กินกาแฟ</button><button type="button" class="preset" data-act="preset" data-idx="4"><span>⛰️</span> ไปเที่ยว</button><button type="button" class="preset" data-act="preset" data-idx="5"><span>🏃</span> ออกกำลังกาย</button><button type="button" class="preset" data-act="preset" data-idx="6"><span>💼</span> ทำงาน</button><button type="button" class="preset" data-act="preset" data-idx="7"><span>🔥</span> โอที</button>
+      <button type="button" class="preset" data-act="preset" data-idx="8"><span>🏃</span> วิ่ง</button>
       <button type="button" class="preset own" data-act="ownPreset"><span>✏️</span> สร้างเอง</button></div>
   <form class="addform" id="addForm">
     <input id="newText" placeholder="เช่น อ่านหนังสือ 20 นาที" maxlength="80" autocomplete="off">
@@ -852,6 +893,13 @@ html,body{width:100%;max-width:100vw;overflow:hidden}
     </div>
     <div class="kindrow" id="kindRow" hidden>
       <input type="hidden" id="newKind" value="">
+      <div id="runRow" hidden>
+        <div class="frow">
+          <label class="fld"><span>ระยะทาง (กม.)</span><input type="number" id="runKm" min="0" step="0.01" inputmode="decimal" placeholder="0"></label>
+          <label class="fld"><span>เพซ (นาที:วินาที/กม.)</span><input type="text" id="runPace" placeholder="5:30" inputmode="numeric"></label>
+        </div>
+        <label class="fld" style="margin-top:8px"><span>อัตราการเต้นหัวใจ (bpm)</span><input type="number" id="runHr" min="0" step="1" inputmode="numeric" placeholder="0"></label>
+      </div>
       <div class="leaverow" id="leaveRow" hidden>
         <input type="hidden" id="newLeave" value="">
         <button type="button" class="lv on" data-act="leave" data-v="">ไม่มี</button>
@@ -866,15 +914,11 @@ html,body{width:100%;max-width:100vw;overflow:hidden}
       </div>
       <div class="frow" id="fOt"><label class="fld"><span>เริ่มโอที</span><input type="hidden" id="oStart"><div class="tpick" data-for="oStart"></div></label><label class="fld"><span>เลิกโอที</span><input type="hidden" id="oEnd"><div class="tpick" data-for="oEnd"></div></label></div>
     </div>
-    <div class="fld"><span>ค่าใช้จ่าย (บาท)</span>
-      <div id="expRows" class="foodrows"></div>
-      <button type="button" class="addfood" data-act="addExpRow">+ เพิ่มค่าใช้จ่าย</button>
-      <div class="foodtotal"><span>รวม</span><b>฿<span id="expTotal">0</span></b></div>
-    </div>
-    <div class="fld foodfld"><span>อาหาร</span>
+    <div id="expRows" hidden></div><span id="expTotal" hidden>0</span>
+    <div class="fld foodfld" id="foodFld"><span>อาหาร</span>
       <div id="foodRows" class="foodrows"></div>
       <button type="button" class="addfood" data-act="addFoodRow">+ เพิ่มอาหาร</button>
-      <div class="foodtotal"><span>แคลอรี่รวม</span><b><span id="foodTotal">0</span> kcal</b></div>
+      <div class="foodtotal"><span>จำนวนเงินรวม</span><b>฿<span id="foodTotal">0</span></b></div>
     </div>
     <div class="fld"><span>ไอคอน</span><div class="ipick" id="ipick"><button type="button" class="ipk" data-act="pickIcon" data-i="💼"><span class="ie">💼</span><small>ทำงาน</small></button><button type="button" class="ipk" data-act="pickIcon" data-i="🍚"><span class="ie">🍚</span><small>กินข้าว</small></button><button type="button" class="ipk" data-act="pickIcon" data-i="☕"><span class="ie">☕</span><small>กาแฟ</small></button><button type="button" class="ipk" data-act="pickIcon" data-i="⛰️"><span class="ie">⛰️</span><small>ภูเขา</small></button><button type="button" class="ipk" data-act="pickIcon" data-i="🧳"><span class="ie">🧳</span><small>เที่ยว</small></button><button type="button" class="ipk" data-act="pickIcon" data-i="🏃"><span class="ie">🏃</span><small>ออกกำลัง</small></button><button type="button" class="ipk" data-act="pickIcon" data-i="📘"><span class="ie">📘</span><small>เรียน</small></button><button type="button" class="ipk" data-act="pickIcon" data-i="🛒"><span class="ie">🛒</span><small>ซื้อของ</small></button><button type="button" class="ipk" data-act="pickIcon" data-i="🚗"><span class="ie">🚗</span><small>เดินทาง</small></button><button type="button" class="ipk" data-act="pickIcon" data-i="🛌"><span class="ie">🛌</span><small>พักผ่อน</small></button><button type="button" class="ipk" data-act="pickIcon" data-i="💧"><span class="ie">💧</span><small>น้ำ</small></button><button type="button" class="ipk" data-act="pickIcon" data-i="🎵"><span class="ie">🎵</span><small>ดนตรี</small></button><button type="button" class="ipk" data-act="pickIcon" data-i="🧹"><span class="ie">🧹</span><small>งานบ้าน</small></button><button type="button" class="ipk" data-act="pickIcon" data-i="📌"><span class="ie">📌</span><small>อื่น ๆ</small></button></div><input type="hidden" id="newIcon" value="📌"></div>
     <label class="rep"><input type="checkbox" id="newRepeat"> ทำทุกวัน</label>
@@ -1007,6 +1051,36 @@ document.addEventListener("change", e => {
   if (apSel) H = (H % 12) + (apSel.value === "PM" ? 12 : 0);
   $(id).value = `${pad(H)}:${mSel.value}`;
 });
+// ===== Running: distance, pace, heart rate =====
+function paceSec(p){ const m = /^(\d{1,2}):([0-5]\d)$/.exec((p || "").trim()); return m ? Number(m[1]) * 60 + Number(m[2]) : 0; }
+function fmtPace(sec){
+  if (!sec) return "–";
+  const t = Math.round(sec);
+  return `${Math.floor(t / 60)}:${pad(t % 60)}`;
+}
+function dayRuns(k){ return itemsFor(k).filter(i => i.run && i.run.km > 0).map(i => i.run); }
+function dayKm(k){ return dayRuns(k).reduce((a, r) => a + r.km, 0); }
+function runCard(){
+  const t = todayKey(), runs = dayRuns(t);
+  const km = runs.reduce((a, r) => a + r.km, 0);
+  const timed = runs.reduce((a, r) => a + r.km * paceSec(r.pace), 0);
+  const pace = km && timed ? timed / km : 0;
+  const hrs = runs.filter(r => r.hr > 0).map(r => r.hr);
+  const hr = hrs.length ? Math.round(hrs.reduce((a, b) => a + b, 0) / hrs.length) : 0;
+  const days = [];
+  for (let i = 6; i >= 0; i--) {
+    const k = addDays(t, -i);
+    days.push({ l: parseKey(k).toLocaleDateString("en-US", {weekday: "short"}).slice(0, 2), v: dayKm(k) });
+  }
+  const max = Math.max(1, ...days.map(d => d.v));
+  return `<section class="card run-card">
+    <div class="run-top">
+      <div><span>ระยะทางวันนี้</span><b>${km.toFixed(2)} <small>km</small></b></div>
+      <div class="run-stats"><div><b>${fmtPace(pace)}</b><small>เพซ/กม.</small></div><div><b>${hr || "–"}</b><small>bpm</small></div></div>
+    </div>
+    <div class="run-bars">${days.map(d => `<div><small>${d.v ? d.v.toFixed(1) : ""}</small><i style="height:${Math.max(4, d.v / max * 100)}%"></i><span>${d.l}</span></div>`).join("")}</div>
+    <p class="muted" style="margin:6px 0 0;font-size:.68rem">ระยะทาง 7 วันล่าสุด (กม.)</p></section>`;
+}
 // ===== Attendance: late, absent / leave, vacation (per pay cycle) =====
 function setLeave(v){
   $("newLeave").value = v;
@@ -1033,6 +1107,15 @@ function attendCard(){
       <div><b>${a.vac}</b><span>พักร้อน</span></div></div>
     <p class="muted" style="margin:8px 0 0;font-size:.68rem">ตามเดือนในปฏิทินรายได้ · มาสายหลัง 08:00 (จันทร์–ศุกร์)</p></section>`;
 }
+// ===== Food is hidden for work, running, and sports (matched by the item name) =====
+const SPORT_WORDS = ["ออกกำลัง","กีฬา","ฟิตเนส","ยิม","ว่ายน้ำ","จักรยาน","ฟุตบอล","ฟุตซอล","บาส","แบด","เทนนิส","โยคะ","มวย","วอลเลย์","ตะกร้อ","ปิงปอง","เดินเร็ว","ปีนเขา","แอโรบิก","เวท","ยกน้ำหนัก"];
+function isSport(t){ const x = (t || "").toLowerCase(); return SPORT_WORDS.some(w => x.includes(w)); }
+function applyFoodVisibility(){
+  const k = $("newKind").value;
+  const hide = k === "work" || k === "run" || isSport($("newText").value);
+  $("foodFld").hidden = hide;
+  if (hide) renderFoodRows([]);
+}
 // ===== Work & overtime kinds =====
 function setKind(k){
   $("newKind").value = k;
@@ -1040,6 +1123,8 @@ function setKind(k){
   $("fWorkStart").hidden = $("fWorkEnd").hidden = k !== "work";
   $("fOt").hidden = k !== "ot";
   $("leaveRow").hidden = k !== "work";
+  $("runRow").hidden = k !== "run";
+  applyFoodVisibility();
   $("fTime").hidden = k === "work";
   if (k !== "work") setLeave("");
   if (k === "work") { if (!$("wStart").value) $("wStart").value = "08:00"; if (!$("wEnd").value) $("wEnd").value = "17:00"; }
@@ -1072,6 +1157,8 @@ Object.assign(EN, {"ลาป่วย":"Sick leave","ลากิจ":"Personal
 Object.assign(EN, {"ใส่เวลาปกติ (จ–ศ)":"Fill standard hours (Mon–Fri)"});
 Object.assign(EN, {"เงินเดือน (คิดโอที)":"Salary (for OT)","ค่าบ้าน":"Housing","ค่าตำแหน่ง":"Position allowance","เงินเพิ่มต่อรอบ":"Extra per cycle"});
 Object.assign(EN, {"ตามเดือนในปฏิทินรายได้ · มาสายหลัง 08:00 (จันทร์–ศุกร์)":"Follows the income calendar month · late after 08:00 (Mon–Fri)"});
+Object.assign(EN, {"จำนวนเงินรวม":"Total amount"});
+Object.assign(EN, {"วิ่ง":"Run","ระยะทาง (กม.)":"Distance (km)","เพซ (นาที:วินาที/กม.)":"Pace (min:sec/km)","อัตราการเต้นหัวใจ (bpm)":"Heart rate (bpm)","กรุณาใส่ระยะทาง":"Enter distance","กรุณาใส่เพซในรูปแบบ นาที:วินาที":"Enter pace as min:sec","ระยะทางวันนี้":"Distance today","เพซ/กม.":"Pace/km","ระยะทาง 7 วันล่าสุด (กม.)":"Distance, last 7 days (km)"});
 function tr(s){ return state.lang === "en" && EN[s] ? EN[s] : s; }
 // Walks the app's text nodes and placeholders; keeps the original Thai so it can switch back
 function i18n(){
@@ -1129,7 +1216,7 @@ function taskRow(k, it){
     <button class="chk ${state._pop === k + "|" + it.key ? "pop" : ""}" data-act="toggle" data-k="${k}" data-key="${it.key}" aria-label="ทำเสร็จ">✓</button>
     <span class="ico">${it.icon || "📌"}</span>
     <div class="tbody">
-      <div class="tt" data-act="edit" data-k="${k}" data-key="${it.key}">${esc(it.text)}${it.src === "T" ? ' <span class="chip">ทุกวัน</span>' : ""}${it.kcal ? ` <span class="chip kcal">${it.kcal} kcal</span>` : ""}</div>
+      <div class="tt" data-act="edit" data-k="${k}" data-key="${it.key}">${esc(it.text)}${it.src === "T" ? ' <span class="chip">ทุกวัน</span>' : ""}${it.run ? ` <span class="chip run">${it.run.km} km</span>` : ""}</div>
       ${(it.foods && it.foods.length) ? `<div class="tm fds">🍽️ ${it.foods.map(f => esc(f.n ? tr(f.n) + (f.q && f.q !== 1 ? " ×" + f.q : "") : "อื่น ๆ") + " <small>" + f.k + "</small>").join(" · ")}</div>` : ""}
       ${(it.time || it.cost) ? `<div class="tm">${esc(it.time || "")}${it.time && it.cost ? " · " : ""}${it.cost ? "฿" + it.cost + (it.expenses && it.expenses.length > 1 ? " (" + it.expenses.map(x => esc(x.name || "-") + " " + x.amount).join(" + ") + ")" : "") : ""}</div>` : ""}
       ${steps ? `<div class="steps">${steps}</div>` : ""}
@@ -1151,7 +1238,7 @@ function groupList(k){
   if (c) {
     const label = k === todayKey() ? "กิจกรรมของวันนี้เสร็จสมบูรณ์แล้ว" : dateLabel(k);
     return `<section class="card donecard"><div class="dc-em">🎉</div><h3>${esc(label)}</h3>
-      <p class="muted">${c.items.length} กิจกรรม${c.kcal ? " · " + c.kcal + " kcal" : ""}${c.cost ? " · ฿" + c.cost : ""}</p>
+      <p class="muted">${c.items.length} กิจกรรม${c.cost ? " · ฿" + c.cost : ""}</p>
       <div class="actions"><button data-act="showSummary" data-k="${k}">ดูสรุป</button><button class="ghost" data-act="reopenDay" data-k="${k}">เปิดรายการอีกครั้ง</button></div></section>`;
   }
   const list = itemsFor(k);
@@ -1223,7 +1310,7 @@ function importData(file){
 function fmListHTML(){
   const q = (state.fmq || "").toLowerCase(), l = allFoods().filter(f => !q || f.name.toLowerCase().includes(q));
   return l.length ? l.map(f => { const o = esc(f._orig || f.name);
-    return `<div class="fm-row"><span>${f.icon || "🍽️"} ${esc(tr(f.name))}</span><small>${f.kcal} kcal</small><button class="ghost sm" data-act="foodEdit" data-n="${o}">✏️</button><button class="ghost sm" data-act="foodDel" data-n="${o}">🗑</button></div>`; }).join("")
+    return `<div class="fm-row"><span>${f.icon || "🍽️"} ${esc(tr(f.name))}</span><button class="ghost sm" data-act="foodEdit" data-n="${o}">✏️</button><button class="ghost sm" data-act="foodDel" data-n="${o}">🗑</button></div>`; }).join("")
     : '<p class="muted">ไม่พบอาหาร</p>';
 }
 function dataCard(){
@@ -1269,11 +1356,11 @@ function showSummary(k, fresh){
   const c = state.completed[k]; if (!c) return;
   const rows = c.items.map(i => {
     const foods = (i.foods || []).map(f => esc(f.n ? tr(f.n) + (f.q && f.q !== 1 ? " ×" + f.q : "") : "อื่น ๆ")).join(" · ");
-    const sub = [i.time ? esc(i.time) : "", foods ? "🍽️ " + foods : "", i.kcal ? i.kcal + " kcal" : "", i.cost ? "฿" + i.cost : ""].filter(Boolean).join(" · ");
+    const sub = [i.time ? esc(i.time) : "", foods ? "🍽️ " + foods : "", i.cost ? "฿" + i.cost : ""].filter(Boolean).join(" · ");
     return `<div class="cel-row"><span class="ck">✓</span><div class="tx">${i.icon} ${esc(i.text)}${sub ? `<div class="sub">${sub}</div>` : ""}</div></div>`;
   }).join("");
   $("celCard").innerHTML = `<div class="cel-top" id="celTop"><div class="em">🎉</div><h2>${k === todayKey() ? "ทำครบทุกกิจกรรมแล้ว!" : "กิจกรรมเสร็จสมบูรณ์"}</h2><p>${esc(dateLabel(k))}</p></div>
-    <div class="cel-stats"><div><b>${c.items.length}</b><span>กิจกรรม</span></div><div><b>${c.kcal}</b><span>kcal</span></div><div><b>฿${c.cost}</b><span>ใช้จ่าย</span></div></div>
+    <div class="cel-stats"><div><b>${c.items.length}</b><span>กิจกรรม</span></div><div><b>฿${c.cost}</b><span>ใช้จ่าย</span></div></div>
     <div class="cel-list">${rows}</div>
     ${state.notes[k] ? `<div class="cel-note">📝 ${esc(state.notes[k])}</div>` : ""}
     <button class="cel-ok" data-act="closeCelebrate">เสร็จสิ้น</button>`;
@@ -1317,7 +1404,8 @@ function vToday(){
     </section>
     ${incomePanel()}
     ${attendCard()}
-    ${kcalCard()}
+    ${runCard()}
+    
     ${budgetCard()}
     <section class="card day-card today"><h3>วันนี้</h3>${previewRow(k)}</section>
     <section class="card day-card tomorrow"><h3>พรุ่งนี้ <span class="muted">เตรียมไว้ล่วงหน้า</span></h3>${previewRow(addDays(k, 1))}</section>
@@ -1448,10 +1536,10 @@ function spendCard(){
 function vSummaryTab(){
   const sub = state.sumTab || "ach";
   const seg = (k, l) => `<button class="seg ${sub === k ? "on" : ""}" data-act="sumTab" data-s="${k}">${l}</button>`;
-  const switcher = `<div class="segs">${seg("ach", "ความสำเร็จ")}${seg("spend", "ค่าใช้จ่าย")}${seg("kcal", "แคลอรี่")}</div>`;
+  const switcher = `<div class="segs">${seg("ach", "ความสำเร็จ")}${seg("spend", "ค่าใช้จ่าย")}</div>`;
   return switcher + (sub === "ach" ? vHistory() + vSummary() : spendCard());
 }
-const FOODS = [{name:"ข้าวผัด", icon:"🍚", kcal:550},{name:"ข้าวมันไก่", icon:"🍗", kcal:600},{name:"ข้าวกะเพราหมูสับไข่ดาว", icon:"🍳", kcal:650},{name:"ข้าวหมูแดง", icon:"🍖", kcal:580},{name:"ข้าวราดแกง", icon:"🥘", kcal:550},{name:"ข้าวต้ม", icon:"🥣", kcal:300},{name:"ก๋วยเตี๋ยวเรือ", icon:"🍜", kcal:400},{name:"ก๋วยเตี๋ยวหมู", icon:"🍜", kcal:350},{name:"บะหมี่หมูแดง", icon:"🍜", kcal:450},{name:"ส้มตำไทย", icon:"🥗", kcal:150},{name:"ไก่ย่าง", icon:"🍗", kcal:300},{name:"ข้าวเหนียว", icon:"🍚", kcal:300},{name:"ผัดกะเพรา", icon:"🍛", kcal:480},{name:"ต้มยำกุ้ง", icon:"🍲", kcal:150},{name:"แกงเขียวหวาน", icon:"🍛", kcal:250},{name:"ข้าวไข่เจียว", icon:"🍳", kcal:500},{name:"ลาบหมู", icon:"🥗", kcal:280},{name:"แซนด์วิช", icon:"🥪", kcal:250},{name:"ไข่ต้ม", icon:"🥚", kcal:75},{name:"กล้วย", icon:"🍌", kcal:105},{name:"แอปเปิ้ล", icon:"🍎", kcal:95},{name:"นมจืด", icon:"🥛", kcal:130},{name:"กาแฟดำ", icon:"☕", kcal:5},{name:"กาแฟลาเต้", icon:"☕", kcal:190},{name:"ชาเขียว", icon:"🍵", kcal:90},{name:"น้ำอัดลม", icon:"🥤", kcal:140},{name:"โยเกิร์ต", icon:"🥣", kcal:120},{name:"ข้าวโอ๊ต", icon:"🥣", kcal:150},{name:"สลัดผัก", icon:"🥗", kcal:120},{name:"โรตี", icon:"🫓", kcal:300},{name:"ไอศกรีม", icon:"🍨", kcal:200}];
+const FOODS = [{name:"ข้าวผัด", icon:"🍚"},{name:"ข้าวมันไก่", icon:"🍗"},{name:"ข้าวกะเพราหมูสับไข่ดาว", icon:"🍳"},{name:"ข้าวหมูแดง", icon:"🍖"},{name:"ข้าวราดแกง", icon:"🥘"},{name:"ข้าวต้ม", icon:"🥣"},{name:"ก๋วยเตี๋ยวเรือ", icon:"🍜"},{name:"ก๋วยเตี๋ยวหมู", icon:"🍜"},{name:"บะหมี่หมูแดง", icon:"🍜"},{name:"ส้มตำไทย", icon:"🥗"},{name:"ไก่ย่าง", icon:"🍗"},{name:"ข้าวเหนียว", icon:"🍚"},{name:"ผัดกะเพรา", icon:"🍛"},{name:"ต้มยำกุ้ง", icon:"🍲"},{name:"แกงเขียวหวาน", icon:"🍛"},{name:"ข้าวไข่เจียว", icon:"🍳"},{name:"ลาบหมู", icon:"🥗"},{name:"แซนด์วิช", icon:"🥪"},{name:"ไข่ต้ม", icon:"🥚"},{name:"กล้วย", icon:"🍌"},{name:"แอปเปิ้ล", icon:"🍎"},{name:"นมจืด", icon:"🥛"},{name:"กาแฟดำ", icon:"☕"},{name:"กาแฟลาเต้", icon:"☕"},{name:"ชาเขียว", icon:"🍵"},{name:"น้ำอัดลม", icon:"🥤"},{name:"โยเกิร์ต", icon:"🥣"},{name:"ข้าวโอ๊ต", icon:"🥣"},{name:"สลัดผัก", icon:"🥗"},{name:"โรตี", icon:"🫓"},{name:"ไอศกรีม", icon:"🍨"}];
 // ===== Pay cycle: 22nd of one month to 21st of the next =====
 function cycleKey(k){
   const d = parseKey(k);
@@ -1643,6 +1731,7 @@ function openSheet(ed){
   refreshFoods().then(() => { if (!$("sheet").hidden) renderFoodRows(readFoodRows()); });
   const sh = $("sheet"), bg = $("sheetBg");
   sh.hidden = false; bg.hidden = false; i18n();
+  applyFoodVisibility();
   requestAnimationFrame(() => { sh.classList.add("open"); bg.classList.add("open"); });
   setTimeout(() => $("newText").focus(), 350);
 }
@@ -1653,7 +1742,7 @@ function setIcon(e){
 const PRESETS = [
   {t:"ข้าวเช้า", i:"🍚", p:"morning"}, {t:"ข้าวเที่ยง", i:"🍚", p:"afternoon"}, {t:"ข้าวเย็น", i:"🍚", p:"evening"},
   {t:"กินกาแฟ", i:"☕", p:"afternoon"}, {t:"ไปเที่ยว", i:"⛰️", p:"afternoon"}, {t:"ออกกำลังกาย", i:"🏃", p:"morning"}
-, {t:"ทำงาน", i:"💼", p:"morning", kind:"work"}, {t:"โอที", i:"🔥", p:"evening", kind:"ot"}];
+, {t:"ทำงาน", i:"💼", p:"morning", kind:"work"}, {t:"โอที", i:"🔥", p:"evening", kind:"ot"}, {t:"วิ่ง", i:"🏃", p:"morning", kind:"run"}];
 function applyPreset(idx){
   const p = PRESETS[idx]; if (!p) return;
   $("newText").value = p.t; setIcon(p.i); setKind(p.kind || "");
@@ -1692,7 +1781,15 @@ function submitAdd(e){
     if (!os || !oe || toMin(oe) <= toMin(os)) return toast("กรุณาใส่เวลาเริ่มและเลิกโอทีให้ถูกต้อง");
     workPatch = { ot: { start: os, end: oe } };
   }
-  if (kind) {
+  let runPatch = null;
+  if (kind === "run") {
+    const km = Number($("runKm").value);
+    if (!(km > 0)) return toast("กรุณาใส่ระยะทาง");
+    const pc = $("runPace").value.trim();
+    if (pc && !/^\d{1,2}:[0-5]\d$/.test(pc)) return toast("กรุณาใส่เพซในรูปแบบ นาที:วินาที");
+    runPatch = { km, pace: pc, hr: Number($("runHr").value) || 0 };
+  }
+  if (kind && kind !== "run") {
     const dup = (state.plans[date] || []).some(x => x.kind === kind && (!old || x.id !== old.id));
     if (dup) return toast(kind === "work" ? "วันนี้มีรายการทำงานแล้ว (ได้วันละ 1 รายการ)" : "วันนี้มีรายการโอทีแล้ว (ได้วันละ 1 รายการ)");
   }
@@ -1705,7 +1802,7 @@ function submitAdd(e){
   const item = {
     id: old ? old.id : uid(), text,
     time: kind === "work" ? $("wStart").value : $("newTime").value, icon: $("newIcon").value,
-    cost: costTotal, expenses, kind, kcal: foods.reduce((a, f) => a + f.k, 0), foods, steps
+    cost: foods.reduce((a, f) => a + (Number(f.k) || 0), 0), expenses: [], kind, run: runPatch, foods, steps
   };
   if (old) {
     const srcList = old.src === "T" ? state.templates : (state.plans[ed.k] || []);
@@ -1717,7 +1814,7 @@ function submitAdd(e){
   state.sel = date; state.month = date.slice(0, 7);
   state.editing = null;
   e.target.reset();
-  ["newTime", "wStart", "wEnd", "oStart", "oEnd"].forEach(id => { $(id).value = ""; });
+  ["newTime", "wStart", "wEnd", "oStart", "oEnd", "runKm", "runPace", "runHr"].forEach(id => { $(id).value = ""; });
   closeSheet(); render(); toast(old ? "บันทึกแล้ว" : "เพิ่มรายการแล้ว");
 }
 
@@ -1729,7 +1826,7 @@ document.addEventListener("input", e => {
   const items = _foodList.map((f, i) => ({ f, i }))
     .filter(({ f }) => !q || f.name.toLowerCase().includes(q) || tr(f.name).toLowerCase().includes(q))
     .slice(0, 30);
-  list.innerHTML = items.map(({ f, i }) => `<button type="button" class="fr-item" data-i="${i}"><span>${f.icon || "🍽️"}</span> ${esc(tr(f.name))}<small>${f.kcal} kcal</small></button>`).join("")
+  list.innerHTML = items.map(({ f, i }) => `<button type="button" class="fr-item" data-i="${i}"><span>${f.icon || "🍽️"}</span> ${esc(tr(f.name))}</button>`).join("")
     + `<button type="button" class="fr-item new" data-i="__new">+ ${tr("เพิ่มอาหารเอง")}${q ? ": " + esc(e.target.value.trim()) : ""}</button>`;
   list.hidden = false;
 });
@@ -1768,7 +1865,7 @@ function buildFoodList(rows){
 }
 function foodRowHTML(r){
   const opts = `<option value="">${tr("— ไม่เลือก —")}</option>`
-    + _foodList.map((f, i) => `<option value="${i}" ${f.name === r.name ? "selected" : ""}>${f.icon || "🍽️"} ${esc(tr(f.name))} · ${f.kcal} kcal</option>`).join("")
+    + _foodList.map((f, i) => `<option value="${i}" ${f.name === r.name ? "selected" : ""}>${f.icon || "🍽️"} ${esc(tr(f.name))}</option>`).join("")
     + `<option value="__new">${tr("+ เพิ่มอาหารเอง")}</option>`;
   return `<div class="frw"><div class="fr-combo">
       <input type="search" class="fr-search" placeholder="${tr("ค้นหาอาหาร")}" value="${esc(tr(r.name || ""))}" autocomplete="off">
@@ -1776,7 +1873,7 @@ function foodRowHTML(r){
       <select class="fr-food" hidden>${opts}</select>
     </div>
     <input type="number" class="fr-qty" min="0.5" step="0.5" value="${r.q || 1}" inputmode="decimal">
-    <input type="number" class="fr-kcal" min="0" step="1" value="${r.k ? Math.round(r.k) : ""}" placeholder="kcal" inputmode="numeric">
+    <input type="number" class="fr-kcal" min="0" step="1" value="${r.k ? Math.round(r.k) : ""}" placeholder="฿" inputmode="decimal">
     <button type="button" class="fr-del" data-act="delFoodRow" aria-label="ลบ">×</button></div>`;
 }
 function renderFoodRows(rows){
@@ -1803,14 +1900,13 @@ function onFoodChange(sel){
     const rows = readFoodRows();
     const name = (prompt(tr("ชื่ออาหาร")) || "").trim();
     if (!name) { renderFoodRows(rows); return; }
-    const kcal = Number(prompt(tr("แคลอรี่ต่อหน่วย (kcal)"), "300")) || 0;
-    const food = { id: uid(), name, icon: "🍽️", kcal, custom: true };
+    const food = { id: uid(), name, icon: "🍽️", custom: true };
     state.sharedFoods.push(food);
     if (window.FB && window.FB.addFood) {
       window.FB.addFood(food).then(() => toast("บันทึกอาหารลงฐานข้อมูลแล้ว"))
         .catch(e => { console.error(e); toast("บันทึกอาหารไม่สำเร็จ"); });
     } else toast("เพิ่มอาหารแล้ว (บันทึกเฉพาะในเครื่อง)");
-    rows[idx] = { name, icon: food.icon, u: kcal, q: 1, k: kcal };
+    rows[idx] = { name, icon: food.icon, u: 0, q: 1, k: 0 };
     renderFoodRows(rows);
     if (!$("newText").value.trim()) $("newText").value = name;
     return;
@@ -1818,7 +1914,6 @@ function onFoodChange(sel){
   const f = sel.value === "" ? null : _foodList[Number(sel.value)];
   if (f) {
     const q = Number(row.querySelector(".fr-qty").value) || 1;
-    row.querySelector(".fr-kcal").value = Math.round(f.kcal * q);
     if (!$("newText").value.trim()) $("newText").value = tr(f.name);
   }
   updateFoodTotal();
@@ -1826,7 +1921,7 @@ function onFoodChange(sel){
 function onQtyInput(inp){
   const row = inp.closest(".frw"), v = row.querySelector(".fr-food").value;
   const f = v === "" || v === "__new" ? null : _foodList[Number(v)];
-  if (f) row.querySelector(".fr-kcal").value = Math.round(f.kcal * (Number(inp.value) || 0));
+  
   updateFoodTotal();
 }
 function kcalCard(){
@@ -2266,8 +2361,7 @@ document.addEventListener("click", e => {
     case "foodEdit": {
       const f = allFoods().find(x => (x._orig || x.name) === el.dataset.n); if (!f) return;
       const n = (prompt(tr("ชื่ออาหาร"), f.name) || "").trim(); if (!n) return;
-      const raw = prompt(tr("แคลอรี่ต่อหน่วย (kcal)"), f.kcal); if (raw === null || !(Number(raw) >= 0)) return;
-      state.foodOv[el.dataset.n] = { n, k: Number(raw) }; return render();
+      state.foodOv[el.dataset.n] = { n }; return render();
     }
     case "foodDel": if (!confirm(tr("ลบอาหารนี้ออกจากรายการ?"))) return; state.foodOv[el.dataset.n] = { del: true }; return render();
     case "foodReset": state.foodOv = {}; return render();
@@ -2391,6 +2485,7 @@ document.addEventListener("pointerout", e => {
   if (c && !c.contains(e.relatedTarget)) c.style.transform = "";
 });
 window.addEventListener("resize", () => moveIndicator(true));
+document.addEventListener("input", e => { if (e.target.id === "newText") applyFoodVisibility(); });
 document.addEventListener("change", e => { if (e.target.id === "wkDate" && e.target.value) { state.sel = e.target.value; state.month = state.sel.slice(0, 7); render(); } });
 document.addEventListener("input", e => { if (e.target.classList.contains("ex-amt")) updateExpTotal(); });
 document.addEventListener("change", e => { if (e.target.classList && e.target.classList.contains("fr-food")) onFoodChange(e.target); });
