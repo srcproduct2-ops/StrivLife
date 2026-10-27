@@ -710,6 +710,18 @@ html[data-theme="dark"] .ic-cell small{background:#064e3b;color:#a7f3d0}
 .pay-hero .lbl{font-size:.72rem}
 .pay-hero .big{font-size:1.35rem;line-height:1.15}
 .pay-hero .muted{font-size:.68rem;margin-top:2px}
+/* Attendance */
+.leaverow{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.lv{background:var(--card);color:var(--muted);box-shadow:none;padding:6px 10px;border-radius:999px;font-size:.78rem;font-weight:700;border:1.5px solid var(--border)}
+.lv.on{background:var(--grad);color:#fff;border-color:transparent}
+.lv:hover{transform:none;box-shadow:none}
+.attend .att-grid{display:grid;grid-template-columns:repeat(3,1fr);text-align:center;gap:8px}
+.att-grid>div{display:flex;flex-direction:column;gap:2px}
+.att-grid b{font-size:1.5rem;font-weight:900;line-height:1.1}
+.att-grid span{font-size:.72rem;color:var(--muted);font-weight:700}
+.att-grid>div:nth-child(1) b{color:#d97706}
+.att-grid>div:nth-child(2) b{color:#e11d48}
+.att-grid>div:nth-child(3) b{color:#0d9488}
 </style>
 </head>
 <body class="guest">
@@ -821,6 +833,14 @@ html[data-theme="dark"] .ic-cell small{background:#064e3b;color:#a7f3d0}
     </div>
     <div class="kindrow" id="kindRow" hidden>
       <input type="hidden" id="newKind" value="">
+      <div class="leaverow" id="leaveRow" hidden>
+        <input type="hidden" id="newLeave" value="">
+        <button type="button" class="lv on" data-act="leave" data-v="">ไม่มี</button>
+        <button type="button" class="lv" data-act="leave" data-v="sick">ลาป่วย</button>
+        <button type="button" class="lv" data-act="leave" data-v="personal">ลากิจ</button>
+        <button type="button" class="lv" data-act="leave" data-v="absent">ขาดงาน</button>
+        <button type="button" class="lv" data-act="leave" data-v="vacation">ลาพักร้อน</button>
+      </div>
       <div class="frow">
         <label class="fld" id="fWorkStart"><span>เริ่มงาน</span><input type="hidden" id="wStart"><div class="tpick" data-for="wStart"></div></label>
         <label class="fld" id="fWorkEnd"><span>เลิกงาน</span><input type="hidden" id="wEnd"><div class="tpick" data-for="wEnd"></div></label>
@@ -968,12 +988,40 @@ document.addEventListener("change", e => {
   if (apSel) H = (H % 12) + (apSel.value === "PM" ? 12 : 0);
   $(id).value = `${pad(H)}:${mSel.value}`;
 });
+// ===== Attendance: late, absent / leave, vacation (per pay cycle) =====
+function setLeave(v){
+  $("newLeave").value = v;
+  document.querySelectorAll("#leaveRow .lv").forEach(b => b.classList.toggle("on", b.dataset.v === v));
+}
+function attendance(cyc){
+  let late = 0, leave = 0, vac = 0;
+  Object.keys(state.work).filter(x => cycleKey(x) === cyc).forEach(x => {
+    const w = state.work[x];
+    if (w.leave === "vacation") vac++;
+    else if (w.leave) leave++;
+    else if (w.start) {
+      const dow = parseKey(x).getDay();
+      if (dow !== 0 && dow !== 6 && toMin(w.start) > 8 * 60) late++;
+    }
+  });
+  return { late, leave, vac };
+}
+function attendCard(){
+  const a = attendance(cycleKey(todayKey()));
+  return `<section class="card attend"><div class="att-grid">
+      <div><b>${a.late}</b><span>มาสาย</span></div>
+      <div><b>${a.leave}</b><span>ขาดลา</span></div>
+      <div><b>${a.vac}</b><span>พักร้อน</span></div></div>
+    <p class="muted" style="margin:8px 0 0;font-size:.68rem">รอบ 22–21 · มาสายหลัง 08:00 (จันทร์–ศุกร์)</p></section>`;
+}
 // ===== Work & overtime kinds =====
 function setKind(k){
   $("newKind").value = k;
   $("kindRow").hidden = !k;
   $("fWorkStart").hidden = $("fWorkEnd").hidden = k !== "work";
   $("fOt").hidden = k !== "ot";
+  $("leaveRow").hidden = k !== "work";
+  if (k !== "work") setLeave("");
   if (k === "work") { if (!$("wStart").value) $("wStart").value = "08:00"; if (!$("wEnd").value) $("wEnd").value = "17:00"; }
   if (k === "ot") { if (!$("oStart").value) $("oStart").value = "18:00"; if (!$("oEnd").value) $("oEnd").value = "21:00"; }
 }
@@ -1000,6 +1048,7 @@ Object.assign(EN, {"รายได้รอบนี้":"This cycle","รา�
 Object.assign(EN, {"กรอกเวลาเริ่มและเลิกงานให้ครบทั้งคู่":"Enter both work start and end","กรอกเวลาเริ่มและเลิกโอทีให้ครบทั้งคู่":"Enter both overtime start and end","เวลาเลิกงานต้องมากกว่าเวลาเริ่ม":"End time must be after start","เวลาเลิกโอทีต้องมากกว่าเวลาเริ่ม":"Overtime end must be after start","บันทึกรายได้วันนี้แล้ว":"Income saved","แก้ไขรายได้วันนี้":"Edit income"});
 Object.assign(EN, {"ฐานเงินเดือน":"Base salary","เงินเดือน (ใช้คำนวณโอที)":"Salary (for OT)","โอที/วันหยุดรอบนี้ (22–21, ประมาณ)":"OT / weekend pay this cycle (22–21, est.)","ฐานคำนวณ":"Base","แตะวันที่เพื่อเลือก แตะซ้ำเพื่อแก้ไข":"Tap a date to select, tap again to edit"});
 Object.assign(EN, {"ค่าทำงานปกติ":"Regular work pay","รายได้รอบนี้ (22–21, ประมาณ)":"Income this cycle (22–21, est.)"});
+Object.assign(EN, {"ลาป่วย":"Sick leave","ลากิจ":"Personal leave","ลาพักร้อน":"Vacation","ขาดงาน":"Absent","ไม่มี":"None","มาสาย":"Late","ขาดลา":"Absent / leave","พักร้อน":"Vacation","รอบ 22–21 · มาสายหลัง 08:00 (จันทร์–ศุกร์)":"Cycle 22–21 · late after 08:00 (Mon–Fri)"});
 function tr(s){ return state.lang === "en" && EN[s] ? EN[s] : s; }
 // Walks the app's text nodes and placeholders; keeps the original Thai so it can switch back
 function i18n(){
@@ -1244,6 +1293,7 @@ function vToday(){
       </div>
     </section>
     ${incomePanel()}
+    ${attendCard()}
     ${kcalCard()}
     ${budgetCard()}
     <section class="card day-card today"><h3>วันนี้</h3>${previewRow(k)}</section>
@@ -1388,7 +1438,7 @@ function cycleKey(k){
 // ===== Income panel: per day and per month, from logged days only =====
 function dayIncome(k){
   const w = state.work[k];
-  if (!w) return { total: 0, hours: 0, days: 0 };
+  if (!w || w.leave) return { total: 0, hours: 0, days: 0 };
   const r = calcDay(k, w.start, w.end, w.ot);
   if (!r.hasWork) return { total: 0, hours: 0, days: 0 };
   return { total: r.baseDay + r.extra, hours: w.start && w.end ? (toMin(w.end) - toMin(w.start)) / 60 : (w.ot && w.ot.start && w.ot.end && toMin(w.ot.end) > toMin(w.ot.start) ? (toMin(w.ot.end) - toMin(w.ot.start)) / 60 : 0), days: 1 };
@@ -1597,9 +1647,13 @@ function submitAdd(e){
   const kind = $("newKind").value;
   let workPatch = null;
   if (kind === "work") {
-    const st = $("wStart").value, en = $("wEnd").value;
-    if (!st || !en) return toast("กรุณาใส่เวลาเริ่มและเลิกงาน");
-    workPatch = { start: st, end: en };
+    const lv = $("newLeave").value;
+    if (lv) workPatch = { start: "", end: "", leave: lv };
+    else {
+      const st = $("wStart").value, en = $("wEnd").value;
+      if (!st || !en) return toast("กรุณาใส่เวลาเริ่มและเลิกงาน");
+      workPatch = { start: st, end: en, leave: "" };
+    }
   }
   if (kind === "ot") {
     const os = $("oStart").value, oe = $("oEnd").value;
@@ -2235,6 +2289,7 @@ document.addEventListener("click", e => {
       toast("บันทึกเวลาทำงานแล้ว"); return render();
     }
     case "clearWork": delete state.work[state.sel]; return render();
+    case "leave": setLeave(el.dataset.v); return;
     case "closeDay": return closeDayPanel();
     case "clearDay": delete state.work[state.sel]; closeDayPanel(); return render();
     case "saveDay": {
