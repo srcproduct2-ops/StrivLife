@@ -4,7 +4,2651 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>StrivLife</title>
+<meta name="theme-color" content="#6366f1"><!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>StrivLife</title>
 <meta name="theme-color" content="#6366f1">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="StrivLife">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%236366f1'/%3E%3Cstop offset='1' stop-color='%238b5cf6'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='100' height='100' rx='28' fill='url(%23g)'/%3E%3Cg fill='%23fff'%3E%3Crect x='20' y='58' width='16' height='20' rx='8'/%3E%3Crect x='42' y='46' width='16' height='32' rx='8'/%3E%3Crect x='64' y='34' width='16' height='44' rx='8'/%3E%3C/g%3E%3Cpath d='M72 32C67 22 75 12 87 14C89 26 81 34 72 32Z' fill='%2386efac'/%3E%3C/svg%3E">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Sarabun:wght@400;500;600;700&family=Kanit:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f6fb;--card:#ffffff;--text:#1e1b4b;--muted:#6b6f8a;--soft:#f0f0fa;--border:#e8e8f4;--dark:#1e1b4b;--grad:linear-gradient(135deg,#6366f1 0%,#8b5cf6 100%);--grad-soft:linear-gradient(135deg,#eef2ff,#f5f3ff);--accent:#6366f1;--ok:#10b981;--shadow:0 1px 2px rgba(30,27,75,.04),0 10px 30px rgba(30,27,75,.06);color-scheme:light}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:#fff;color:var(--text);font:15px/1.6 "Outfit","Sarabun",system-ui,-apple-system,sans-serif;-webkit-font-smoothing:antialiased;overscroll-behavior-y:contain}
+body{display:flex;justify-content:center}
+[hidden]{display:none!important}
+
+/* Phone frame (desktop) */
+#app{position:relative;width:100%;height:100dvh;overflow:hidden;background:var(--bg);transform:translateZ(0)}
+#scroller{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+body.guest #scroller{display:none}
+@media (min-width:600px){
+  body{align-items:center}
+  #app{width:390px;height:844px;max-height:calc(100dvh - 48px);border-radius:48px;border:0;box-shadow:0 30px 60px rgba(30,27,75,.18)}
+}
+
+/* Buttons */
+button,.btn{font:inherit;font-weight:700;border:0;border-radius:16px;padding:12px 20px;background:var(--grad);color:#fff;cursor:pointer;box-shadow:0 8px 20px rgba(99,102,241,.28);transition:transform .18s cubic-bezier(.2,.8,.2,1),box-shadow .2s,opacity .15s}
+button:hover{transform:translateY(-1px)}
+button:active{transform:scale(.97)}
+button.ghost{background:var(--soft);color:var(--text);box-shadow:none}
+button.sm{padding:6px 12px;font-size:.8rem;border-radius:12px}
+button.danger{background:none;color:#e11d48;box-shadow:none;padding:6px 10px}
+.actions{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:14px}
+
+/* Splash */
+#splash{position:absolute;inset:0;z-index:100;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:#fff;transition:opacity .6s ease,visibility .6s;cursor:pointer}
+#splash.gone{opacity:0;visibility:hidden}
+.logo{width:88px;height:88px;border-radius:28px;background:var(--grad);display:grid;place-items:center;box-shadow:0 16px 36px rgba(99,102,241,.35);color:#fff;font-weight:900;font-size:2rem}
+.splash-name{font-size:2.1rem;font-weight:900;letter-spacing:-.03em}
+.splash-tag{color:var(--muted);font-size:.95rem}
+.splash-bar{width:140px;height:4px;border-radius:4px;background:var(--border);overflow:hidden;margin-top:28px}
+.splash-bar i{display:block;height:100%;width:0;background:var(--grad);animation:load 2.2s ease forwards}
+@keyframes load{to{width:100%}}
+
+/* Auth */
+#auth{height:100%;display:flex;align-items:stretch;justify-content:center;padding:0;background:linear-gradient(160deg,#1e1b4b 0%,#312e81 100%)}
+.au-card{width:100%;height:100%;border-radius:0;padding:calc(env(safe-area-inset-top,0px) + 44px) 28px calc(env(safe-area-inset-bottom,0px) + 28px);display:flex;flex-direction:column;overflow-y:auto;background:linear-gradient(160deg,#1e1b4b 0%,#312e81 100%);box-shadow:none;color:#fff}
+.au-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.au-brand{font-weight:900;color:#c4b5fd;font-size:1rem;letter-spacing:-.01em}
+.au-card h2{margin:14px 0 18px;font-size:1.9rem;font-weight:900;letter-spacing:-.03em}
+.au-err{color:#fca5a5;min-height:20px;font-size:.85rem;margin-bottom:6px}
+.au-in{display:flex;align-items:center;gap:10px;background:#fff;color:var(--text);border-radius:999px;padding:6px 14px 6px 6px;margin-bottom:12px}
+.au-ic{width:44px;height:44px;border-radius:50%;background:var(--grad);color:#fff;display:grid;place-items:center;flex:none}
+.au-ic svg{width:20px;height:20px}
+.au-in input{flex:1;min-width:0;border:0;background:transparent;padding:10px 0;font:inherit;font-size:16px;color:var(--text);box-shadow:none;border-radius:0}
+.au-in input:focus{outline:none;box-shadow:none;background:transparent;border:0}
+.au-in input::placeholder{color:#9b9fb8}
+.au-link{background:none;border:0;color:#c4b5fd;font:inherit;font-weight:700;font-size:.82rem;padding:6px 8px;cursor:pointer;box-shadow:none;border-radius:10px;white-space:nowrap}
+.au-link:hover{transform:none;box-shadow:none;opacity:.8}
+.au-actions{display:flex;justify-content:flex-end;margin:18px 0 6px}
+.au-go{width:56px;height:56px;border-radius:50%;padding:0;background:#fff;color:#4338ca;display:grid;place-items:center;box-shadow:0 0 0 6px rgba(255,255,255,.14)}
+.au-go svg{width:24px;height:24px}
+.au-note{text-align:center;color:#a5a3d6;font-size:.85rem;margin:12px 0 0}
+.au-or{display:flex;align-items:center;gap:12px;color:#a5a3d6;font-size:.85rem;margin:20px 0 14px}
+.au-or::before,.au-or::after{content:"";flex:1;height:1px;background:#4338ca}
+.au-google{width:100%;height:52px;border-radius:999px;background:#fff;color:var(--text);box-shadow:none;display:flex;align-items:center;justify-content:center;gap:10px;font-weight:700;padding:0}
+.au-google:hover{box-shadow:none}
+.au-google svg{width:20px;height:20px}
+.au-guest{width:100%;background:none;box-shadow:none;color:#c7d2fe;font-weight:700;margin-top:14px;padding:10px}
+.au-guest:hover{transform:none;box-shadow:none;color:#fff}
+.au-card .au-hint{color:#a5a3d6;font-size:.85rem;margin:-6px 0 12px}
+
+/* Topbar */
+body.guest .topbar,body.guest .tabs,body.guest .view{display:none!important}
+.topbar{position:sticky;top:0;z-index:5;padding:calc(env(safe-area-inset-top,0px) + 14px) 18px 10px;background:rgba(246,246,251,.85);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+.brand{display:flex;align-items:center;gap:12px}
+.brand>div:nth-child(2){flex:1;min-width:0}
+.avatar{width:44px;height:44px;border-radius:14px;background:var(--grad);color:#fff;display:grid;place-items:center;font-weight:800;flex:none;overflow:hidden}
+.avatar img{width:100%;height:100%;object-fit:cover}
+.brand small{display:block;font-size:.78rem;color:var(--muted);font-weight:600}
+.topbar h1{margin:0;font-size:1.15rem;font-weight:800;letter-spacing:-.02em}
+.tb-actions{display:flex;gap:8px}
+.icon-btn,.lang-btn{height:44px;border-radius:14px;border:0;background:#fff;color:var(--muted);box-shadow:var(--shadow);display:grid;place-items:center;padding:0 14px;cursor:pointer;font-weight:700;font-size:.8rem}
+.icon-btn{width:44px;padding:0;color:var(--text)}
+.icon-btn svg{width:22px;height:22px}
+.lang-btn:hover,.icon-btn:hover{transform:translateY(-1px);background:#fff}
+
+/* View + cards */
+.view{max-width:760px;margin:0 auto;padding:8px 16px 150px;display:grid;gap:14px}
+.card{background:var(--card);border-radius:22px;padding:18px;min-width:0;box-shadow:var(--shadow);border:1px solid var(--border)}
+.card h3{margin:0 0 12px;font-size:1rem;font-weight:800;display:flex;justify-content:space-between;align-items:center}
+.muted{color:var(--muted);font-size:.87rem}
+.greet{font-size:.92rem;color:var(--muted);margin:6px 2px 0;font-weight:600}
+.name.dt{font-family:"Kanit","Sarabun",sans-serif;font-weight:500;font-size:1.05rem;letter-spacing:.01em}
+.name{font-size:1.1rem;font-weight:900;letter-spacing:-.03em;margin:0;line-height:1.15;overflow-wrap:anywhere}
+.weekcard{background:radial-gradient(120% 120% at 100% 0%,rgba(196,181,253,.45),transparent 55%),linear-gradient(135deg,#4338ca,#7c3aed);color:#fff;border-radius:24px;padding:20px;min-height:150px;display:flex;flex-direction:column;justify-content:space-between;box-shadow:0 18px 40px rgba(99,102,241,.3)}
+.weekcard .big{font-size:2.6rem;font-weight:900;line-height:1}
+.weekcard .lbl{font-size:.85rem;opacity:.85}
+.weekcard .go{display:flex;justify-content:space-between;font-size:.85rem;margin-top:10px;font-weight:600}
+.bar2{height:6px;border-radius:6px;background:rgba(255,255,255,.25);margin-top:12px;overflow:hidden}
+.bar2 i{display:block;height:100%;background:#fff;border-radius:6px;transition:width .4s ease}
+
+/* Checklist */
+.addform{display:grid;grid-template-columns:1fr auto;gap:8px}
+.addform input,.addform select{width:100%;padding:12px 14px;border:1.5px solid transparent;border-radius:14px;background:var(--soft);color:var(--text);font:inherit;font-size:16px}
+.addform input:focus,.addform select:focus{outline:none;border-color:var(--accent);background:#fff;box-shadow:0 0 0 4px rgba(99,102,241,.15)}
+.addform select{grid-column:1/2}
+.addform button{grid-row:1/3;grid-column:2}
+.task{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--border)}
+.task:last-child{border-bottom:0}
+.chk{width:30px;height:30px;border-radius:10px;padding:0;background:#fff;border:1.5px solid #c7c9e2;color:#fff;box-shadow:none;display:grid;place-items:center;flex:none;font-size:14px}
+.chk:hover{transform:none;box-shadow:none}
+.task.done .chk{background:var(--grad);border-color:transparent}
+.tt{flex:1;min-width:0;font-weight:600;cursor:pointer;word-break:break-word}
+.task.done .tt{text-decoration:line-through;color:var(--muted)}
+
+/* Week strip */
+.wk{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;text-align:center;font-size:.72rem;color:var(--muted)}
+.wk b{display:block;font-size:1rem;color:var(--text);margin-top:6px;padding:8px 0;border-radius:14px}
+.wk b.sel{background:var(--grad);color:#fff;box-shadow:0 8px 18px rgba(99,102,241,.3)}
+
+/* History */
+.hgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+.hcell{aspect-ratio:1;border-radius:10px;background:var(--soft);display:grid;place-items:center;font-size:.72rem;font-weight:700;color:var(--text)}
+.hcell.l1{background:#e0e7ff}
+.hcell.l2{background:#a5b4fc}
+.hcell.l3{background:var(--grad);color:#fff}
+.hcell.today{outline:2px solid var(--dark);outline-offset:1px}
+
+/* Summary */
+.bars{display:flex;align-items:flex-end;gap:8px;height:140px;margin-top:8px}
+.bars div{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;font-size:.7rem;color:var(--muted);gap:4px}
+.bars i{display:block;width:100%;border-radius:10px 10px 4px 4px;background:var(--grad);min-height:4px}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.stat{background:var(--grad-soft);border:1px solid var(--border);border-radius:20px;padding:14px}
+.stat b{display:block;font-size:1.5rem;font-weight:900;color:var(--text)}
+.stat span{font-size:.8rem;color:var(--muted)}
+
+/* Tab bar + FAB */
+.tabs{position:fixed;bottom:calc(env(safe-area-inset-bottom,0px) + 14px);left:50%;transform:translateX(-50%);width:min(560px,calc(100% - 28px));display:flex;align-items:center;gap:12px;z-index:6}
+.pill{position:relative;flex:1;display:grid;grid-template-columns:repeat(5,1fr);gap:4px;padding:8px;border-radius:26px;background:rgba(255,255,255,.92);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);box-shadow:0 12px 32px rgba(30,27,75,.14),0 0 0 1px rgba(255,255,255,.6) inset}
+.ind{position:absolute;top:16px;left:0;width:50px;height:34px;border-radius:14px;background:var(--grad);box-shadow:0 8px 18px rgba(99,102,241,.35);transition:left .5s cubic-bezier(.34,1.4,.64,1);pointer-events:none;z-index:0}
+.tabs .pill button{position:relative;z-index:1;background:none;color:var(--muted);box-shadow:none;font-size:.68rem;font-weight:600;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:8px 0;border-radius:18px;min-width:0}
+.tabs .pill button:hover{transform:none;box-shadow:none}
+.tabs .pill button .ic{width:50px;height:34px;display:grid;place-items:center;transition:color .3s ease,transform .35s cubic-bezier(.34,1.56,.64,1)}
+.tabs .pill button .ic svg{width:22px;height:22px}
+.tabs .pill button.on{color:var(--text);font-weight:800}
+.tabs .pill button.on .ic{color:#fff;transform:translateY(-1px) scale(1.05)}
+.tabs .pill button:active{transform:scale(.92)}
+.fab{flex:none;width:58px;height:58px;border-radius:20px;padding:0;background:var(--grad);color:#fff;box-shadow:0 14px 30px rgba(99,102,241,.42);display:grid;place-items:center}
+.fab svg{width:26px;height:26px}
+.fab:hover{transform:translateY(-2px)}
+
+/* Toast */
+.toast{position:fixed;left:50%;bottom:110px;transform:translateX(-50%);background:var(--dark);color:#fff;padding:12px 18px;border-radius:14px;font-size:14px;opacity:0;transition:opacity .3s;pointer-events:none;max-width:88%;text-align:center;z-index:9}
+.toast.show{opacity:1}
+/* Bottom nav v2: glass bar, mint capsule for active tab, round dark action button */
+.pill{background:rgba(255,255,255,.55);-webkit-backdrop-filter:blur(18px) saturate(1.6);backdrop-filter:blur(18px) saturate(1.6);border:1px solid rgba(30,27,75,.08);box-shadow:0 12px 32px rgba(30,27,75,.14),inset 0 1px 0 rgba(255,255,255,.6)}
+.ind{background:#dcfce7;box-shadow:none;border-radius:999px;width:50px;height:34px;top:16px}
+.tabs .pill button{transition:transform .15s ease,color .25s ease}
+.tabs .pill button:not(.on){color:var(--muted)}
+.tabs .pill button.on{color:#14532d;font-weight:800}
+.tabs .pill button.on .ic{color:#15803d;transform:none}
+.tabs .pill button:active{transform:scale(.92)}
+.tabs .pill button:hover .ic svg{animation:navWiggle .5s ease}
+@keyframes navWiggle{0%,100%{transform:rotate(0)}25%{transform:rotate(-10deg)}75%{transform:rotate(10deg)}}
+.tabs{gap:10px}
+.fab{width:56px;height:56px;border-radius:50%;background:#1e1b4b;color:#fff;box-shadow:0 10px 24px rgba(30,27,75,.35)}
+.fab:hover{background:#1e1b4b;transform:translateY(-2px)}
+.fab:active{transform:scale(.92)}
+/* Bottom bar slides away when scrolling down and returns when scrolling up */
+.tabs{transition:transform .35s ease}
+.tabs.hide{transform:translate(-50%,220%)}
+/* Slide-to-sign-in control */
+.au-actions{display:block;margin:18px 0 6px}
+.slider{position:relative;height:60px;width:100%;border-radius:999px;background:#fff;overflow:hidden;padding:4px;user-select:none;-webkit-user-select:none;touch-action:none;box-shadow:0 10px 30px rgba(0,0,0,.2);transition:background .4s ease}
+.sl-fill{position:absolute;left:0;top:0;bottom:0;width:0;border-radius:999px;background:linear-gradient(90deg,rgba(99,102,241,.06),rgba(139,92,246,.3));transition:opacity .3s}
+.sl-text{position:absolute;inset:0;display:grid;align-items:center;justify-items:start;padding-left:104px;color:#9b9fb8;font-weight:600;font-size:16px;pointer-events:none;white-space:nowrap}
+.sl-knob{position:absolute;top:4px;left:4px;width:88px;height:52px;border-radius:999px;background:var(--grad);color:#fff;display:grid;place-items:center;cursor:grab;box-shadow:0 6px 16px rgba(99,102,241,.4);z-index:2;touch-action:none}
+.sl-knob:active{cursor:grabbing}
+.sl-knob svg{width:22px;height:22px}
+.slider.ok{background:linear-gradient(135deg,#34d399,#10b981)}
+.slider.ok .sl-fill{opacity:0}
+.slider.ok .sl-knob{background:#fff;color:#10b981;box-shadow:0 6px 16px rgba(0,0,0,.15)}
+.slider.ok .sl-text{color:#fff;font-weight:800}
+/* Tap animation: floating circle pops up under the active tab, icon bounces */
+.ind{top:8px;width:50px;height:50px;border-radius:50%;background:var(--grad);box-shadow:0 10px 22px rgba(99,102,241,.4);transition:left .5s cubic-bezier(.34,1.4,.64,1)}
+.ind.bounce{animation:navPop .55s cubic-bezier(.34,1.3,.64,1)}
+@keyframes navPop{0%{transform:translateY(0) scale(.85)}35%{transform:translateY(-14px) scale(1.12)}100%{transform:translateY(0) scale(1)}}
+.tabs .pill button.on .ic{color:#fff;transform:none}
+.tabs .pill button.on .ic svg{animation:iconBounce .5s ease}
+@keyframes iconBounce{0%{transform:scale(.6)}60%{transform:scale(1.2)}100%{transform:scale(1)}}
+.tabs .pill button:active .ic{transform:scale(.85)}
+/* Tab panel expands from the tapped tab and merges into the page */
+.reveal{position:absolute;border-radius:50%;background:var(--grad);transform:scale(0);z-index:4;pointer-events:none;animation:revealIn .42s cubic-bezier(.6,0,.3,1) forwards;transition:opacity .4s ease}
+.reveal.out{opacity:0}
+@keyframes revealIn{to{transform:scale(1)}}
+.ind{transition:none}
+/* Liquid link: a white blob rises from the bar toward the selected tab and merges with it */
+.goo{position:absolute;left:-30px;right:-30px;top:-40px;bottom:-30px;pointer-events:none;z-index:0;filter:url(#goo)}
+.goo-bar{position:absolute;left:30px;right:30px;top:40px;bottom:30px;border-radius:26px;background:#fff}
+.goo-blob{position:absolute;top:17px;width:46px;height:46px;border-radius:50%;background:#fff;transition:left .55s cubic-bezier(.25,.8,.25,1)}
+.tabs .pill button{position:relative;z-index:1}
+/* Compact tab bar: smaller frame, icons keep their size */
+.tabs{width:min(520px,calc(100% - 28px));gap:8px}
+.tabs .pill{padding:5px 6px;border-radius:24px}
+.tabs .pill button{padding:4px 0 3px;gap:2px}
+.ind{top:2px}
+/* Icon-only tab bar: labels stay in the DOM for screen readers but are not shown */
+.tabs .pill button .lb{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.tabs .pill button{gap:0}
+.ind{top:1px}
+/* Roomier tab frame so the selected circle sits fully inside */
+.tabs .pill{padding:10px 8px;border-radius:30px}
+.ind{top:6px}
+/* Floating add-item panel opened by the + button */
+.sheet-backdrop{position:fixed;inset:0;z-index:20;background:rgba(30,27,75,.35);opacity:0;transition:opacity .3s ease}
+.sheet-backdrop.open{opacity:1}
+.sheet{position:fixed;left:0;right:0;bottom:0;z-index:21;background:#fff;border-radius:28px 28px 0 0;padding:12px 20px calc(24px + env(safe-area-inset-bottom,0px));box-shadow:0 -12px 40px rgba(30,27,75,.2);transform:translateY(105%);transition:transform .35s cubic-bezier(.2,.8,.2,1)}
+.sheet.open{transform:none}
+.sheet-grip{width:44px;height:5px;border-radius:5px;background:#d4d4e4;margin:0 auto 14px}
+.sheet h3{margin:0 0 12px;font-size:1.05rem;font-weight:800}
+/* Per-day planning, calendar, previews and checklists */
+.addform{display:flex;flex-direction:column;gap:10px}
+.addform button{grid-row:auto;grid-column:auto;width:100%}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.fld{display:flex;flex-direction:column;gap:4px;font-size:.78rem;color:var(--muted);font-weight:600}
+.fld input,.fld select,.addform textarea{width:100%;padding:11px 12px;border:1.5px solid transparent;border-radius:14px;background:var(--soft);color:var(--text);font:inherit;font-size:16px}
+.addform textarea{resize:none}
+.rep{display:flex;gap:8px;align-items:center;font-size:.9rem;color:var(--text)}
+.rep input{width:18px;height:18px;accent-color:#6366f1}
+.sheet-go{margin-top:4px}
+.foodrows{display:flex;flex-direction:column;gap:8px}
+.frw{display:grid;grid-template-columns:minmax(0,1fr) 46px 58px 28px;gap:4px;padding:4px;border-radius:12px;background:var(--soft);align-items:center}
+.addform .frw select,.addform .frw input{background:var(--card);padding:6px 8px;border-radius:9px;min-width:0;font-size:13px!important;height:34px}
+.addform .frw .fr-qty,.addform .frw .fr-kcal{padding:6px 4px;text-align:center}
+.addform .frw .fr-del{width:28px;height:28px;padding:0;border-radius:9px;background:var(--card);color:#ef4444;box-shadow:none;font-size:1rem;line-height:1;display:grid;place-items:center}
+.addform .addfood{width:100%;padding:6px;border-radius:12px;background:transparent;color:var(--accent);border:1.5px dashed var(--accent);box-shadow:none;font-size:.8rem;font-weight:700}
+.foodrows{gap:5px}
+.ipick{grid-template-columns:repeat(7,1fr)!important;gap:4px!important}
+.ipk{padding:4px 0!important;border-radius:10px!important}
+.ipk .ie{font-size:1.1rem!important}
+.ipk small{display:none!important}
+.foodtotal{display:flex;justify-content:space-between;align-items:center;font-size:.85rem;color:var(--text);padding:2px 4px}
+.foodtotal b{color:var(--accent)}
+.tm.fds{margin-top:2px}
+.cal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.cal-head b{font-weight:800}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;text-align:center}
+.cal .wd{font-size:.72rem;color:var(--muted);font-weight:700;padding:4px 0}
+.cal .cd{position:relative;border:0;background:none;box-shadow:none;padding:8px 0;border-radius:12px;color:var(--text);font-weight:700;font-size:.9rem;cursor:pointer}
+.cal .cd:hover{transform:none;box-shadow:none;background:var(--soft)}
+.cal .cd.blank{visibility:hidden}
+.cal .cd.today{outline:2px solid #6366f1;outline-offset:-2px}
+.cal .cd.sel{background:var(--grad);color:#fff}
+.cal .cd .dot{position:absolute;bottom:3px;left:50%;transform:translateX(-50%);width:5px;height:5px;border-radius:50%;background:#6366f1}
+.cal .cd.sel .dot{background:#fff}
+.hscroll{display:flex;gap:10px;overflow-x:auto;padding-bottom:4px}
+.pv{min-width:112px;background:var(--card);border:1px solid var(--border);border-radius:18px;padding:12px;display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center}
+.pv-ico{font-size:1.9rem;width:56px;height:56px;border-radius:18px;background:var(--grad-soft);display:grid;place-items:center}
+.pv-t{font-weight:700;font-size:.85rem}
+.pv-m{font-size:.75rem;color:var(--muted)}
+.pv.done{opacity:.5}
+.ico{width:34px;height:34px;border-radius:12px;background:var(--grad-soft);display:grid;place-items:center;font-size:1.05rem;flex:none}
+.tbody{flex:1;min-width:0}
+.task{align-items:flex-start}
+.task .chk{margin-top:2px}
+.chip{font-size:.65rem;background:var(--soft);color:#6366f1;border-radius:999px;padding:2px 6px;margin-left:4px;font-weight:700}
+.tm{font-size:.75rem;color:var(--muted)}
+.steps{margin-top:6px;display:grid;gap:4px}
+.step{display:flex;align-items:center;gap:8px;font-size:.85rem;color:var(--muted)}
+.step input{width:16px;height:16px;accent-color:#6366f1;flex:none;padding:0;box-shadow:none}
+.step.done span{text-decoration:line-through}
+.hcell{box-shadow:none;padding:0;transform:none}
+.hcell:hover{transform:none;box-shadow:none}
+/* Top-left brand mark: StrivLife logo instead of the user avatar */
+.brand-logo{font-size:1.3rem;font-weight:900;letter-spacing:-.02em;box-shadow:0 8px 20px rgba(99,102,241,.3)}
+/* ---------- Motion ---------- */
+.view.enter>*{animation:enterUp .55s cubic-bezier(.2,.8,.2,1) both}
+.view.enter>*:nth-child(2){animation-delay:.05s}
+.view.enter>*:nth-child(3){animation-delay:.1s}
+.view.enter>*:nth-child(4){animation-delay:.15s}
+.view.enter>*:nth-child(5){animation-delay:.2s}
+.view.enter>*:nth-child(6){animation-delay:.25s}
+.view.enter>*:nth-child(n+7){animation-delay:.3s}
+@keyframes enterUp{from{opacity:0;transform:translateY(16px) scale(.98)}to{opacity:1;transform:none}}
+@keyframes pop{0%{transform:scale(.6)}60%{transform:scale(1.18)}100%{transform:scale(1)}}
+@keyframes logoIn{from{transform:scale(.4) rotate(-12deg);opacity:0}to{transform:none;opacity:1}}
+.logo{animation:logoIn .8s cubic-bezier(.34,1.56,.64,1) both}
+.chk{transition:background .25s ease,border-color .25s ease,transform .2s ease}
+.chk.pop{animation:pop .45s cubic-bezier(.34,1.56,.64,1)}
+.card{transition:transform .2s ease,box-shadow .25s ease}
+.card:active{transform:scale(.985)}
+.pv{transition:transform .2s ease,opacity .3s ease}
+.pv:active{transform:scale(.96)}
+.cal .cd{transition:transform .15s ease,background .2s ease}
+.cal .cd:active{transform:scale(.88)}
+.weekcard{transition:transform .35s cubic-bezier(.2,.8,.2,1);will-change:transform}
+.bar2 i{transition:width .6s cubic-bezier(.2,.8,.2,1)}
+.sheet{transition:transform .45s cubic-bezier(.34,1.3,.64,1)}
+.sheet-backdrop{-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px)}
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-delay:0ms!important;transition-duration:.01ms!important}
+}
+.tabs{position:absolute!important;left:50%!important;bottom:calc(env(safe-area-inset-bottom,0px) + 14px)!important;top:auto!important;right:auto!important;transform:translate3d(-50%,0,0)!important;will-change:transform;backface-visibility:hidden}
+.tabs.hide{transform:translate3d(-50%,0,0)!important}
+/* ===== Liquid tab bar ===== */
+.pill{background:transparent!important;border:1px solid transparent!important;box-shadow:none!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+.goo{filter:url(#goo2) drop-shadow(0 10px 16px rgba(30,27,75,.16))}
+.goo-bar{background:#fff;border-radius:30px}
+.goo-blob{width:62px;height:62px;top:11px;background:#fff;border-radius:999px;transition:none}
+.ind{top:-22px;width:48px;height:48px;transition:left .6s cubic-bezier(.34,1.35,.64,1)}
+.tabs .pill button .ic{transition:color .3s ease,transform .5s cubic-bezier(.34,1.45,.64,1)}
+.tabs .pill button.on .ic{transform:translateY(-29px)}
+.tabs .pill button.on:active .ic{transform:translateY(-29px) scale(.88)}
+/* ===== Splash logo (minimal, animated) ===== */
+.logo{width:96px;height:96px;border-radius:0;background:none;box-shadow:none;display:block;animation:lgFloat 3.2s ease-in-out 1.8s infinite}
+.logo svg{display:block;overflow:visible;filter:drop-shadow(0 14px 22px rgba(99,102,241,.32))}
+.lg-bg{fill:url(#lgG);transform-box:fill-box;transform-origin:center;animation:lgIn .7s cubic-bezier(.34,1.56,.64,1) both}
+.lg-b{fill:#fff;transform-box:fill-box;transform-origin:50% 100%;transform:scaleY(0);animation:lgGrow .55s cubic-bezier(.34,1.4,.64,1) forwards}
+.lg-b1{animation-delay:.45s}.lg-b2{animation-delay:.65s}.lg-b3{animation-delay:.85s}
+.lg-leaf{fill:#86efac;transform-box:fill-box;transform-origin:0 100%;transform:scale(0) rotate(-20deg);animation:lgLeaf .6s cubic-bezier(.34,1.8,.64,1) 1.35s forwards}
+.splash-name{animation:lgUp .7s ease .9s both}
+.splash-tag{animation:lgUp .7s ease 1.15s both}
+@keyframes lgIn{from{transform:scale(.5) rotate(-10deg);opacity:0}to{transform:none;opacity:1}}
+@keyframes lgGrow{to{transform:scaleY(1)}}
+@keyframes lgLeaf{to{transform:scale(1) rotate(0)}}
+@keyframes lgUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@keyframes lgFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+/* Backup sign-in button, show-password, undo snackbar */
+.au-switch{display:flex;align-items:center;gap:10px;background:none;box-shadow:none;border-radius:10px;padding:6px 2px;color:#c4b5fd;font-weight:700;font-size:.82rem;cursor:pointer}
+.au-switch:hover{transform:none;box-shadow:none}
+.au-switch:active{transform:none}
+.au-switch:focus-visible{outline:3px solid #fff;outline-offset:2px}
+.sw-track{position:relative;width:42px;height:24px;border-radius:999px;background:rgba(255,255,255,.25);flex:none;transition:background .25s ease}
+.sw-track i{position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#fff;box-shadow:0 2px 5px rgba(0,0,0,.3);transition:transform .25s cubic-bezier(.34,1.4,.64,1)}
+.au-switch.on .sw-track{background:#34d399}
+.au-switch.on .sw-track i{transform:translateX(18px)}
+/* Sign-in -> home: the sign-in screen stays on top and fades away to reveal the home page */
+.view.late.enter>*{animation-delay:.35s}
+.view.late.enter>*:nth-child(2){animation-delay:.4s}
+.view.late.enter>*:nth-child(3){animation-delay:.45s}
+.view.late.enter>*:nth-child(4){animation-delay:.5s}
+.view.late.enter>*:nth-child(5){animation-delay:.55s}
+.view.late.enter>*:nth-child(n+6){animation-delay:.6s}
+#auth{transition:opacity .75s ease}
+#auth.over{position:absolute;inset:0;z-index:50}
+#auth.over.leaving{opacity:0;pointer-events:none}
+.au-aux{display:flex;justify-content:space-between;align-items:center;margin:-4px 6px 0}
+.au-link:focus-visible,.au-google:focus-visible,.au-guest:focus-visible{outline:3px solid #fff;outline-offset:2px}
+.snack{position:fixed;left:50%;bottom:110px;transform:translate(-50%,16px);display:flex;align-items:center;gap:14px;background:var(--dark);color:#fff;padding:8px 8px 8px 18px;border-radius:16px;font-size:14px;opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;max-width:92%;z-index:10;box-shadow:0 10px 30px rgba(30,27,75,.3)}
+.snack.show{opacity:1;pointer-events:auto;transform:translate(-50%,0)}
+.snack button{background:rgba(255,255,255,.16);box-shadow:none;border-radius:12px;padding:8px 14px;font-size:.85rem}
+.snack button:hover{background:rgba(255,255,255,.26);box-shadow:none}
+/* Tab bar v3: no SVG filter (it rendered jagged edges and grey blocks on iOS). The bump is a plain circle
+   joined to the bar by two concave corner pieces; one shadow sits under the bar only. */
+.goo,.goo.goo{filter:none!important}
+.goo-bar{background:#fff;border-radius:30px;box-shadow:0 10px 24px rgba(30,27,75,.14),0 1px 3px rgba(30,27,75,.06)}
+.goo-blob{background:#fff;box-shadow:none}
+/* streak, budget, health, note, data */
+.streak{display:flex;justify-content:space-between;align-items:center;background:linear-gradient(135deg,#fff7ed,#fdf2f8)}
+html[data-theme="dark"] .streak{background:linear-gradient(135deg,#3b2a14,#3b1b2e)}
+.streak b{font-size:1.4rem}.st-em{font-size:1.3rem}
+.bg-row{margin-bottom:10px}.bg-top{display:flex;justify-content:space-between;font-size:.85rem;margin-bottom:4px}
+.over{color:#ef4444}.bar2 i.over{background:#ef4444}.over.sm{font-size:.72rem;margin-top:3px}
+.water{display:flex;flex-wrap:wrap;gap:4px;font-size:1.3rem}.dr{opacity:.2;transition:opacity .2s}.dr.on{opacity:1}
+.daynote{width:100%;padding:10px 12px;border:1.5px solid transparent;border-radius:14px;background:var(--soft);color:var(--text);font:inherit;font-size:16px;resize:none}
+.fmq,#foodQ{width:100%;padding:8px 12px;border:1.5px solid transparent;border-radius:12px;background:var(--soft);color:var(--text);font:inherit;font-size:14px!important;margin-bottom:8px}
+.fm-list{max-height:260px;overflow:auto;display:flex;flex-direction:column;gap:4px}
+.fm-row{display:flex;align-items:center;gap:6px;padding:4px 6px;border-radius:10px;background:var(--soft);font-size:.85rem}
+.fm-row span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.fm-row small{color:var(--muted)}
+.fm-row .ghost.sm{padding:3px 8px}
+.cel-note{margin:8px 14px 0;padding:10px 12px;border-radius:14px;background:var(--soft);font-size:.82rem;white-space:pre-wrap;word-break:break-word}
+/* Day-complete panel */
+.celebrate{position:fixed;inset:0;z-index:40;display:flex;align-items:center;justify-content:center;padding:18px;opacity:0;transition:opacity .3s}
+.celebrate.open{opacity:1}
+.cel-bg{position:absolute;inset:0;background:rgba(30,27,75,.55);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px)}
+.cel-card{position:relative;width:100%;max-width:400px;max-height:86vh;overflow:auto;border-radius:28px;background:var(--card);color:var(--text);box-shadow:0 24px 60px rgba(30,27,75,.45);transform:scale(.9) translateY(14px);transition:transform .45s cubic-bezier(.34,1.4,.64,1)}
+.celebrate.open .cel-card{transform:none}
+.cel-top{position:relative;overflow:hidden;text-align:center;padding:26px 18px 18px;color:#fff;background:radial-gradient(circle at 12% 20%,rgba(253,224,71,.55) 0 6px,transparent 7px),radial-gradient(circle at 85% 30%,rgba(255,255,255,.5) 0 5px,transparent 6px),radial-gradient(circle at 70% 85%,rgba(134,239,172,.6) 0 7px,transparent 8px),radial-gradient(circle at 25% 80%,rgba(147,197,253,.6) 0 5px,transparent 6px),linear-gradient(135deg,#ec4899,#a855f7 50%,#6366f1)}
+.cel-top .em{font-size:2.6rem;line-height:1;animation:celBounce 1s ease infinite}
+.cel-top h2{margin:8px 0 2px;font-size:1.25rem;font-weight:900}
+.cel-top p{margin:0;font-size:.8rem;opacity:.9}
+.cel-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:14px 14px 4px}
+.cel-stats div{background:var(--soft);border-radius:14px;padding:8px 4px;text-align:center}
+.cel-stats b{display:block;font-size:1.05rem}
+.cel-stats span{font-size:.66rem;color:var(--muted);font-weight:600}
+.cel-list{padding:8px 14px 4px;display:flex;flex-direction:column;gap:6px}
+.cel-row{display:flex;gap:10px;align-items:flex-start;padding:8px 10px;border-radius:14px;background:var(--soft)}
+.cel-row .ck{flex:none;width:22px;height:22px;border-radius:50%;background:#10b981;color:#fff;display:grid;place-items:center;font-size:.75rem;font-weight:900;margin-top:1px}
+.cel-row .tx{flex:1;min-width:0;font-weight:700;font-size:.88rem;word-break:break-word}
+.cel-row .sub{font-size:.7rem;color:var(--muted);font-weight:600;margin-top:2px}
+.cel-card .cel-ok{margin:10px 14px 16px;width:calc(100% - 28px)}
+.cel-conf{position:absolute;top:-12px;width:8px;height:12px;border-radius:2px;opacity:.9;animation:celFall linear forwards;pointer-events:none}
+@keyframes celFall{to{transform:translateY(130px) rotate(540deg);opacity:0}}
+@keyframes celBounce{50%{transform:translateY(-6px) scale(1.08)}}
+.donecard{text-align:center;background:linear-gradient(135deg,#ecfdf5,#fdf2f8)}
+html[data-theme="dark"] .donecard{background:linear-gradient(135deg,#12332a,#2a1b3b)}
+.donecard .dc-em{font-size:2rem}
+.donecard h3{justify-content:center;margin:4px 0}
+.donecard p{margin:0 0 10px;font-size:.8rem}
+.donecard .actions{justify-content:center;margin-top:0}
+/* plain round bump: no pointed fillet tails */
+.goo-blob::before,.goo-blob::after{content:none;display:none}
+/* Activity panel: spacing, presets, icon picker, cost */
+.frow{gap:18px}
+.presets{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 14px}
+.preset{background:var(--soft);color:var(--text);box-shadow:none;padding:8px 12px;border-radius:999px;font-size:.85rem;font-weight:700;display:inline-flex;align-items:center;gap:6px}
+.preset span{font-size:1rem}
+.preset.own{background:none;border:1.5px dashed #c7c9e2}
+.preset.on{background:var(--grad-soft);outline:2px solid #6366f1;outline-offset:-2px}
+.preset:hover{transform:translateY(-1px);box-shadow:none}
+.ipick{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-top:4px}
+.ipk{background:var(--soft);color:var(--text);box-shadow:none;padding:6px 2px;border-radius:14px;display:flex;flex-direction:column;align-items:center;gap:2px;border:1.5px solid transparent}
+.ipk .ie{font-size:1.25rem;line-height:1.2}
+.ipk small{font-size:.62rem;color:var(--muted);font-weight:600}
+.ipk.on{border-color:#6366f1;background:var(--grad-soft)}
+.ipk:hover{transform:none;box-shadow:none}
+.chip.cost{background:#fef3c7;color:#92400e}
+/* Compact add/edit panel */
+.sheet{max-height:78%;overflow-y:auto;padding:8px 16px calc(16px + env(safe-area-inset-bottom,0px))}
+.sheet-grip{margin:0 auto 10px;width:36px}
+.sheet h3{font-size:.92rem;margin:0 0 8px}
+.presets{gap:6px;margin:0 0 10px}
+.preset{padding:5px 10px;font-size:.75rem;gap:4px}
+.preset span{font-size:.85rem}
+.addform{gap:8px}
+.addform input,.addform select,.addform textarea{padding:8px 10px;font-size:14px;border-radius:12px}
+.fld{font-size:.68rem;gap:3px}
+.frow{gap:12px}
+.addform textarea{min-height:0}
+.ipick{gap:4px;margin-top:2px}
+.ipk{padding:4px 1px;border-radius:11px}
+.ipk .ie{font-size:1rem}
+.ipk small{font-size:.56rem}
+.rep{font-size:.8rem}
+.rep input{width:15px;height:15px}
+.sheet-go{padding:9px 16px;font-size:.85rem;border-radius:14px;margin-top:2px}
+/* Top bar: today shows the date; the small greeting is removed from here (the big greeting stays in the body) */
+#greet{display:none}
+.topbar h1{font-size:1rem}
+/* Smaller today card, split into progress and spending */
+.weekcard.split{display:grid;grid-template-columns:1fr 1fr;gap:0;min-height:0;padding:14px 16px}
+.weekcard .half{display:flex;flex-direction:column;gap:2px;min-width:0}
+.weekcard .half:first-child{padding-right:12px;border-right:1px solid rgba(255,255,255,.22)}
+.weekcard .half:last-child{padding-left:14px}
+.weekcard .big.sm{font-size:1.5rem;line-height:1.1}
+.weekcard .bar2{margin:6px 0 4px}
+.segs{display:flex;gap:3px;background:var(--soft);border-radius:12px;padding:3px;margin-bottom:10px}
+.seg{flex:1;background:none;color:var(--muted);box-shadow:none;padding:6px 4px;border-radius:9px;font-size:.8rem;font-weight:700}
+.seg.on{background:#fff;color:var(--text);box-shadow:var(--shadow)}
+.seg:hover{transform:none;box-shadow:none}
+.bars.spend{height:120px;gap:4px}
+.bars.spend span{font-size:.62rem}
+/* Summary now combines progress and spending; the bar has four tabs */
+.tabs .pill{grid-template-columns:repeat(4,1fr)}
+/* Calories */
+.kcal .kc-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:10px}
+.kcal .kc-big{font-size:1.6rem;font-weight:900;letter-spacing:-.02em}
+.kcal .kc-big small{font-size:.8rem;font-weight:600;color:var(--muted)}
+.bar3{height:6px;border-radius:6px;background:var(--soft);overflow:hidden}
+.bar3 i{display:block;height:100%;background:var(--grad);border-radius:6px;transition:width .6s cubic-bezier(.2,.8,.2,1)}
+.kc-split{display:flex;justify-content:space-between;gap:8px;margin-top:10px;font-size:.78rem;color:var(--muted)}
+.kc-split b{color:var(--text);font-weight:800}
+.chip.kcal{background:#dcfce7;color:#166534}
+/* Locked frame: no pinch or double-tap zoom; vertical scrolling only */
+html,body,#app,.sheet,.tabs{touch-action:pan-y;-webkit-user-select:none;user-select:none}
+input,textarea,select{-webkit-user-select:text;user-select:text}
+.addform input,.addform select,.addform textarea,.au-in input{font-size:16px!important}
+/* ---------- Color & depth pass ---------- */
+#app{background:
+  radial-gradient(900px 500px at -10% -10%, rgba(165,180,252,.35), transparent 60%),
+  radial-gradient(700px 420px at 110% 15%, rgba(251,207,232,.40), transparent 60%),
+  radial-gradient(800px 500px at 50% 110%, rgba(167,243,208,.35), transparent 60%),
+  #f7f6ff}
+.topbar{background:rgba(247,246,255,.78)}
+.name{background:linear-gradient(90deg,#312e81,#7c3aed 60%,#db2777);-webkit-background-clip:text;background-clip:text;color:transparent}
+.card{border:0;box-shadow:0 2px 6px rgba(79,70,229,.06),0 14px 34px rgba(79,70,229,.10);position:relative;overflow:hidden}
+.card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--grad);opacity:.9}
+.card.per-morning::before{background:linear-gradient(180deg,#fbbf24,#f97316)}
+.card.per-afternoon::before{background:linear-gradient(180deg,#38bdf8,#6366f1)}
+.card.per-evening::before{background:linear-gradient(180deg,#a855f7,#ec4899)}
+.card h3{font-weight:800}
+.card.per-morning .ico{background:linear-gradient(135deg,#fef3c7,#fed7aa)}
+.card.per-afternoon .ico{background:linear-gradient(135deg,#dbeafe,#bae6fd)}
+.card.per-evening .ico{background:linear-gradient(135deg,#ede9fe,#fbcfe8)}
+.card.per-morning h3 span.muted{color:#b45309}
+.card.per-afternoon h3 span.muted{color:#0369a1}
+.card.per-evening h3 span.muted{color:#7e22ce}
+.pv:nth-child(4n+1) .pv-ico{background:linear-gradient(135deg,#fde68a,#fdba74)}
+.pv:nth-child(4n+2) .pv-ico{background:linear-gradient(135deg,#a7f3d0,#6ee7b7)}
+.pv:nth-child(4n+3) .pv-ico{background:linear-gradient(135deg,#bfdbfe,#a5b4fc)}
+.pv:nth-child(4n+4) .pv-ico{background:linear-gradient(135deg,#fbcfe8,#f0abfc)}
+.pv{background:linear-gradient(180deg,#ffffff,#faf9ff);border-color:#ebe9ff}
+.weekcard{background:radial-gradient(120% 120% at 100% 0%,rgba(253,186,116,.45),transparent 55%),radial-gradient(90% 90% at 0% 100%,rgba(56,189,248,.45),transparent 60%),linear-gradient(135deg,#6366f1 0%,#a855f7 55%,#ec4899 100%);box-shadow:0 20px 44px rgba(168,85,247,.35)}
+.weekcard .half:first-child{border-right-color:rgba(255,255,255,.3)}
+.bar2{background:rgba(255,255,255,.3)}
+.bar2 i{background:linear-gradient(90deg,#fef08a,#ffffff)}
+.kcal{background:linear-gradient(135deg,#ecfdf5 0%,#fff7ed 100%)}
+.kcal .kc-big{background:linear-gradient(90deg,#059669,#ea580c);-webkit-background-clip:text;background-clip:text;color:transparent}
+.bar3 i{background:linear-gradient(90deg,#10b981,#f59e0b)}
+.chip{box-shadow:0 1px 0 rgba(255,255,255,.6) inset}
+.chip.kcal{background:linear-gradient(135deg,#bbf7d0,#fde68a);color:#14532d}
+.chip.cost{background:linear-gradient(135deg,#fde68a,#fdba74);color:#7c2d12}
+.segs{background:linear-gradient(135deg,#eef2ff,#fdf2f8)}
+.seg{color:#6b7280}
+.seg.on{background:var(--grad);color:#fff;box-shadow:0 6px 16px rgba(99,102,241,.35)}
+.cal .cd{color:#312e81}
+.cal .cd.sel{background:linear-gradient(135deg,#6366f1,#ec4899)}
+.cal .cd .dot{background:linear-gradient(90deg,#f59e0b,#ec4899)}
+.cal .cd.sel .dot{background:#fff}
+.bars i{background:linear-gradient(180deg,#a78bfa,#6366f1)}
+.bars.spend i{background:linear-gradient(180deg,#fbbf24,#ef4444)}
+.stat{background:linear-gradient(135deg,#eef2ff,#fdf4ff);border:0}
+.stat:nth-child(2){background:linear-gradient(135deg,#ecfeff,#e0f2fe)}
+.stat:nth-child(3){background:linear-gradient(135deg,#fff7ed,#fef9c3)}
+.stat:nth-child(4){background:linear-gradient(135deg,#fdf2f8,#ffe4e6)}
+.stat b{background:linear-gradient(90deg,#4f46e5,#db2777);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hcell.l1{background:linear-gradient(135deg,#d1fae5,#a7f3d0);color:#065f46}
+.hcell.l2{background:linear-gradient(135deg,#6ee7b7,#34d399);color:#064e3b}
+.hcell.l3{background:linear-gradient(135deg,#10b981,#f59e0b);color:#fff}
+.hcell{background:#f1f0ff}
+.task .chk{border-color:#a5b4fc}
+.task.done .chk{background:linear-gradient(135deg,#34d399,#10b981)}
+.task.done .tt{color:#9ca3af}
+.ipk.on{background:linear-gradient(135deg,#eef2ff,#fdf2f8)}
+.preset{background:linear-gradient(135deg,#eef2ff,#fdf2f8);color:#312e81}
+.preset.own{background:none}
+.au-card{background:linear-gradient(160deg,#1e1b4b 0%,#4c1d95 55%,#831843 100%)}
+.tabs .pill{background:rgba(255,255,255,.85);box-shadow:0 14px 36px rgba(99,102,241,.22),inset 0 1px 0 rgba(255,255,255,.7)}
+.tabs .pill button:not(.on){color:#7c83a6}
+.tabs .pill button.on{color:#312e81}
+.ind{background:linear-gradient(135deg,#e0e7ff,#fae8ff)}
+.tabs .pill button.on .ic{color:#6d28d9}
+.fab{background:linear-gradient(135deg,#1e1b4b,#4c1d95)}
+.toast{background:linear-gradient(135deg,#312e81,#be185d)}
+.sheet{background:linear-gradient(180deg,#ffffff,#fbf9ff)}
+.sheet h3{background:linear-gradient(90deg,#4f46e5,#db2777);-webkit-background-clip:text;background-clip:text;color:transparent}
+button.ghost{background:linear-gradient(135deg,#eef2ff,#fdf2f8);color:#4338ca}
+/* Compact calorie card with a colored frame */
+.kcal{padding:10px 14px;border:2px solid transparent;background:linear-gradient(#ffffff,#ffffff) padding-box,linear-gradient(120deg,#10b981,#f59e0b 50%,#ec4899) border-box;box-shadow:0 6px 18px rgba(16,185,129,.12)}
+.kcal::before{display:none}
+.kcal .kc-top{margin-bottom:6px}
+.kcal .kc-big{font-size:1.15rem}
+.kcal .kc-big small{font-size:.7rem}
+.kcal .muted{font-size:.72rem}
+.kcal .ghost.sm{padding:4px 10px;font-size:.72rem}
+.kcal .bar3{height:4px}
+.kcal .kc-split{margin-top:6px;font-size:.7rem}
+.kcal p{margin:4px 0 0!important;font-size:.6rem!important}
+/* Calorie card matches the top card, colors mirrored left-to-right */
+.kcal{border:0;padding:12px 16px;color:#fff;background:radial-gradient(120% 120% at 0% 0%,rgba(253,186,116,.45),transparent 55%),radial-gradient(90% 90% at 100% 100%,rgba(56,189,248,.45),transparent 60%),linear-gradient(90deg,#ec4899 0%,#a855f7 45%,#6366f1 100%);box-shadow:0 14px 34px rgba(168,85,247,.32)}
+.kcal .kc-big{background:none;-webkit-text-fill-color:#fff;color:#fff}
+.kcal .kc-big small,.kcal .muted,.kcal p{color:rgba(255,255,255,.85)!important}
+.kcal .kc-split{color:rgba(255,255,255,.85)}
+.kcal .kc-split b{color:#fff}
+.kcal .bar3{background:rgba(255,255,255,.3)}
+.kcal .bar3 i{background:#fff}
+.kcal .ghost.sm{background:rgba(255,255,255,.22);color:#fff}
+/* Easier to scroll and tap the preview cards */
+.hscroll{touch-action:pan-x pan-y;overscroll-behavior-x:contain;scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch;scroll-padding:0 16px}
+.hscroll>*{scroll-snap-align:start;flex:none}
+.card:active,.pv:active{transform:none}
+.pv{cursor:pointer}
+/* ---------- Theme switch ---------- */
+.theme-switch{position:relative;width:58px;height:32px;border-radius:999px;padding:0;border:0;cursor:pointer;background:linear-gradient(135deg,#fde68a,#fdba74);box-shadow:0 6px 16px rgba(251,146,60,.35),inset 0 1px 0 rgba(255,255,255,.5);flex:none}
+.theme-switch:hover{transform:none;box-shadow:0 6px 16px rgba(251,146,60,.35)}
+.theme-switch .knob{position:absolute;top:3px;left:3px;width:26px;height:26px;border-radius:50%;background:#fff;box-shadow:0 2px 6px rgba(0,0,0,.2);display:grid;place-items:center;transition:transform .45s cubic-bezier(.34,1.4,.64,1),background .35s ease}
+.theme-switch .knob::before{content:"☀️";font-size:14px;line-height:1}
+html[data-theme="dark"] .theme-switch{background:linear-gradient(135deg,#312e81,#6d28d9);box-shadow:0 6px 16px rgba(109,40,217,.45),inset 0 1px 0 rgba(255,255,255,.15)}
+html[data-theme="dark"] .theme-switch .knob{transform:translateX(26px);background:#1e1b4b}
+html[data-theme="dark"] .theme-switch .knob::before{content:"🌙"}
+
+/* ---------- Dark theme ---------- */
+html[data-theme="dark"]{color-scheme:dark;--bg:#0f0e1a;--card:#1b1a2e;--text:#f1f0ff;--muted:#9a9cc0;--soft:#24233b;--border:#2e2d4a;--dark:#f1f0ff;--grad-soft:linear-gradient(135deg,#2a2656,#3a1f4d)}
+html[data-theme="dark"] body,html[data-theme="dark"] #splash,html[data-theme="dark"] #auth{background:#0f0e1a}
+html[data-theme="dark"] #app{background:
+  radial-gradient(900px 500px at -10% -10%, rgba(99,102,241,.25), transparent 60%),
+  radial-gradient(700px 420px at 110% 15%, rgba(236,72,153,.18), transparent 60%),
+  radial-gradient(800px 500px at 50% 110%, rgba(16,185,129,.14), transparent 60%),
+  #0f0e1a}
+html[data-theme="dark"] .topbar{background:rgba(15,14,26,.78)}
+html[data-theme="dark"] .name{background:linear-gradient(90deg,#c4b5fd,#f0abfc 60%,#f9a8d4);-webkit-background-clip:text;background-clip:text}
+html[data-theme="dark"] .card{box-shadow:0 2px 8px rgba(0,0,0,.35),0 14px 34px rgba(0,0,0,.35)}
+html[data-theme="dark"] .pv{background:linear-gradient(180deg,#1f1e35,#191829);border-color:#2e2d4a}
+html[data-theme="dark"] .icon-btn,html[data-theme="dark"] .lang-btn{background:#1b1a2e;color:var(--text);box-shadow:0 2px 8px rgba(0,0,0,.35)}
+html[data-theme="dark"] .sheet{background:linear-gradient(180deg,#1f1e35,#161526)}
+html[data-theme="dark"] .sheet h3{background:linear-gradient(90deg,#c4b5fd,#f9a8d4);-webkit-background-clip:text;background-clip:text}
+html[data-theme="dark"] .tabs .pill{background:rgba(27,26,46,.9);box-shadow:0 14px 36px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.06)}
+html[data-theme="dark"] .tabs .pill button:not(.on){color:#8b8db3}
+html[data-theme="dark"] .tabs .pill button.on{color:#fff}
+html[data-theme="dark"] .tabs .pill button.on .ic{color:#c4b5fd}
+html[data-theme="dark"] .ind{background:linear-gradient(135deg,#312e81,#6d28d9)}
+html[data-theme="dark"] .task .chk{background:#24233b;border-color:#4b4a72}
+html[data-theme="dark"] .stat{background:linear-gradient(135deg,#1f1e35,#241f3d)}
+html[data-theme="dark"] .stat b{background:linear-gradient(90deg,#c4b5fd,#f9a8d4);-webkit-background-clip:text;background-clip:text}
+html[data-theme="dark"] .hcell{background:#24233b;color:var(--text)}
+html[data-theme="dark"] .hcell.l1{background:linear-gradient(135deg,#0f3d33,#14532d);color:#d1fae5}
+html[data-theme="dark"] .hcell.l2{background:linear-gradient(135deg,#047857,#059669);color:#ecfdf5}
+html[data-theme="dark"] .hcell.l3{background:linear-gradient(135deg,#10b981,#f59e0b);color:#fff}
+html[data-theme="dark"] .segs{background:linear-gradient(135deg,#1f1e35,#241c35)}
+html[data-theme="dark"] .seg{color:#9a9cc0}
+html[data-theme="dark"] .seg.on{color:#fff}
+html[data-theme="dark"] .cal .cd{color:#e0e7ff}
+html[data-theme="dark"] .preset{background:linear-gradient(135deg,#24233b,#2a1f3d);color:#e0e7ff}
+html[data-theme="dark"] button.ghost{background:linear-gradient(135deg,#24233b,#2a1f3d);color:#c7d2fe}
+html[data-theme="dark"] .chip{background:#24233b;color:#c7d2fe}
+html[data-theme="dark"] .chip.kcal{background:linear-gradient(135deg,#14532d,#713f12);color:#d1fae5}
+html[data-theme="dark"] .chip.cost{background:linear-gradient(135deg,#713f12,#7c2d12);color:#fde68a}
+html[data-theme="dark"] .ipk{background:#24233b;color:var(--text)}
+html[data-theme="dark"] .ipk.on{background:linear-gradient(135deg,#2a2656,#3a1f4d)}
+html[data-theme="dark"] .card.per-morning .ico{background:linear-gradient(135deg,#3b2a14,#4a2a14)}
+html[data-theme="dark"] .card.per-afternoon .ico{background:linear-gradient(135deg,#14243b,#142a3b)}
+html[data-theme="dark"] .card.per-evening .ico{background:linear-gradient(135deg,#2a1b3b,#3b1b2e)}
+html[data-theme="dark"] .toast{background:linear-gradient(135deg,#4338ca,#be185d)}
+html[data-theme="dark"] .fab{background:linear-gradient(135deg,#6d28d9,#4338ca)}
+html[data-theme="dark"] .tabs .pill button .lb{color:inherit}
+/* Smaller, colored Today / Tomorrow cards */
+.day-card{padding:10px 14px;border-radius:18px}
+.day-card h3{font-size:.86rem;margin:0 0 4px}
+.day-card .muted{font-size:.72rem}
+.day-card .hscroll{gap:8px}
+.day-card .pv{min-width:92px;padding:8px 8px;border-radius:14px;gap:2px}
+.day-card .pv-ico{width:38px;height:38px;font-size:1.25rem;border-radius:12px}
+.day-card .pv-t{font-size:.74rem}
+.day-card .pv-m{font-size:.66rem}
+.day-card.today{background:linear-gradient(135deg,#ecfeff 0%,#e0e7ff 100%)}
+.day-card.today::before{background:linear-gradient(180deg,#22d3ee,#6366f1)}
+.day-card.today h3{color:#0e7490}
+.day-card.tomorrow{background:linear-gradient(135deg,#fff7ed 0%,#fdf2f8 100%)}
+.day-card.tomorrow::before{background:linear-gradient(180deg,#fb923c,#ec4899)}
+.day-card.tomorrow h3{color:#9a3412}
+html[data-theme="dark"] .day-card.today{background:linear-gradient(135deg,#0c2a35,#17183a)}
+html[data-theme="dark"] .day-card.tomorrow{background:linear-gradient(135deg,#2a1a10,#2c1630)}
+html[data-theme="dark"] .day-card.today h3{color:#67e8f9}
+html[data-theme="dark"] .day-card.tomorrow h3{color:#fdba74}
+/* Pull down from the top to refresh */
+.ptr{position:absolute;top:0;left:50%;transform:translate(-50%,-60px);width:40px;height:40px;border-radius:50%;background:#fff;box-shadow:0 8px 20px rgba(79,70,229,.25);display:grid;place-items:center;z-index:30;transition:transform .3s cubic-bezier(.34,1.3,.64,1);pointer-events:none}
+.ptr.show{transform:translate(-50%,14px)}
+.ptr.ready .ptr-dot{border-top-color:#db2777;border-right-color:#db2777}
+.ptr-dot{width:18px;height:18px;border:2.5px solid #c7d2fe;border-top-color:#6366f1;border-radius:50%}
+.ptr.spin .ptr-dot{animation:ptrSpin .8s linear infinite}
+@keyframes ptrSpin{to{transform:rotate(360deg)}}
+html[data-theme="dark"] .ptr{background:#1b1a2e}
+/* Several expenses per record */
+.frw.exp{grid-template-columns:minmax(0,1fr) 78px 28px}
+.frw.exp .ex-name{min-width:0}
+.frw.exp .ex-amt{text-align:right}
+/* Income */
+.pay-hero{background:linear-gradient(135deg,#ecfdf5,#eef2ff);text-align:left}
+.pay-hero .big{font-size:2rem;font-weight:900;color:#065f46}
+.pay-sum{display:block;font-size:1.05rem;padding:10px 4px;color:var(--text)}
+.pay-rates{display:flex;gap:10px;margin-top:12px}
+.pay-rates>div{flex:1;background:var(--soft);border-radius:14px;padding:10px;display:flex;flex-direction:column;gap:2px}
+.pay-rates b{font-size:1rem;font-weight:800}
+.pay-rates span{font-size:.7rem;color:var(--muted)}
+.pay-detail{margin-top:10px;border-top:1px dashed var(--border);padding-top:6px}
+.pay-row{display:flex;justify-content:space-between;align-items:center;padding:6px 2px;font-size:.85rem;border-bottom:1px solid var(--border)}
+.pay-row:last-child{border-bottom:0}
+.pay-row.total{font-weight:800;color:#065f46}
+.pay-row b{font-weight:800}
+/* Income panel on the home page */
+.income-panel{padding:14px 16px;border:0;background:linear-gradient(135deg,#059669 0%,#0d9488 50%,#2563eb 100%);color:#fff;box-shadow:0 14px 30px rgba(13,148,136,.3)}
+.income-panel::before{display:none}
+.inc-grid{display:grid;grid-template-columns:1fr 1fr;gap:0}
+.inc-grid>div{display:flex;flex-direction:column;gap:2px;min-width:0}
+.inc-grid>div:first-child{padding-right:12px;border-right:1px solid rgba(255,255,255,.3)}
+.inc-grid>div:last-child{padding-left:14px}
+.inc-grid span{font-size:.72rem;opacity:.9;font-weight:600}
+.inc-grid b{font-size:1.4rem;font-weight:900;letter-spacing:-.02em;line-height:1.15}
+.inc-grid small{font-size:.7rem;opacity:.85}
+/* Work / overtime inputs */
+.kindrow{background:var(--soft);border-radius:14px;padding:8px}
+.kindrow .fld input{background:var(--card)}
+/* Five tabs now: income has its own tab */
+.tabs .pill{grid-template-columns:repeat(5,1fr)}
+/* Time picker */
+.tpick{display:flex;align-items:center;gap:4px}
+.tpick select{flex:1;min-width:0;padding:8px 6px;border-radius:12px;border:1.5px solid transparent;background:var(--soft);color:var(--text);font:inherit;font-size:16px;font-variant-numeric:tabular-nums}
+.tpick select:focus{outline:none;border-color:#6366f1;background:var(--card)}
+.tp-sep,.tp-u{font-weight:800;color:var(--text);font-size:.9rem}
+/* Food search per row */
+.fr-combo{position:relative;min-width:0}
+.fr-combo .fr-search{width:100%;min-width:0;padding:6px 8px;border-radius:9px;background:var(--card);border:1.5px solid transparent;font:inherit;font-size:16px!important;color:var(--text)}
+.fr-combo .fr-search:focus{outline:none;border-color:#6366f1}
+.fr-list{position:absolute;left:0;right:0;top:100%;margin-top:4px;z-index:20;background:var(--card);border:1px solid var(--border);border-radius:12px;box-shadow:0 14px 30px rgba(30,27,75,.18);max-height:220px;overflow-y:auto;padding:4px}
+.fr-item{display:flex;align-items:center;gap:6px;width:100%;text-align:left;background:none;color:var(--text);box-shadow:none;padding:8px;border-radius:9px;font-size:.85rem;font-weight:600}
+.fr-item:hover{background:var(--soft);transform:none;box-shadow:none}
+.fr-item span{font-size:1rem}
+.fr-item small{margin-left:auto;color:var(--muted);font-size:.72rem;font-weight:700}
+.fr-item.new{color:#6366f1}
+/* Income calendar */
+.ic-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;text-align:center}
+.ic-grid .wd{font-size:.7rem;color:var(--muted);font-weight:700;padding:4px 0}
+.ic-cell{background:var(--soft);border:0;border-radius:12px;min-height:50px;padding:5px 2px;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:3px;color:var(--text);box-shadow:none;font-size:.8rem;cursor:pointer}
+.ic-cell:hover{transform:none;box-shadow:none}
+.ic-cell b{font-weight:800}
+.ic-cell small{font-size:.6rem;font-weight:800;color:#047857;background:#d1fae5;border-radius:6px;padding:1px 3px;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ic-cell.blank{visibility:hidden;background:none}
+.ic-cell.today{outline:2px solid #6366f1;outline-offset:-2px}
+.ic-cell.sel{background:var(--grad);color:#fff}
+.ic-cell.sel small{background:rgba(255,255,255,.28);color:#fff}
+html[data-theme="dark"] .ic-cell small{background:#064e3b;color:#a7f3d0}
+/* Smaller income summary */
+.pay-hero{padding:10px 14px}
+.pay-hero .lbl{font-size:.72rem}
+.pay-hero .big{font-size:1.35rem;line-height:1.15}
+.pay-hero .muted{font-size:.68rem;margin-top:2px}
+/* Attendance */
+.leaverow{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.lv{background:var(--card);color:var(--muted);box-shadow:none;padding:6px 10px;border-radius:999px;font-size:.78rem;font-weight:700;border:1.5px solid var(--border)}
+.lv.on{background:var(--grad);color:#fff;border-color:transparent}
+.lv:hover{transform:none;box-shadow:none}
+.attend .att-grid{display:grid;grid-template-columns:repeat(3,1fr);text-align:center;gap:8px}
+.att-grid>div{display:flex;flex-direction:column;gap:2px}
+.att-grid b{font-size:1.5rem;font-weight:900;line-height:1.1}
+.att-grid span{font-size:.72rem;color:var(--muted);font-weight:700}
+.att-grid>div:nth-child(1) b{color:#d97706}
+.att-grid>div:nth-child(2) b{color:#e11d48}
+.att-grid>div:nth-child(3) b{color:#0d9488}
+/* Fit date and time fields side by side on small iPhones */
+.frow{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px}
+.fld{min-width:0}
+.fld input[type="date"],.fld input[type="time"]{min-width:0;width:100%;-webkit-appearance:none;appearance:none}
+.tpick{gap:2px;min-width:0;width:100%}
+.tpick select{flex:1 1 0;min-width:0;padding:8px 4px;font-size:15px}
+.tpick .tp-ap{flex:0 0 auto;min-width:0;width:auto;padding:8px 6px}
+.tp-sep,.tp-u{flex:0 0 auto;font-size:.85rem}
+@media (max-width:380px){
+  .tpick select{font-size:14px;padding:7px 2px}
+  .fld input[type="date"]{font-size:14px}
+}
+</style>
+</head>
+<body class="guest">
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><filter id="goo2" x="-10%" y="-60%" width="120%" height="220%"><feGaussianBlur in="SourceGraphic" stdDeviation="8" result="b"/><feColorMatrix in="b" mode="matrix" values="1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 20 -9" result="g"/><feComposite in="SourceGraphic" in2="g" operator="atop"/></filter><filter id="goo"><feGaussianBlur in="SourceGraphic" stdDeviation="6" result="b"/><feColorMatrix in="b" mode="matrix" values="1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 18 -8" result="g"/><feComposite in="SourceGraphic" in2="g" operator="atop"/></filter></defs></svg>
+<div id="app">
+  <div class="ptr" id="ptr" aria-hidden="true"><div class="ptr-dot"></div></div>
+
+  <!-- Splash -->
+  <section id="splash" onclick="this.classList.add('gone')">
+    <div class="logo" aria-label="StrivLife"><svg viewBox="0 0 100 100" width="96" height="96" aria-hidden="true"><defs><linearGradient id="lgG" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#6366f1"/><stop offset="1" stop-color="#8b5cf6"/></linearGradient></defs><rect class="lg-bg" width="100" height="100" rx="28"/><rect class="lg-b lg-b1" x="20" y="58" width="16" height="20" rx="8"/><rect class="lg-b lg-b2" x="42" y="46" width="16" height="32" rx="8"/><rect class="lg-b lg-b3" x="64" y="34" width="16" height="44" rx="8"/><path class="lg-leaf" d="M72 32C67 22 75 12 87 14C89 26 81 34 72 32Z"/></svg></div>
+    <div class="splash-name">StrivLife</div>
+    <div class="splash-tag">Small steps, big results.</div>
+    <div class="splash-bar"><i></i></div>
+  </section>
+
+  <!-- Auth -->
+  <section id="auth">
+    <div class="au-card">
+      <div class="au-top">
+        <span class="au-brand">StrivLife</span>
+        <button class="au-link" id="auSwitch" data-act="toggleMode" hidden>เข้าสู่ระบบ</button>
+      </div>
+      <h2 id="auTitle">เข้าสู่ระบบ</h2>
+      <div class="au-err" id="auErr" role="alert"></div>
+
+      <div class="au-in" id="auNameWrap" hidden>
+        <span class="au-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg></span>
+        <input id="auName" placeholder="ชื่อที่แสดง" autocomplete="name">
+      </div>
+      <div class="au-in">
+        <span class="au-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="m4 7 8 6 8-6"/></svg></span>
+        <input id="auEmail" type="text" inputmode="email" placeholder="User ID (หรืออีเมล)" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false">
+      </div>
+      <div class="au-in">
+        <span class="au-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span>
+        <input id="auPass" type="password" placeholder="รหัสผ่าน (อย่างน้อย 8 ตัว)" autocomplete="current-password">
+      </div>
+      <div class="au-in" id="auPass2Wrap" hidden>
+        <span class="au-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span>
+        <input id="auPass2" type="password" placeholder="ยืนยันรหัสผ่าน" autocomplete="new-password">
+      </div>
+      <div class="au-aux">
+        <button class="au-switch" type="button" data-act="togglePass" id="auEye" role="switch" aria-checked="false"><span class="sw-track"><i></i></span><span>แสดงรหัสผ่าน</span></button>
+        <button class="au-link" type="button" data-act="forgot" id="auForgot">ลืมรหัสผ่าน?</button>
+      </div>
+
+      <div class="au-actions">
+        <div class="slider" id="slider">
+          <div class="sl-fill"></div>
+          <div class="sl-text" id="slText">เลื่อนเพื่อเข้าสู่ระบบ</div>
+          <div class="sl-knob"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+        </div>
+      </div>
+
+      <div class="au-note" id="auRegWrap"><span>ยังไม่มีบัญชี?</span> <button class="au-link" type="button" data-act="toggleMode">สมัครสมาชิก</button></div>
+
+      <div class="au-or"><span>หรือ</span></div>
+      <button class="au-google" data-act="googleLogin">
+        <svg viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9 3.5l6.7-6.7C35.6 2.4 30.2 0 24 0 14.6 0 6.5 5.4 2.6 13.2l7.8 6.1C12.3 13.5 17.7 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 3-2.3 5.5-4.8 7.2l7.5 5.8c4.4-4.1 7-10.1 7-17.5z"/><path fill="#FBBC05" d="M10.4 28.7c-.5-1.4-.8-2.9-.8-4.7s.3-3.3.8-4.7l-7.8-6.1C.9 16.6 0 20.2 0 24s.9 7.4 2.6 10.8l7.8-6.1z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.5-5.8c-2.1 1.4-4.8 2.3-8.4 2.3-6.3 0-11.7-4.2-13.6-9.8l-7.8 6C6.5 42.6 14.6 48 24 48z"/></svg>
+        ดำเนินการต่อด้วย Google
+      </button>
+      <button class="au-guest" data-act="guestLogin">เข้าใช้แบบผู้เยี่ยมชม (ไม่ต้องสมัคร)</button>
+    </div>
+  </section>
+
+  <!-- Topbar -->
+  <div id="scroller">
+  <header class="topbar">
+    <div class="brand">
+      <div class="avatar brand-logo" id="avatar" data-act="goProfile" role="button" tabindex="0" aria-label="โปรไฟล์" style="cursor:pointer"></div>
+      <div><small id="greet"></small><h1 id="title">วันนี้</h1></div>
+      <div class="tb-actions">
+        <button class="theme-switch" data-act="theme" aria-label="โหมดกลางคืน" title="โหมดกลางคืน"><span class="knob"></span></button>
+        <button class="icon-btn" data-act="bell" aria-label="การแจ้งเตือน"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 8 3 8H3s3-1 3-8"/><path d="M10 21h4"/></svg></button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main view -->
+  <main id="view" class="view"></main>
+  </div>
+
+  <!-- Bottom tabs + FAB -->
+  <nav class="tabs">
+    <div class="pill">
+      <div class="goo" aria-hidden="true"><div class="goo-bar"></div><div class="goo-blob"></div></div>
+      <span class="ind" aria-hidden="true"></span>
+      <button data-tab="today"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"/></svg></span><span class="lb">หน้าหลัก</span></button>
+      <button data-tab="schedule"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg></span><span class="lb">ตารางงาน</span></button>
+      <button data-tab="summary"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 20V10M10 20V4M16 20v-8M22 20H2"/></svg></span><span class="lb">สรุป</span></button>
+      <button data-tab="income"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M15 9.5c-.5-1-1.6-1.5-3-1.5-1.8 0-3 .9-3 2.2 0 3 6 1.5 6 4.3 0 1.3-1.3 2.2-3 2.2-1.5 0-2.6-.6-3-1.6M12 6v2m0 8v2"/></svg></span><span class="lb">รายได้</span></button>
+      <button data-tab="profile"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg></span><span class="lb">โปรไฟล์</span></button>
+    </div>
+    <button class="fab" data-act="fab" aria-label="เพิ่มรายการ"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button>
+  </nav>
+  <div class="sheet-backdrop" data-act="closeDay" id="dayBg" hidden></div>
+<div class="sheet" id="daySheet" hidden><div class="sheet-grip"></div><div id="dayBody"></div></div>
+<div class="sheet-backdrop" data-act="closeSheet" id="sheetBg" hidden></div>
+<div class="sheet" id="sheet" hidden>
+  <div class="sheet-grip"></div>
+  <h3 id="sheetTitle">เพิ่มรายการ</h3>
+  <div class="presets" id="presets"><button type="button" class="preset" data-act="preset" data-idx="0"><span>🍚</span> ข้าวเช้า</button><button type="button" class="preset" data-act="preset" data-idx="1"><span>🍚</span> ข้าวเที่ยง</button><button type="button" class="preset" data-act="preset" data-idx="2"><span>🍚</span> ข้าวเย็น</button><button type="button" class="preset" data-act="preset" data-idx="3"><span>☕</span> กินกาแฟ</button><button type="button" class="preset" data-act="preset" data-idx="4"><span>⛰️</span> ไปเที่ยว</button><button type="button" class="preset" data-act="preset" data-idx="5"><span>🏃</span> ออกกำลังกาย</button><button type="button" class="preset" data-act="preset" data-idx="6"><span>💼</span> ทำงาน</button><button type="button" class="preset" data-act="preset" data-idx="7"><span>🔥</span> โอที</button>
+      <button type="button" class="preset own" data-act="ownPreset"><span>✏️</span> สร้างเอง</button></div>
+  <form class="addform" id="addForm">
+    <input id="newText" placeholder="เช่น อ่านหนังสือ 20 นาที" maxlength="80" autocomplete="off">
+    <div class="frow">
+      <label class="fld"><span>วันที่</span><input type="date" id="newDate"></label>
+      <label class="fld" id="fTime"><span>เวลา</span><input type="hidden" id="newTime"><div class="tpick" data-for="newTime"></div></label>
+    </div>
+    <div class="kindrow" id="kindRow" hidden>
+      <input type="hidden" id="newKind" value="">
+      <div class="leaverow" id="leaveRow" hidden>
+        <input type="hidden" id="newLeave" value="">
+        <button type="button" class="lv on" data-act="leave" data-v="">ไม่มี</button>
+        <button type="button" class="lv" data-act="leave" data-v="sick">ลาป่วย</button>
+        <button type="button" class="lv" data-act="leave" data-v="personal">ลากิจ</button>
+        <button type="button" class="lv" data-act="leave" data-v="absent">ขาดงาน</button>
+        <button type="button" class="lv" data-act="leave" data-v="vacation">ลาพักร้อน</button>
+      </div>
+      <div class="frow">
+        <label class="fld" id="fWorkStart"><span>เริ่มงาน</span><input type="hidden" id="wStart"><div class="tpick" data-for="wStart"></div></label>
+        <label class="fld" id="fWorkEnd"><span>เลิกงาน</span><input type="hidden" id="wEnd"><div class="tpick" data-for="wEnd"></div></label>
+      </div>
+      <div class="frow" id="fOt"><label class="fld"><span>เริ่มโอที</span><input type="hidden" id="oStart"><div class="tpick" data-for="oStart"></div></label><label class="fld"><span>เลิกโอที</span><input type="hidden" id="oEnd"><div class="tpick" data-for="oEnd"></div></label></div>
+    </div>
+    <div class="fld"><span>ค่าใช้จ่าย (บาท)</span>
+      <div id="expRows" class="foodrows"></div>
+      <button type="button" class="addfood" data-act="addExpRow">+ เพิ่มค่าใช้จ่าย</button>
+      <div class="foodtotal"><span>รวม</span><b>฿<span id="expTotal">0</span></b></div>
+    </div>
+    <div class="fld foodfld"><span>อาหาร</span>
+      <div id="foodRows" class="foodrows"></div>
+      <button type="button" class="addfood" data-act="addFoodRow">+ เพิ่มอาหาร</button>
+      <div class="foodtotal"><span>แคลอรี่รวม</span><b><span id="foodTotal">0</span> kcal</b></div>
+    </div>
+    <div class="fld"><span>ไอคอน</span><div class="ipick" id="ipick"><button type="button" class="ipk" data-act="pickIcon" data-i="💼"><span class="ie">💼</span><small>ทำงาน</small></button><button type="button" class="ipk" data-act="pickIcon" data-i="🍚"><span class="ie">🍚</span><small>กินข้าว</small></button><button type="button" class="ipk" data-act="pickIcon" data-i="☕"><span class="ie">☕</span><small>กาแฟ</small></button><button type="button" class="ipk" data-act="pickIcon" data-i="⛰️"><span class="ie">⛰️</span><small>ภูเขา</small></button><button type="button" class="ipk" data-act="pickIcon" data-i="🧳"><span class="ie">🧳</span><small>เที่ยว</small></button><button type="button" class="ipk" data-act="pickIcon" data-i="🏃"><span class="ie">🏃</span><small>ออกกำลัง</small></button><button type="button" class="ipk" data-act="pickIcon" data-i="📘"><span class="ie">📘</span><small>เรียน</small></button><button type="button" class="ipk" data-act="pickIcon" data-i="🛒"><span class="ie">🛒</span><small>ซื้อของ</small></button><button type="button" class="ipk" data-act="pickIcon" data-i="🚗"><span class="ie">🚗</span><small>เดินทาง</small></button><button type="button" class="ipk" data-act="pickIcon" data-i="🛌"><span class="ie">🛌</span><small>พักผ่อน</small></button><button type="button" class="ipk" data-act="pickIcon" data-i="💧"><span class="ie">💧</span><small>น้ำ</small></button><button type="button" class="ipk" data-act="pickIcon" data-i="🎵"><span class="ie">🎵</span><small>ดนตรี</small></button><button type="button" class="ipk" data-act="pickIcon" data-i="🧹"><span class="ie">🧹</span><small>งานบ้าน</small></button><button type="button" class="ipk" data-act="pickIcon" data-i="📌"><span class="ie">📌</span><small>อื่น ๆ</small></button></div><input type="hidden" id="newIcon" value="📌"></div>
+    <label class="rep"><input type="checkbox" id="newRepeat"> ทำทุกวัน</label>
+    <button type="submit" class="sheet-go" id="sheetSubmit">เพิ่มรายการ</button>
+  </form>
+</div>
+<div class="celebrate" id="celebrate" hidden><div class="cel-bg" data-act="closeCelebrate"></div><div class="cel-card" id="celCard"></div></div>
+</div>
+<input type="file" id="photoIn" accept="image/*" hidden>
+<input type="file" id="importIn" accept="application/json,.json" hidden>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<div class="snack" id="snack" role="status"><span id="snackMsg"></span><button type="button" id="snackBtn" data-act="undo"></button></div>
+
+<script>
+// ===== Config & constants =====
+const PERIODS = [["morning","เช้า"],["afternoon","กลางวัน"],["evening","เย็น"]];
+const ORDER = {morning:0, afternoon:1, evening:2};
+const ICONS = ["📌","📘","✏️","🏃","💧","🧘","🍎","💻","🛌","🎯","🎵","🧹"];
+const TITLES = {today:"วันนี้", schedule:"ตารางงาน", history:"ประวัติ", summary:"สรุป", profile:"โปรไฟล์"};
+const WEEK = ["จ","อ","พ","พฤ","ศ","ส","อา"];
+
+// templates = items repeated every day; plans = items for one date
+const state = {
+  pay: {salary:30400, housing:2500, position:800}, work: {},
+  customFoods: [], completed: {}, foodOv: {}, notes: {}, water: {}, weights: {}, costGoal: 0, costGoalM: 0, fmq: "", sharedFoods: [], kcalGoal: 2000, theme: "light",
+  lang: "th", user: null, authMode: "login", tab: "today", users: [], saved: "", entering: false,
+  templates: [], plans: {}, done: {},
+  sel: "", month: "", calOpen: false, reminders: false
+};
+
+let deferredInstall = null;
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const pad = n => String(n).padStart(2, "0");
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+function keyOf(d){ return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`; }
+function todayKey(){ return keyOf(new Date()); }
+function parseKey(k){ const [y,m,d] = k.split("-").map(Number); return new Date(y, m-1, d); }
+function addDays(k, n){ const d = parseKey(k); d.setDate(d.getDate() + n); return keyOf(d); }
+function locale(){ return state.lang === "en" ? "en-US" : "th-TH"; }
+function dateLabel(k){ return parseKey(k).toLocaleDateString(locale(), {weekday:"long", day:"numeric", month:"long"}); }
+
+// ===== Translation (Thai source text -> English) =====
+const EN = {
+  "เข้าสู่ระบบ":"Sign in","สร้างบัญชี":"Create account","ยังไม่มีบัญชี?":"No account yet?","สมัครสมาชิก":"Sign up",
+  "มีบัญชีอยู่แล้ว?":"Already have an account?","หรือ":"or","ดำเนินการต่อด้วย Google":"Continue with Google",
+  "เข้าใช้แบบผู้เยี่ยมชม (ไม่ต้องสมัคร)":"Continue as guest (no sign-up)",
+  "การใช้งานนี้เพื่อการวางแผนและติดตามกิจวัตรเท่านั้น":"For planning and tracking daily routines only",
+  "ลืมรหัสผ่าน?":"Forgot password?","User ID (หรืออีเมล)":"User ID (or email)",
+  "รหัสผ่าน (อย่างน้อย 8 ตัว)":"Password (min. 8 characters)","ยืนยันรหัสผ่าน":"Confirm password","ชื่อที่แสดง":"Display name",
+  "เลื่อนเพื่อเข้าสู่ระบบ":"Slide to sign in","เลื่อนเพื่อสมัครสมาชิก":"Slide to sign up","ยินดีต้อนรับ!":"Welcome!",
+  "วันนี้":"Today","ตารางงาน":"Schedule","ประวัติ":"History","สรุป":"Summary","โปรไฟล์":"Profile","หน้าหลัก":"Home",
+  "วันนี้ทำสำเร็จ":"Completed today","รายการ":"items","ทำต่ออีกนิด ›":"Keep going ›","ยอดเยี่ยม!":"Great job!",
+  "เพิ่มรายการ":"Add item","เช่น อ่านหนังสือ 20 นาที":"e.g. Read for 20 minutes",
+  "เช้า":"Morning","กลางวัน":"Afternoon","เย็น":"Evening","เพิ่ม":"Add",
+  "ยังไม่มีรายการ":"No items yet","ไม่มีรายการ":"No items","ลบ":"Delete","แก้ไขรายการ":"Edit item",
+  "ทุกวัน":"Daily","ทำทุกวัน":"Every day","วันที่":"Date","เวลา":"Time","ช่วง":"Period","ไอคอน":"Icon",
+  "ขั้นตอนย่อย (บรรทัดละ 1 ข้อ) ไม่บังคับ":"Sub-steps (one per line, optional)",
+  "พรุ่งนี้":"Tomorrow","เตรียมไว้ล่วงหน้า":"Prepared in advance","ไม่มีรายการในวันนี้":"Nothing planned",
+  "กางปฏิทิน":"Expand calendar","พับปฏิทิน":"Collapse calendar","+ เพิ่มแผน":"+ Add plan",
+  "การแจ้งเตือน":"Reminders","เปิดอยู่":"On","ปิดอยู่":"Off",
+  "รับการแจ้งเตือนเมื่อถึงเวลาทำกิจวัตร":"Get notified when it's time for your routine",
+  "ปิดการแจ้งเตือน":"Turn off reminders","เปิดการแจ้งเตือน":"Turn on reminders",
+  "จ":"M","อ":"T","พ":"W","พฤ":"T","ศ":"F","ส":"S","อา":"S",
+  "ย้อนหลัง 28 วัน":"Last 28 days","🟩 ครบทั้งหมด":"🟩 Fully done","ครบบางส่วน":"Partially done",
+  "วันที่ทำครบทุกรายการ":"Days fully completed","วัน":"days",
+  "ความสำเร็จ 7 วันล่าสุด":"Last 7 days","รายการที่ทำสำเร็จทั้งหมด":"Total items completed",
+  "เฉลี่ยทุกวันที่บันทึก":"Average on logged days","รายการวันนี้":"Items today",
+  "บัญชี":"Account","โหมดผู้เยี่ยมชม":"Guest mode","ออกจากระบบ":"Sign out","ผู้เยี่ยมชม":"Guest",
+  "ออกจากระบบแล้ว":"Signed out","สมัครสมาชิกสำเร็จ":"Signed up successfully","เร็ว ๆ นี้":"Coming soon",
+  "ยังไม่มีการแจ้งเตือนใหม่":"No new notifications","กรุณาพิมพ์รายการก่อน":"Please type an item first",
+  "เพิ่มรายการแล้ว":"Item added","เปิดการแจ้งเตือนแล้ว":"Reminders turned on","ปิดการแจ้งเตือนแล้ว":"Reminders turned off",
+  "ฟีเจอร์รีเซ็ตรหัสผ่านจะเปิดใช้เร็ว ๆ นี้":"Password reset is coming soon",
+  "ยังไม่ได้ตั้งค่า Google Client ID — เข้าแบบทดสอบแทน":"Google Client ID not set — using demo sign-in",
+  "อีเมลหรือรหัสผ่านไม่ถูกต้อง":"Incorrect email or password","กรุณากรอกชื่อที่แสดง":"Please enter a display name",
+  "รูปแบบอีเมลไม่ถูกต้อง":"Invalid email format","รหัสผ่านต้องมีอย่างน้อย 8 ตัวอักษร":"Password must be at least 8 characters",
+  "รหัสผ่านไม่ตรงกัน":"Passwords do not match","อีเมลนี้ถูกใช้งานแล้ว":"This email is already in use",
+  "กำลังเชื่อมต่อ Firebase กรุณาลองใหม่":"Connecting to Firebase, please try again",
+  "User ID ใช้ได้เฉพาะ a-z 0-9 . _ - (3–30 ตัว) หรือกรอกอีเมลให้ถูกต้อง":"User ID may only use a-z 0-9 . _ - (3–30 chars), or enter a valid email",
+  "ลองผิดหลายครั้งเกินไป กรุณารอสักครู่":"Too many attempts, please wait a moment",
+  "ไม่มีการเชื่อมต่ออินเทอร์เน็ต":"No internet connection",
+  "ยังไม่ได้เปิดใช้วิธีเข้าสู่ระบบนี้ใน Firebase Console":"This sign-in method is not enabled in Firebase Console",
+  "โดเมนนี้ยังไม่ได้เพิ่มใน Authorized domains ของ Firebase":"This domain is not in Firebase Authorized domains",
+  "ไม่มีสิทธิ์เข้าถึงข้อมูล (ตรวจสอบ Firestore rules)":"Permission denied (check Firestore rules)",
+  "เกิดข้อผิดพลาด กรุณาลองใหม่":"Something went wrong, please try again",
+  "บันทึกข้อมูลไม่สำเร็จ":"Could not save data","แก้ไขชื่อ":"Edit name","เปลี่ยนรูปโปรไฟล์":"Change photo","ลบรูป":"Remove photo","เปลี่ยนรูปโปรไฟล์แล้ว":"Photo updated","ลบรูปแล้ว":"Photo removed","กรุณาเลือกไฟล์รูปภาพ":"Please choose an image file","เปลี่ยนชื่อแล้ว":"Name updated",
+  "ผู้เยี่ยมชม: เก็บข้อมูลไว้ในเครื่องนี้เท่านั้น":"Guest: data is kept on this device only",
+  "ซิงก์ไม่สำเร็จ":"Sync failed","รอซิงก์ขึ้นฐานข้อมูล":"Waiting to sync","ซิงก์ขึ้นฐานข้อมูลแล้ว":"Synced to database",
+  "แสดง":"Show","ซ่อน":"Hide","แสดงรหัสผ่าน":"Show password","ซ่อนรหัสผ่าน":"Hide password",
+  "ลบรายการแล้ว":"Item deleted","เลิกทำ":"Undo","ติดตั้งแอป":"Install app","ติดตั้งแอปแล้ว":"App installed",
+  "บันทึกไม่สำเร็จ กำลังลองใหม่อัตโนมัติ":"Couldn't save, retrying automatically",
+  "ออฟไลน์: เก็บไว้ในเครื่อง จะซิงก์เมื่อมีเน็ต":"Offline: saved on this device, will sync when online",
+  "ส่งลิงก์รีเซ็ตรหัสผ่านไปที่อีเมลแล้ว":"Password reset link sent to your email",
+  "กรอกอีเมลก่อน (บัญชีที่สมัครด้วย User ID ไม่สามารถรีเซ็ตทางอีเมลได้)":"Enter your email first (User ID accounts can't reset by email)"
+};
+Object.assign(EN, {
+  "ค่าใช้จ่าย (บาท)":"Cost (THB)","ค่าใช้จ่ายวันนี้":"Spending today","บันทึก":"Save","บันทึกแล้ว":"Saved",
+  "ข้าวเช้า":"Breakfast","ข้าวเที่ยง":"Lunch","ข้าวเย็น":"Dinner","กินกาแฟ":"Coffee","ไปเที่ยว":"Day trip",
+  "ออกกำลังกาย":"Workout","สร้างเอง":"Custom","ทำงาน":"Work","กินข้าว":"Eat","กาแฟ":"Coffee","ภูเขา":"Mountain",
+  "เที่ยว":"Travel","ออกกำลัง":"Exercise","เรียน":"Study","ซื้อของ":"Shopping","เดินทาง":"Transport",
+  "พักผ่อน":"Rest","น้ำ":"Water","ดนตรี":"Music","งานบ้าน":"Chores","อื่น ๆ":"Other"
+});
+Object.assign(EN, {"ทำสำเร็จวันนี้":"Done today","ยอดเงินที่ใช้":"Spending","สัปดาห์":"Week","เดือน":"Month","ปี":"Year"});
+Object.assign(EN, {"ความสำเร็จ":"Progress","ค่าใช้จ่าย":"Spending"});
+Object.assign(EN, {"ข้าวผัด":"Fried rice","ข้าวมันไก่":"Chicken rice","ข้าวกะเพราหมูสับไข่ดาว":"Basil pork with egg","ข้าวหมูแดง":"Red pork rice","ข้าวราดแกง":"Rice with curry","ข้าวต้ม":"Rice porridge","ก๋วยเตี๋ยวเรือ":"Boat noodles","ก๋วยเตี๋ยวหมู":"Pork noodles","บะหมี่หมูแดง":"Red pork noodles","ส้มตำไทย":"Thai papaya salad","ไก่ย่าง":"Grilled chicken","ข้าวเหนียว":"Sticky rice","ผัดกะเพรา":"Basil stir-fry","ต้มยำกุ้ง":"Tom yum goong","แกงเขียวหวาน":"Green curry","ข้าวไข่เจียว":"Rice with omelette","ลาบหมู":"Pork larb","แซนด์วิช":"Sandwich","ไข่ต้ม":"Boiled egg","กล้วย":"Banana","แอปเปิ้ล":"Apple","นมจืด":"Plain milk","กาแฟดำ":"Black coffee","กาแฟลาเต้":"Latte","ชาเขียว":"Green tea","น้ำอัดลม":"Soft drink","โยเกิร์ต":"Yogurt","ข้าวโอ๊ต":"Oatmeal","สลัดผัก":"Vegetable salad","โรตี":"Roti","ไอศกรีม":"Ice cream"});
+Object.assign(EN, {"วันติดต่อกัน":"day streak","งบค่าใช้จ่าย":"Spending budget","วันนี้":"Today","เดือนนี้":"This month","ตั้งงบรายวัน":"Set daily budget","ตั้งงบรายเดือน":"Set monthly budget","น้ำดื่ม":"Water","น้ำหนัก":"Weight","บันทึกน้ำหนักวันนี้":"Log today's weight","บันทึกประจำวัน":"Daily note","ข้อมูลของฉัน":"My data","ส่งออกข้อมูล":"Export data","นำเข้าข้อมูล":"Import data","ล้างข้อมูลทั้งหมด":"Clear all data","จัดการอาหาร":"Manage foods","ค้นหาอาหาร":"Search food","คืนค่าเริ่มต้น":"Reset","ไม่พบอาหาร":"No food found","+ 1 แก้ว":"+ 1 glass","โปรดใส่ username และ password":"Please enter your username and password","กิจกรรมของวันนี้เสร็จสมบูรณ์แล้ว":"Today's activities are all done","ดูสรุป":"View summary","เปิดรายการอีกครั้ง":"Reopen list","ทำครบทุกกิจกรรมแล้ว!":"All activities done!","กิจกรรมเสร็จสมบูรณ์":"Day completed","กิจกรรม":"Activities","ใช้จ่าย":"Spent","เสร็จสิ้น":"Done","รายการ":"Items","+ เพิ่มอาหาร":"+ Add food","แคลอรี่รวม":"Total calories","อื่น ๆ":"Other","แคลอรี่วันนี้":"Calories today","ตั้งเป้า":"Set goal","ค่าประมาณจากฐานข้อมูล":"Estimates from the food list","แคลอรี่ที่ได้รับ":"Calories eaten","เป้าหมายแคลอรี่ต่อวัน (kcal)":"Daily calorie goal (kcal)","ชื่ออาหาร":"Food name","แคลอรี่ต่อหน่วย (kcal)":"Calories per serving (kcal)","— ไม่เลือก —":"— None —","+ เพิ่มอาหารเอง":"+ Add my own food","อาหาร":"Food","จำนวน":"Qty","แคลอรี่ (kcal)":"Calories (kcal)"});
+Object.assign(EN, {"ภาษา":"Language","ไทย":"Thai"});
+// ===== Time picker: Thai 24-hour style, AM/PM only in English =====
+function buildTP(id){
+  const box = document.querySelector(`.tpick[data-for="${id}"]`); if (!box) return;
+  const v = $(id).value || "", en = state.lang === "en";
+  let h = "", m = "", ap = "AM";
+  if (v) {
+    const [H, M] = v.split(":").map(Number); m = pad(M);
+    if (en) { ap = H >= 12 ? "PM" : "AM"; h = String(H % 12 || 12); } else h = pad(H);
+  }
+  const hours = en ? Array.from({length: 12}, (_, i) => String(i + 1)) : Array.from({length: 24}, (_, i) => pad(i));
+  const hOpts = `<option value="">--</option>` + hours.map(x => `<option value="${x}" ${x === h ? "selected" : ""}>${x}</option>`).join("");
+  const mOpts = `<option value="">--</option>` + Array.from({length: 60}, (_, i) => pad(i)).map(x => `<option value="${x}" ${x === m ? "selected" : ""}>${x}</option>`).join("");
+  const apSel = en ? `<select class="tp-ap" aria-label="AM/PM"><option ${ap === "AM" ? "selected" : ""}>AM</option><option ${ap === "PM" ? "selected" : ""}>PM</option></select>` : "";
+  box.innerHTML = `<select class="tp-h" aria-label="ชั่วโมง">${hOpts}</select><span class="tp-sep">${en ? ":" : "."}</span><select class="tp-m" aria-label="นาที">${mOpts}</select>${apSel}${en ? "" : '<span class="tp-u">น.</span>'}`;
+}
+function buildAllTP(){ document.querySelectorAll(".tpick").forEach(b => buildTP(b.dataset.for)); }
+document.addEventListener("change", e => {
+  const box = e.target.closest && e.target.closest(".tpick"); if (!box) return;
+  const id = box.dataset.for, hSel = box.querySelector(".tp-h"), mSel = box.querySelector(".tp-m"), apSel = box.querySelector(".tp-ap");
+  if (!hSel.value) { $(id).value = ""; return; }
+  if (!mSel.value) mSel.value = "00";
+  let H = Number(hSel.value);
+  if (apSel) H = (H % 12) + (apSel.value === "PM" ? 12 : 0);
+  $(id).value = `${pad(H)}:${mSel.value}`;
+});
+// ===== Attendance: late, absent / leave, vacation (per pay cycle) =====
+function setLeave(v){
+  $("newLeave").value = v;
+  document.querySelectorAll("#leaveRow .lv").forEach(b => b.classList.toggle("on", b.dataset.v === v));
+}
+function attendance(cyc){
+  let late = 0, leave = 0, vac = 0;
+  Object.keys(state.work).filter(x => cycleKey(x) === cyc).forEach(x => {
+    const w = state.work[x];
+    if (w.leave === "vacation") vac++;
+    else if (w.leave) leave++;
+    else if (w.start) {
+      const dow = parseKey(x).getDay();
+      if (dow !== 0 && dow !== 6 && toMin(w.start) > 8 * 60) late++;
+    }
+  });
+  return { late, leave, vac };
+}
+function attendCard(){
+  const a = attendance(cycleKey(todayKey()));
+  return `<section class="card attend"><div class="att-grid">
+      <div><b>${a.late}</b><span>มาสาย</span></div>
+      <div><b>${a.leave}</b><span>ขาดลา</span></div>
+      <div><b>${a.vac}</b><span>พักร้อน</span></div></div>
+    <p class="muted" style="margin:8px 0 0;font-size:.68rem">รอบ 22–21 · มาสายหลัง 08:00 (จันทร์–ศุกร์)</p></section>`;
+}
+// ===== Work & overtime kinds =====
+function setKind(k){
+  $("newKind").value = k;
+  $("kindRow").hidden = !k;
+  $("fWorkStart").hidden = $("fWorkEnd").hidden = k !== "work";
+  $("fOt").hidden = k !== "ot";
+  $("leaveRow").hidden = k !== "work";
+  $("fTime").hidden = k === "work";
+  if (k !== "work") setLeave("");
+  if (k === "work") { if (!$("wStart").value) $("wStart").value = "08:00"; if (!$("wEnd").value) $("wEnd").value = "17:00"; }
+  if (k === "ot") { if (!$("oStart").value) $("oStart").value = "18:00"; if (!$("oEnd").value) $("oEnd").value = "21:00"; }
+}
+// ===== Several expenses per record =====
+function addExpRow(name = "", amount = ""){
+  const row = document.createElement("div");
+  row.className = "frw exp";
+  row.innerHTML = `<input class="ex-name" placeholder="${tr("ชื่อรายการ")}" value="${esc(name)}">`
+    + `<input type="number" class="ex-amt" min="0" step="1" inputmode="decimal" placeholder="0" value="${amount}">`
+    + `<button type="button" class="fr-del" data-act="delExpRow" aria-label="ลบ">×</button>`;
+  $("expRows").appendChild(row);
+  updateExpTotal();
+}
+function updateExpTotal(){
+  const total = [...document.querySelectorAll("#expRows .ex-amt")].reduce((a, i) => a + (Number(i.value) || 0), 0);
+  $("expTotal").textContent = total.toLocaleString("en-US");
+}
+Object.assign(EN, {"+ เพิ่มค่าใช้จ่าย":"+ Add expense","ชื่อรายการ":"Item name","รวม":"Total"});
+Object.assign(EN, {"รายได้":"Income","รายได้เดือนนี้ (ประมาณ)":"Income this month (est.)","เงินเดือนประจำ":"Base salary","ค่าบ้าน":"Housing","ค่าตำแหน่ง":"Position","รวมต่อเดือน":"Monthly total","ต่อวัน (÷30)":"per day (÷30)","ต่อชั่วโมง (÷8)":"per hour (÷8)","บันทึกเงินเดือน":"Save salary","บันทึกเวลาทำงาน":"Log work time","เวลาเริ่ม":"Start","เวลาเลิก":"End","รายได้ต่อวัน":"Daily income","วันหยุด":"Weekend","รายได้วันนี้":"Income today","รายได้เพิ่มเติมเดือนนี้":"Extra income this month","ยังไม่ได้บันทึกเวลาวันนี้":"No work time logged today","ยังไม่มีวันที่บันทึกเวลา":"No work days logged yet","บันทึก":"Save","เงินเดือน":"Salary","บันทึกเงินเดือนแล้ว":"Salary saved","บันทึกเวลาทำงานแล้ว":"Work time saved"});
+Object.assign(EN, {"โอที":"Overtime","เริ่มงาน":"Start work","เลิกงาน":"End work","ชั่วโมงโอที":"Overtime hours","กรุณาใส่เวลาเริ่มและเลิกงาน":"Enter start and end time","กรุณาใส่ชั่วโมงโอที":"Enter overtime hours"});
+Object.assign(EN, {"รายได้":"Income"});
+Object.assign(EN, {"เริ่มโอที":"Overtime start","เลิกโอที":"Overtime end","กรุณาใส่เวลาเริ่มและเลิกโอทีให้ถูกต้อง":"Enter valid overtime start and end"});
+Object.assign(EN, {"รายได้รอบนี้":"This cycle","รายได้รอบเงินเดือน (22–21, ประมาณ)":"Pay cycle income (22–21, est.)"});
+Object.assign(EN, {"กรอกเวลาเริ่มและเลิกงานให้ครบทั้งคู่":"Enter both work start and end","กรอกเวลาเริ่มและเลิกโอทีให้ครบทั้งคู่":"Enter both overtime start and end","เวลาเลิกงานต้องมากกว่าเวลาเริ่ม":"End time must be after start","เวลาเลิกโอทีต้องมากกว่าเวลาเริ่ม":"Overtime end must be after start","บันทึกรายได้วันนี้แล้ว":"Income saved","แก้ไขรายได้วันนี้":"Edit income"});
+Object.assign(EN, {"ฐานเงินเดือน":"Base salary","เงินเดือน (ใช้คำนวณโอที)":"Salary (for OT)","โอที/วันหยุดรอบนี้ (22–21, ประมาณ)":"OT / weekend pay this cycle (22–21, est.)","ฐานคำนวณ":"Base","แตะวันที่เพื่อเลือก แตะซ้ำเพื่อแก้ไข":"Tap a date to select, tap again to edit"});
+Object.assign(EN, {"ค่าทำงานปกติ":"Regular work pay","รายได้รอบนี้ (22–21, ประมาณ)":"Income this cycle (22–21, est.)"});
+Object.assign(EN, {"ลาป่วย":"Sick leave","ลากิจ":"Personal leave","ลาพักร้อน":"Vacation","ขาดงาน":"Absent","ไม่มี":"None","มาสาย":"Late","ขาดลา":"Absent / leave","พักร้อน":"Vacation","รอบ 22–21 · มาสายหลัง 08:00 (จันทร์–ศุกร์)":"Cycle 22–21 · late after 08:00 (Mon–Fri)"});
+Object.assign(EN, {"ใส่เวลาปกติ (จ–ศ)":"Fill standard hours (Mon–Fri)"});
+Object.assign(EN, {"เงินเดือน (คิดโอที)":"Salary (for OT)","ค่าบ้าน":"Housing","ค่าตำแหน่ง":"Position allowance","เงินเพิ่มต่อรอบ":"Extra per cycle"});
+function tr(s){ return state.lang === "en" && EN[s] ? EN[s] : s; }
+// Walks the app's text nodes and placeholders; keeps the original Thai so it can switch back
+function i18n(){
+  const root = $("app");
+  const w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+  let n;
+  while ((n = w.nextNode())) {
+    if (n._th === undefined) n._th = n.nodeValue;
+    const k = n._th.trim();
+    const t = state.lang === "en" && EN[k];
+    n.nodeValue = t ? n._th.replace(k, t) : n._th;
+  }
+  root.querySelectorAll("input,textarea").forEach(el => {
+    if (el._ph === undefined) el._ph = el.placeholder;
+    el.placeholder = state.lang === "en" && EN[el._ph] ? EN[el._ph] : el._ph;
+  });
+  const lb = root.querySelector('[data-act="lang"]');
+  if (lb) lb.textContent = state.lang === "en" ? "EN" : "TH";
+  document.documentElement.lang = state.lang === "en" ? "en" : "th";
+  buildAllTP();
+}
+function snack(msg, label, fn){
+  const sn = $("snack");
+  $("snackMsg").textContent = tr(msg); $("snackBtn").textContent = tr(label);
+  sn._fn = fn; sn.classList.add("show");
+  clearTimeout(snack._t);
+  snack._t = setTimeout(() => { sn.classList.remove("show"); sn._fn = null; }, 6000);
+}
+function toast(msg){
+  const t = $("toast"); t.textContent = tr(msg); t.classList.add("show");
+  clearTimeout(toast._t); toast._t = setTimeout(() => t.classList.remove("show"), 2400);
+}
+
+// ===== Items & progress =====
+function itemsFor(k){
+  const t = state.templates.map(x => ({...x, key: "T" + x.id, src: "T"}));
+  const p = (state.plans[k] || []).map(x => ({...x, key: "P" + x.id, src: "P"}));
+  return [...t, ...p].sort((a, b) => (a.time || "99:99").localeCompare(b.time || "99:99"));
+}
+const isDone = (k, it) => !!state.done[`${k}|${it.key}`];
+const stepDone = (k, it, sid) => !!state.done[`${k}|${it.key}|${sid}`];
+function dayStat(k){ const its = itemsFor(k); return { total: its.length, done: its.filter(i => isDone(k, i)).length }; }
+function pctOf(st){ return st.total ? Math.round(st.done / st.total * 100) : null; }
+function findItem(k, key){ return itemsFor(k).find(i => i.key === key); }
+function toggleKey(id){ if (state.done[id]) delete state.done[id]; else state.done[id] = true; }
+
+// ===== Shared pieces =====
+function taskRow(k, it){
+  const dn = isDone(k, it);
+  const steps = (it.steps || []).map(s => {
+    const sd = stepDone(k, it, s.id);
+    return `<label class="step ${sd ? "done" : ""}"><input type="checkbox" data-act="step" data-k="${k}" data-key="${it.key}" data-sid="${s.id}" ${sd ? "checked" : ""}><span>${esc(s.text)}</span></label>`;
+  }).join("");
+  return `<div class="task ${dn ? "done" : ""}">
+    <button class="chk ${state._pop === k + "|" + it.key ? "pop" : ""}" data-act="toggle" data-k="${k}" data-key="${it.key}" aria-label="ทำเสร็จ">✓</button>
+    <span class="ico">${it.icon || "📌"}</span>
+    <div class="tbody">
+      <div class="tt" data-act="edit" data-k="${k}" data-key="${it.key}">${esc(it.text)}${it.src === "T" ? ' <span class="chip">ทุกวัน</span>' : ""}${it.kcal ? ` <span class="chip kcal">${it.kcal} kcal</span>` : ""}</div>
+      ${(it.foods && it.foods.length) ? `<div class="tm fds">🍽️ ${it.foods.map(f => esc(f.n ? tr(f.n) + (f.q && f.q !== 1 ? " ×" + f.q : "") : "อื่น ๆ") + " <small>" + f.k + "</small>").join(" · ")}</div>` : ""}
+      ${(it.time || it.cost) ? `<div class="tm">${esc(it.time || "")}${it.time && it.cost ? " · " : ""}${it.cost ? "฿" + it.cost + (it.expenses && it.expenses.length > 1 ? " (" + it.expenses.map(x => esc(x.name || "-") + " " + x.amount).join(" + ") + ")" : "") : ""}</div>` : ""}
+      ${steps ? `<div class="steps">${steps}</div>` : ""}
+    </div>
+    <button class="danger sm" data-act="del" data-k="${k}" data-key="${it.key}">ลบ</button>
+  </div>`;
+}
+function dayAllDone(k){ const its = itemsFor(k); return its.length > 0 && its.every(i => isDone(k, i)); }
+function archiveDay(k){
+  const its = itemsFor(k);
+  state.completed[k] = {
+    at: Date.now(), kcal: its.reduce((a, i) => a + (Number(i.kcal) || 0), 0), cost: its.reduce((a, i) => a + (Number(i.cost) || 0), 0),
+    items: its.map(i => ({ icon: i.icon || "📌", text: i.text, time: i.time || "", cost: Number(i.cost) || 0, kcal: Number(i.kcal) || 0, foods: i.foods || [] }))
+  };
+}
+function groupList(k){
+  if (state.completed[k] && !dayAllDone(k)) delete state.completed[k];   // something new was added or unticked
+  const c = state.completed[k];
+  if (c) {
+    const label = k === todayKey() ? "กิจกรรมของวันนี้เสร็จสมบูรณ์แล้ว" : dateLabel(k);
+    return `<section class="card donecard"><div class="dc-em">🎉</div><h3>${esc(label)}</h3>
+      <p class="muted">${c.items.length} กิจกรรม${c.kcal ? " · " + c.kcal + " kcal" : ""}${c.cost ? " · ฿" + c.cost : ""}</p>
+      <div class="actions"><button data-act="showSummary" data-k="${k}">ดูสรุป</button><button class="ghost" data-act="reopenDay" data-k="${k}">เปิดรายการอีกครั้ง</button></div></section>`;
+  }
+  const list = itemsFor(k);
+  return `<section class="card"><h3>รายการ<span class="muted">${list.filter(i => isDone(k, i)).length}/${list.length}</span></h3>
+    ${list.length ? list.map(i => taskRow(k, i)).join("") : '<p class="muted" style="margin:0">ยังไม่มีรายการ</p>'}</section>`;
+}
+// ===== Streak, budget, health, note, data, food manager =====
+function streakInfo(){
+  const ks = new Set(Object.keys(state.plans)); Object.keys(state.done).forEach(x => ks.add(x.split("|")[0]));
+  let k = [...ks].filter(x => /^\d{4}-\d\d-\d\d$/.test(x)).sort()[0];
+  if (!k) return { cur: 0, best: 0 };
+  const today = todayKey(); let run = 0, best = 0, n = 0;
+  while (k <= today && n++ < 1500) {
+    const t = dayStat(k);
+    if (t.total > 0 && t.done === t.total) { run++; best = Math.max(best, run); } else if (k !== today) run = 0;
+    k = addDays(k, 1);
+  }
+  return { cur: run, best };
+}
+function streakCard(){
+  const s = streakInfo();
+  return `<section class="card streak"><div><span class="st-em">🔥</span> <b>${s.cur}</b> วันติดต่อกัน</div><div class="muted">ดีที่สุด ${s.best} วัน</div></section>`;
+}
+function budgetCard(){
+  const k = todayKey(), d = daySpend(k), mk = k.slice(0, 7);
+  let m = 0; for (let i = 1; i <= Number(k.slice(8)); i++) m += daySpend(`${mk}-${pad(i)}`);
+  const row = (l, v, g) => `<div class="bg-row"><div class="bg-top"><span>${l}</span><b class="${g && v > g ? "over" : ""}">฿${v}${g ? " / ฿" + g : ""}</b></div>${g ? `<div class="bar2"><i class="${v > g ? "over" : ""}" style="width:${Math.min(100, Math.round(v / g * 100))}%"></i></div>` : ""}${g && v > g ? `<div class="over sm">เกินงบ ฿${v - g}</div>` : ""}</div>`;
+  return `<section class="card"><h3>งบค่าใช้จ่าย</h3>${row("วันนี้", d, state.costGoal)}${row("เดือนนี้", m, state.costGoalM)}
+    <div class="actions"><button class="ghost sm" data-act="budgetD">ตั้งงบรายวัน</button><button class="ghost sm" data-act="budgetM">ตั้งงบรายเดือน</button></div></section>`;
+}
+function spark(v){
+  if (v.length < 2) return "";
+  const mn = Math.min(...v), r = (Math.max(...v) - mn) || 1, W = 240, H = 48;
+  const p = v.map((x, i) => `${(i / (v.length - 1) * W).toFixed(1)},${(H - 4 - (x - mn) / r * (H - 8)).toFixed(1)}`).join(" ");
+  return `<svg viewBox="0 0 ${W} ${H}" width="100%" height="${H}" preserveAspectRatio="none"><polyline points="${p}" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+}
+function healthCard(){
+  const k = todayKey(), w = state.water[k] || 0, G = 8;
+  const ws = Object.keys(state.weights).sort(), last = ws.length ? state.weights[ws[ws.length - 1]] : null;
+  return `<section class="card"><h3>น้ำดื่ม<span class="muted">${w} / ${G} แก้ว</span></h3>
+    <div class="water">${Array.from({ length: Math.max(G, w) }, (_, i) => `<span class="dr ${i < w ? "on" : ""}">💧</span>`).join("")}</div>
+    <div class="actions"><button class="ghost sm" data-act="waterSub">−</button><button class="sm" data-act="waterAdd">+ 1 แก้ว</button></div>
+    <h3 style="margin-top:14px">น้ำหนัก<span class="muted">${last ? last + " kg" : "ยังไม่มีข้อมูล"}</span></h3>
+    ${spark(ws.slice(-14).map(x => state.weights[x]))}
+    <div class="actions"><button class="ghost sm" data-act="weightSet">บันทึกน้ำหนักวันนี้</button></div></section>`;
+}
+function noteCard(){
+  return `<section class="card"><h3>บันทึกประจำวัน</h3><textarea id="dayNote" class="daynote" rows="3" placeholder="วันนี้เป็นยังไงบ้าง...">${esc(state.notes[todayKey()] || "")}</textarea></section>`;
+}
+function exportData(){
+  const data = { app: "strivlife", exportedAt: new Date().toISOString(), ...JSON.parse(snapshot()) };
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([JSON.stringify(data, null, 1)], { type: "application/json" }));
+  a.download = `strivlife-${todayKey()}.json`; document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 2000); toast("ส่งออกข้อมูลแล้ว");
+}
+function importData(file){
+  const r = new FileReader();
+  r.onload = () => {
+    try {
+      const d = JSON.parse(r.result);
+      if (!d || typeof d !== "object" || !d.plans || !d.templates) throw 0;
+      if (!confirm(tr("นำเข้าข้อมูลนี้? ข้อมูลปัจจุบันจะถูกแทนที่"))) return;
+      applyData(d); state.saved = ""; render(); toast("นำเข้าข้อมูลแล้ว");
+    } catch (e) { toast("ไฟล์ไม่ถูกต้อง"); }
+  };
+  r.readAsText(file);
+}
+function fmListHTML(){
+  const q = (state.fmq || "").toLowerCase(), l = allFoods().filter(f => !q || f.name.toLowerCase().includes(q));
+  return l.length ? l.map(f => { const o = esc(f._orig || f.name);
+    return `<div class="fm-row"><span>${f.icon || "🍽️"} ${esc(tr(f.name))}</span><small>${f.kcal} kcal</small><button class="ghost sm" data-act="foodEdit" data-n="${o}">✏️</button><button class="ghost sm" data-act="foodDel" data-n="${o}">🗑</button></div>`; }).join("")
+    : '<p class="muted">ไม่พบอาหาร</p>';
+}
+function dataCard(){
+  return `<section class="card"><h3>ข้อมูลของฉัน</h3>
+    <div class="actions" style="margin-top:0"><button class="ghost" data-act="exportData">⬇️ ส่งออกข้อมูล</button><button class="ghost" data-act="importData">⬆️ นำเข้าข้อมูล</button></div>
+    <div class="actions"><button class="danger" data-act="clearData">ล้างข้อมูลทั้งหมด</button></div></section>
+    <section class="card"><h3>จัดการอาหาร</h3>
+    <input type="search" id="fmq" class="fmq" placeholder="ค้นหาอาหาร" value="${esc(state.fmq || "")}" autocomplete="off">
+    <div class="fm-list" id="fmList">${fmListHTML()}</div>
+    <div class="actions"><button class="ghost sm" data-act="foodReset">คืนค่าเริ่มต้น</button></div></section>`;
+}
+// Reminders (fire while the app is open)
+function enablePushUi(){
+  const u = state.user;
+  const local = () => { if ("Notification" in window && Notification.permission === "default") Notification.requestPermission(); };
+  if (u && u.uid && window.FB && FB.enablePush)
+    FB.enablePush(u.uid).then(() => toast("เปิดการแจ้งเตือนแล้ว รับได้แม้ปิดแอป"))
+      .catch(e => { console.warn("push", e); local(); toast(e.message === "no-vapid" ? "เปิดแจ้งเตือนในแอปแล้ว (ยังไม่ได้ตั้งค่า push)" : e.message === "denied" ? "ไม่ได้อนุญาตแจ้งเตือนของเบราว์เซอร์" : "เปิด push ไม่สำเร็จ ใช้แจ้งเตือนในแอปแทน"); });
+  else { local(); toast("เปิดการแจ้งเตือนแล้ว"); }
+}
+const _notified = new Set();
+function notifyItem(it){
+  const body = `${it.icon || "📌"} ${it.text} · ${it.time}`;
+  toast("⏰ " + body);
+  if (!("Notification" in window) || Notification.permission !== "granted") return;
+  const opt = { body, tag: "sl-" + it.key, icon: undefined };
+  const fallback = () => { try { new Notification("StrivLife", opt); } catch (e) {} };
+  if (navigator.serviceWorker && navigator.serviceWorker.getRegistration)
+    navigator.serviceWorker.getRegistration().then(g => g ? g.showNotification("StrivLife", opt) : fallback()).catch(fallback);
+  else fallback();
+}
+function remindTick(){
+  if (!state.user || !state.reminders) return;
+  const k = todayKey(), n = new Date(), hm = pad(n.getHours()) + ":" + pad(n.getMinutes());
+  itemsFor(k).forEach(it => {
+    const id = k + "|" + it.key + "|" + it.time;
+    if (it.time === hm && !isDone(k, it) && !_notified.has(id)) { _notified.add(id); notifyItem(it); }
+  });
+}
+setInterval(remindTick, 15000);
+
+function showSummary(k, fresh){
+  const c = state.completed[k]; if (!c) return;
+  const rows = c.items.map(i => {
+    const foods = (i.foods || []).map(f => esc(f.n ? tr(f.n) + (f.q && f.q !== 1 ? " ×" + f.q : "") : "อื่น ๆ")).join(" · ");
+    const sub = [i.time ? esc(i.time) : "", foods ? "🍽️ " + foods : "", i.kcal ? i.kcal + " kcal" : "", i.cost ? "฿" + i.cost : ""].filter(Boolean).join(" · ");
+    return `<div class="cel-row"><span class="ck">✓</span><div class="tx">${i.icon} ${esc(i.text)}${sub ? `<div class="sub">${sub}</div>` : ""}</div></div>`;
+  }).join("");
+  $("celCard").innerHTML = `<div class="cel-top" id="celTop"><div class="em">🎉</div><h2>${k === todayKey() ? "ทำครบทุกกิจกรรมแล้ว!" : "กิจกรรมเสร็จสมบูรณ์"}</h2><p>${esc(dateLabel(k))}</p></div>
+    <div class="cel-stats"><div><b>${c.items.length}</b><span>กิจกรรม</span></div><div><b>${c.kcal}</b><span>kcal</span></div><div><b>฿${c.cost}</b><span>ใช้จ่าย</span></div></div>
+    <div class="cel-list">${rows}</div>
+    ${state.notes[k] ? `<div class="cel-note">📝 ${esc(state.notes[k])}</div>` : ""}
+    <button class="cel-ok" data-act="closeCelebrate">เสร็จสิ้น</button>`;
+  const el = $("celebrate"); el.hidden = false; i18n();
+  requestAnimationFrame(() => el.classList.add("open"));
+  if (fresh) {
+    const top = $("celTop"), colors = ["#fde047","#86efac","#93c5fd","#fff","#f9a8d4","#fdba74"];
+    for (let n = 0; n < 36; n++) {
+      const p = document.createElement("i"); p.className = "cel-conf";
+      p.style.cssText = `left:${Math.random() * 100}%;background:${colors[n % colors.length]};animation-duration:${(1.6 + Math.random() * 1.6).toFixed(2)}s;animation-delay:${(Math.random() * .8).toFixed(2)}s`;
+      top.appendChild(p);
+    }
+  }
+}
+function closeCelebrate(){
+  const el = $("celebrate"); el.classList.remove("open");
+  setTimeout(() => { el.hidden = true; }, 300);
+}
+function previewRow(k){
+  const its = itemsFor(k);
+  if (!its.length) return '<p class="muted" style="margin:0">ไม่มีรายการในวันนี้</p>';
+  return `<div class="hscroll">${its.map(i => `<div class="pv ${isDone(k, i) ? "done" : ""}" data-act="openDay" data-k="${k}"><div class="pv-ico">${i.icon || "📌"}</div><div class="pv-t">${esc(i.text)}</div><div class="pv-m">${esc(i.time || "")}</div></div>`).join("")}</div>`;
+}
+
+// ===== Views =====
+function vToday(){
+  const k = todayKey(), st = dayStat(k), pct = pctOf(st) || 0;
+  return `
+    <section class="weekcard split">
+      <div class="half">
+        <div class="lbl">ทำสำเร็จวันนี้</div>
+        <div class="big sm">${st.done} / ${st.total}</div>
+        <div class="bar2"><i style="width:${pct}%"></i></div>
+        <div class="lbl">${pct}%</div>
+      </div>
+      <div class="half">
+        <div class="lbl">ค่าใช้จ่ายวันนี้</div>
+        <div class="big sm">฿${daySpend(k).toLocaleString("en-US")}</div>
+        <div class="lbl">${itemsFor(k).filter(i => Number(i.cost) > 0).length} รายการ</div>
+      </div>
+    </section>
+    ${incomePanel()}
+    ${attendCard()}
+    ${kcalCard()}
+    ${budgetCard()}
+    <section class="card day-card today"><h3>วันนี้</h3>${previewRow(k)}</section>
+    <section class="card day-card tomorrow"><h3>พรุ่งนี้ <span class="muted">เตรียมไว้ล่วงหน้า</span></h3>${previewRow(addDays(k, 1))}</section>
+    ${groupList(k)}
+    ${healthCard()}
+    ${noteCard()}`;
+}
+function dayCell(k, blank){
+  if (blank) return '<span class="cd blank"></span>';
+  const cls = ["cd"];
+  if (k === state.sel) cls.push("sel");
+  if (k === todayKey()) cls.push("today");
+  const has = dayStat(k).total > 0;
+  return `<button class="${cls.join(" ")}" data-act="pick" data-k="${k}">${parseKey(k).getDate()}${has ? '<span class="dot"></span>' : ""}</button>`;
+}
+function vSchedule(){
+  const monthTitle = parseKey(state.month + "-01").toLocaleDateString(locale(), {month:"long", year:"numeric"});
+  const head = WEEK.map(w => `<span class="wd">${w}</span>`).join("");
+  let cells;
+  if (state.calOpen) {
+    const first = parseKey(state.month + "-01");
+    const offset = (first.getDay() + 6) % 7;
+    const n = new Date(first.getFullYear(), first.getMonth() + 1, 0).getDate();
+    cells = [...Array(offset)].map(() => dayCell("", true));
+    for (let d = 1; d <= n; d++) cells.push(dayCell(`${state.month}-${pad(d)}`));
+  } else {
+    const mon = addDays(state.sel, -((parseKey(state.sel).getDay() + 6) % 7));
+    cells = [...Array(7)].map((_, i) => dayCell(addDays(mon, i)));
+  }
+  return `
+    <section class="card">
+      <div class="cal-head"><button class="sm ghost" data-act="mprev" aria-label="ก่อนหน้า">‹</button><b>${monthTitle}</b><button class="sm ghost" data-act="mnext" aria-label="ถัดไป">›</button></div>
+      <div class="cal">${head}${cells.join("")}</div>
+      <div class="actions" style="justify-content:center"><button class="ghost sm" data-act="calToggle">${state.calOpen ? "พับปฏิทิน" : "กางปฏิทิน"}</button></div>
+    </section>
+    <section class="card"><h3>${dateLabel(state.sel)}<button class="sm" data-act="addHere">+ เพิ่มแผน</button></h3></section>
+    ${groupList(state.sel)}
+    <section class="card"><h3>การแจ้งเตือน<span class="muted">${state.reminders ? "เปิดอยู่" : "ปิดอยู่"}</span></h3>
+      <p class="muted" style="margin:0 0 10px">รับการแจ้งเตือนเมื่อถึงเวลาทำกิจวัตร</p>
+      <button class="${state.reminders ? "ghost" : ""}" data-act="toggleReminders">${state.reminders ? "ปิดการแจ้งเตือน" : "เปิดการแจ้งเตือน"}</button>
+    </section>`;
+}
+function vHistory(){
+  const t = todayKey(), cells = [];
+  for (let i = 27; i >= 0; i--) {
+    const k = addDays(t, -i), p = pctOf(dayStat(k));
+    const lvl = p === null ? "" : p >= 100 ? "l3" : p >= 50 ? "l2" : p > 0 ? "l1" : "";
+    cells.push(`<button class="hcell ${lvl} ${i === 0 ? "today" : ""}" data-act="openDay" data-k="${k}">${parseKey(k).getDate()}</button>`);
+  }
+  let full = 0;
+  for (let i = 0; i < 28; i++) { const st = dayStat(addDays(t, -i)); if (st.total && st.done === st.total) full++; }
+  return `<section class="card"><h3>ย้อนหลัง 28 วัน</h3><div class="hgrid">${cells.join("")}</div>
+    <div class="actions" style="gap:12px;font-size:.8rem;color:var(--muted)"><span>🟩 ครบทั้งหมด</span><span>ครบบางส่วน</span></div></section>
+    <section class="card"><h3>วันที่ทำครบทุกรายการ</h3><p style="margin:0;font-size:1.6rem;font-weight:900">${full} <span class="muted" style="font-size:.9rem;font-weight:600">วัน</span></p></section>`;
+}
+function vSummary(){
+  const t = todayKey(), days = [];
+  for (let i = 6; i >= 0; i--) {
+    const k = addDays(t, -i);
+    days.push({ label: parseKey(k).toLocaleDateString(locale(), {weekday:"short"}), p: pctOf(dayStat(k)) || 0 });
+  }
+  let totalDone = 0, sum = 0, logged = 0;
+  for (let i = 0; i < 28; i++) {
+    const st = dayStat(addDays(t, -i));
+    totalDone += st.done;
+    if (st.total) { logged++; sum += pctOf(st); }
+  }
+  const avg = logged ? Math.round(sum / logged) : 0;
+  return `
+    <section class="card"><h3>ความสำเร็จ 7 วันล่าสุด</h3>
+      <div class="bars">${days.map(d => `<div><i style="height:${Math.max(d.p, 4)}%"></i><span>${d.label}</span></div>`).join("")}</div></section>
+    <section class="stats">
+      <div class="stat"><b>${pctOf(dayStat(t)) || 0}%</b><span>วันนี้</span></div>
+      <div class="stat"><b>${totalDone}</b><span>รายการที่ทำสำเร็จทั้งหมด</span></div>
+      <div class="stat"><b>${avg}%</b><span>เฉลี่ยทุกวันที่บันทึก</span></div>
+      <div class="stat"><b>${itemsFor(t).length}</b><span>รายการวันนี้</span></div>
+      <div class="stat"><b>฿${itemsFor(t).reduce((a, i) => a + (Number(i.cost) || 0), 0)}</b><span>ค่าใช้จ่ายวันนี้</span></div>
+    </section>`;
+}
+function vProfile(){
+  const u = state.user;
+  return `
+    <section class="card" style="display:flex;align-items:center;gap:14px">
+      <div class="avatar" style="width:56px;height:56px;${u.provider !== "anonymous" ? "cursor:pointer" : ""}" ${u.provider !== "anonymous" ? 'data-act="pickPhoto"' : ""}>${u.picture ? `<img src="${esc(u.picture)}" alt="">` : esc((u.name || "?").charAt(0).toUpperCase())}</div>
+      <div style="min-width:0"><b>${esc(u.name)}</b><div class="muted">${u.provider === "anonymous" ? "โหมดผู้เยี่ยมชม" : esc(u.email)}</div></div>
+    </section>
+    <section class="card"><h3>บัญชี</h3>
+      <div class="actions" style="margin-top:0"><button class="ghost" data-act="theme"><span>🌓</span> <span>โหมดกลางคืน</span></button></div>
+      <div class="actions" style="margin-top:0"><button class="ghost" data-act="lang"><span>🌐</span> <span>ภาษา</span> <span>${state.lang === "en" ? "English" : "ไทย"}</span></button></div>
+      <div class="actions" style="margin-top:0">${u.provider !== "anonymous" ? '<button class="ghost" data-act="rename">แก้ไขชื่อ</button><button class="ghost" data-act="pickPhoto">เปลี่ยนรูปโปรไฟล์</button>' + (u.picture ? '<button class="ghost" data-act="removePhoto">ลบรูป</button>' : "") : ""}<button class="ghost" data-act="toggleReminders">${state.reminders ? "ปิดการแจ้งเตือน" : "เปิดการแจ้งเตือน"}</button>${deferredInstall ? '<button class="ghost" data-act="install">ติดตั้งแอป</button>' : ""}</div>
+      <p class="muted" id="syncInfo" style="margin:12px 0 0">${syncText()}</p>
+      <div class="actions"><button class="danger" data-act="logout">ออกจากระบบ</button></div>
+    </section>${dataCard()}`;
+}
+function dayVal(k, m){ return itemsFor(k).reduce((a, i) => a + (Number(m === "kcal" ? i.kcal : i.cost) || 0), 0); }
+function daySpend(k){ return dayVal(k, "cost"); }
+function spendCard(){
+  const metric = state.sumTab === "kcal" ? "kcal" : "cost";
+  const val = k => dayVal(k, metric);
+  const fmt = n => metric === "kcal" ? n.toLocaleString("en-US") + " kcal" : "฿" + n.toLocaleString("en-US");
+  const span = state.spanTab || "week", t = todayKey(), bars = [];
+  let total = 0, n = 0;
+  if (span === "year") {
+    const y = t.slice(0, 4);
+    for (let m = 1; m <= 12; m++) {
+      const mk = `${y}-${pad(m)}`, days = new Date(+y, m, 0).getDate();
+      let v = 0;
+      for (let d = 1; d <= days; d++) { const k = `${mk}-${pad(d)}`; if (k <= t) v += val(k); }
+      bars.push({ label: new Date(+y, m - 1, 1).toLocaleDateString("en-US", {month:"short"}).slice(0, 1), v });
+    }
+  } else if (span === "month") {
+    const mk = t.slice(0, 7), today = parseKey(t).getDate();
+    for (let d = 1; d <= today; d++) bars.push({ label: String(d), v: val(`${mk}-${pad(d)}`) });
+  } else {
+    for (let i = 6; i >= 0; i--) {
+      const k = addDays(t, -i);
+      bars.push({ label: parseKey(k).toLocaleDateString("en-US", {weekday:"short"}).slice(0, 1), v: val(k) });
+    }
+  }
+  bars.forEach(b => total += b.v);
+  const max = Math.max(1, ...bars.map(b => b.v));
+  const segs = [["week","สัปดาห์"],["month","เดือน"],["year","ปี"]]
+    .map(([k, l]) => `<button class="seg ${span === k ? "on" : ""}" data-act="span" data-s="${k}">${l}</button>`).join("");
+  return `<section class="card"><h3>${metric === "kcal" ? "แคลอรี่ที่ได้รับ" : "ยอดเงินที่ใช้"}<span class="muted">${fmt(total)}</span></h3>
+    <div class="segs">${segs}</div>
+    <div class="bars spend">${bars.map(b => `<div><i style="height:${Math.max(4, b.v / max * 100)}%"></i><span>${esc(b.label)}</span></div>`).join("")}</div></section>`;
+}
+function vSummaryTab(){
+  const sub = state.sumTab || "ach";
+  const seg = (k, l) => `<button class="seg ${sub === k ? "on" : ""}" data-act="sumTab" data-s="${k}">${l}</button>`;
+  const switcher = `<div class="segs">${seg("ach", "ความสำเร็จ")}${seg("spend", "ค่าใช้จ่าย")}${seg("kcal", "แคลอรี่")}</div>`;
+  return switcher + (sub === "ach" ? vHistory() + vSummary() : spendCard());
+}
+const FOODS = [{name:"ข้าวผัด", icon:"🍚", kcal:550},{name:"ข้าวมันไก่", icon:"🍗", kcal:600},{name:"ข้าวกะเพราหมูสับไข่ดาว", icon:"🍳", kcal:650},{name:"ข้าวหมูแดง", icon:"🍖", kcal:580},{name:"ข้าวราดแกง", icon:"🥘", kcal:550},{name:"ข้าวต้ม", icon:"🥣", kcal:300},{name:"ก๋วยเตี๋ยวเรือ", icon:"🍜", kcal:400},{name:"ก๋วยเตี๋ยวหมู", icon:"🍜", kcal:350},{name:"บะหมี่หมูแดง", icon:"🍜", kcal:450},{name:"ส้มตำไทย", icon:"🥗", kcal:150},{name:"ไก่ย่าง", icon:"🍗", kcal:300},{name:"ข้าวเหนียว", icon:"🍚", kcal:300},{name:"ผัดกะเพรา", icon:"🍛", kcal:480},{name:"ต้มยำกุ้ง", icon:"🍲", kcal:150},{name:"แกงเขียวหวาน", icon:"🍛", kcal:250},{name:"ข้าวไข่เจียว", icon:"🍳", kcal:500},{name:"ลาบหมู", icon:"🥗", kcal:280},{name:"แซนด์วิช", icon:"🥪", kcal:250},{name:"ไข่ต้ม", icon:"🥚", kcal:75},{name:"กล้วย", icon:"🍌", kcal:105},{name:"แอปเปิ้ล", icon:"🍎", kcal:95},{name:"นมจืด", icon:"🥛", kcal:130},{name:"กาแฟดำ", icon:"☕", kcal:5},{name:"กาแฟลาเต้", icon:"☕", kcal:190},{name:"ชาเขียว", icon:"🍵", kcal:90},{name:"น้ำอัดลม", icon:"🥤", kcal:140},{name:"โยเกิร์ต", icon:"🥣", kcal:120},{name:"ข้าวโอ๊ต", icon:"🥣", kcal:150},{name:"สลัดผัก", icon:"🥗", kcal:120},{name:"โรตี", icon:"🫓", kcal:300},{name:"ไอศกรีม", icon:"🍨", kcal:200}];
+// ===== Pay cycle: 22nd of one month to 21st of the next =====
+function cycleKey(k){
+  const d = parseKey(k);
+  const c = d.getDate() >= 22 ? new Date(d.getFullYear(), d.getMonth() + 1, 1) : new Date(d.getFullYear(), d.getMonth(), 1);
+  return keyOf(c).slice(0, 7);
+}
+// ===== Income panel: per day and per month, from logged days only =====
+function dayIncome(k){
+  const w = state.work[k];
+  if (!w || w.leave) return { total: 0, hours: 0, days: 0 };
+  const r = calcDay(k, w.start, w.end, w.ot);
+  if (!r.hasWork) return { total: 0, hours: 0, days: 0 };
+  return { total: r.baseDay + r.extra, hours: w.start && w.end ? (toMin(w.end) - toMin(w.start)) / 60 : (w.ot && w.ot.start && w.ot.end && toMin(w.ot.end) > toMin(w.ot.start) ? (toMin(w.ot.end) - toMin(w.ot.start)) / 60 : 0), days: 1 };
+}
+function incomePanel(){
+  const t = todayKey(), ym = cycleKey(t);
+  const today = dayIncome(t);
+  let month = allowances(), days = 0;
+  Object.keys(state.work).filter(x => cycleKey(x) === ym).forEach(x => {
+    const d = dayIncome(x); month += d.total; days += d.days;
+  });
+  return `<section class="card income-panel">
+    <div class="inc-grid">
+      <div><span>รายได้วันนี้</span><b>${fmtBaht(today.total)}</b><small>${today.days ? today.hours.toFixed(1) + " ชม." : "ยังไม่ได้บันทึก"}</small></div>
+      <div><span>รายได้รอบนี้</span><b>${fmtBaht(month)}</b><small>${days} วันที่บันทึก</small></div>
+    </div></section>`;
+}
+TITLES.income = "รายได้";
+function allowances(){ const p = state.pay || {}; return (p.housing || 0) + (p.position || 0); }
+function baseSalary(){ return (state.pay && state.pay.salary) || 0; }
+function openDayPanel(){
+  $("dayBody").innerHTML = dayEditCard();
+  const w0 = state.work[state.sel] || {}, wd = parseKey(state.sel).getDay();
+  if (!w0.start && !w0.end && !w0.ot && wd !== 0 && wd !== 6) {
+    $("dStart").value = "08:00"; $("dEnd").value = "17:20";
+    $("dOtS").value = "18:00"; $("dOtE").value = "20:00";
+  }
+  const sh = $("daySheet"), bg = $("dayBg");
+  sh.hidden = false; bg.hidden = false;
+  buildAllTP(); i18n();
+  requestAnimationFrame(() => { sh.classList.add("open"); bg.classList.add("open"); });
+}
+function closeDayPanel(){
+  const sh = $("daySheet"), bg = $("dayBg");
+  if (sh.hidden) return;
+  sh.classList.remove("open"); bg.classList.remove("open");
+  setTimeout(() => { sh.hidden = true; bg.hidden = true; }, 350);
+}
+// ===== Day editor: tap a date in the income calendar to view and change its work / overtime =====
+function dayEditCard(){
+  const k = state.sel, w = state.work[k] || {}, c = calcDay(k, w.start, w.end, w.ot);
+  const ot = w.ot || {};
+  const rows = c.hasWork ? `<div class="pay-detail">
+      ${c.baseDay > 0 ? `<div class="pay-row"><span>ค่าทำงานปกติ</span><b>${fmtBaht(c.baseDay)}</b></div>` : ""}
+      ${!c.weekend && c.otH > 0 ? `<div class="pay-row"><span>โอที ${c.otH.toFixed(1)} ชม. (×1.5)</span><b>${fmtBaht(c.otPay)}</b></div>` : ""}
+      ${c.weekend && c.wkH > 0 ? `<div class="pay-row"><span>วันหยุด ${c.wkH.toFixed(1)} ชม.</span><b>${fmtBaht(c.wkPay)}</b></div>` : ""}
+      <div class="pay-row total"><span>รายได้วันนี้</span><b>${fmtBaht(c.baseDay + c.extra)}</b></div>
+    </div>` : '<p class="muted" style="margin:6px 0 0">ยังไม่ได้บันทึกเวลาวันนี้</p>';
+  return `<section class="card"><h3>${dateLabel(k)}</h3>
+    ${rows}
+    <div class="frow" style="margin-top:10px">
+      <label class="fld"><span>เริ่มงาน</span><input type="hidden" id="dStart" value="${w.start || ""}"><div class="tpick" data-for="dStart"></div></label>
+      <label class="fld"><span>เลิกงาน</span><input type="hidden" id="dEnd" value="${w.end || ""}"><div class="tpick" data-for="dEnd"></div></label>
+    </div>
+    <div class="frow" style="margin-top:8px">
+      <label class="fld"><span>เริ่มโอที</span><input type="hidden" id="dOtS" value="${ot.start || ""}"><div class="tpick" data-for="dOtS"></div></label>
+      <label class="fld"><span>เลิกโอที</span><input type="hidden" id="dOtE" value="${ot.end || ""}"><div class="tpick" data-for="dOtE"></div></label>
+    </div>
+    <div class="actions"><button class="sm" data-act="saveDay">บันทึก</button>${(w.start || w.end || w.ot) ? '<button class="ghost sm" data-act="clearDay">ลบ</button>' : ""}</div>
+    <p class="muted" style="margin:8px 0 0;font-size:.7rem">จันทร์–ศุกร์ โอทีคิด ×1.5 · เสาร์–อาทิตย์ ก่อน 17:30 ×1 และตั้งแต่ 17:30 ×3</p>
+  </section>`;
+}
+// ===== Income calendar: each day shows what was earned =====
+function incomeCalendar(){
+  const [y, m] = state.month.split("-").map(Number);
+  const offset = (new Date(y, m - 1, 1).getDay() + 6) % 7;
+  const n = new Date(y, m, 0).getDate();
+  const cells = [...Array(offset)].map(() => '<span class="ic-cell blank"></span>');
+  for (let d = 1; d <= n; d++) {
+    const k = `${state.month}-${pad(d)}`, inc = dayIncome(k).total, cls = ["ic-cell"];
+    if (k === state.sel) cls.push("sel");
+    if (k === todayKey()) cls.push("today");
+    if (inc > 0) cls.push("has");
+    cells.push(`<button type="button" class="${cls.join(" ")}" data-act="pick" data-k="${k}"><b>${d}</b>${inc > 0 ? `<small>${fmtBaht(inc)}</small>` : ""}</button>`);
+  }
+  const title = parseKey(state.month + "-01").toLocaleDateString(locale(), {month: "long", year: "numeric"});
+  return `<section class="card"><div class="cal-head"><button class="sm ghost" data-act="mprev" aria-label="ก่อนหน้า">‹</button><b>${title}</b><button class="sm ghost" data-act="mnext" aria-label="ถัดไป">›</button></div>
+    <div class="ic-grid">${WEEK.map(w => `<span class="wd">${w}</span>`).join("")}${cells.join("")}</div>
+    <p class="muted" style="margin:8px 0 0;font-size:.7rem">แตะวันที่เพื่อเลือก แตะซ้ำเพื่อแก้ไข</p></section>`;
+}
+// ===== Income: monthly pay + overtime / weekend work =====
+function monthlyPay(){ const p = state.pay || {}; return (p.salary || 0) + (p.housing || 0) + (p.position || 0); }
+function toMin(t){ const [h, m] = t.split(":").map(Number); return h * 60 + m; }
+function calcDay(k, start, end, ot){
+  const dailyBase = baseSalary() / 30, hourly = dailyBase / 8;
+  const dow = parseKey(k).getDay(), weekend = dow === 0 || dow === 6;
+  const r = { dailyBase, hourly, weekend, baseDay: 0, otH: 0, otPay: 0, wkH: 0, wkPay: 0, extra: 0, hasWork: false };
+  const hasTimes = !!(start && end) && toMin(end) > toMin(start);
+  const otHours = ot && ot.start && ot.end && toMin(ot.end) > toMin(ot.start) ? (toMin(ot.end) - toMin(ot.start)) / 60 : 0;
+  if (!hasTimes && otHours <= 0) return r;
+  r.hasWork = true;
+  if (!weekend) {
+    if (hasTimes) r.baseDay = dailyBase;
+    // Mon-Fri: overtime from 18:00 at x1.5 (manual OT hours override the time-based calculation)
+    r.otH = otHours > 0 ? otHours : Math.max(0, toMin(end) - Math.max(toMin(start), 18 * 60)) / 60;
+    r.otPay = r.otH * hourly * 1.5;
+  } else {
+    if (hasTimes) {
+      // Sat-Sun: before 17:30 x1, from 17:30 x3
+      const s = toMin(start), e = toMin(end), cut = 17 * 60 + 30;
+      const normal = Math.max(0, Math.min(e, cut) - s), extra = Math.max(0, e - Math.max(s, cut));
+      r.wkH += (normal + extra) / 60;
+      r.wkPay += normal / 60 * hourly + extra / 60 * hourly * 3;
+    }
+    if (otHours > 0) { r.wkH += otHours; r.wkPay += otHours * hourly * 3; }
+  }
+  r.extra = r.otPay + r.wkPay;
+  return r;
+}
+const fmtBaht = n => "฿" + Math.round(n).toLocaleString("en-US");
+function payCard(){
+  const k = state.sel, w = state.work[k] || {}, c = calcDay(k, w.start, w.end, w.ot);
+  const ym = cycleKey(k);
+  let mExtra = 0, mDays = 0;
+  const rows = Object.keys(state.work).filter(x => cycleKey(x) === ym).sort().map(x => {
+    const r = calcDay(x, state.work[x].start, state.work[x].end, state.work[x].ot);
+    mExtra += dayIncome(x).total; if (r.hasWork) mDays++;
+    return r.hasWork ? `<div class="pay-row"><span>${parseKey(x).getDate()}</span><b>${fmtBaht(dayIncome(x).total)}</b></div>` : "";
+  }).join("");
+  const p = state.pay || {};
+  return `
+    <section class="card pay-hero"><div class="lbl">รายได้รอบนี้ (22–21, ประมาณ)</div>
+      <div class="big">${fmtBaht(mExtra + allowances())}</div>
+      <div class="muted">เงินเพิ่ม ${fmtBaht(allowances())} + โอที/ทำงาน ${fmtBaht(mExtra)} · ${mDays} วัน</div></section>
+    ${incomeCalendar()}
+    <section class="card"><h3>ฐานเงินเดือน</h3>
+      <div class="frow"><label class="fld"><span>เงินเดือน (คิดโอที)</span><input type="number" id="paySal" value="${baseSalary()}" inputmode="numeric"></label>
+        <label class="fld"><span>ค่าบ้าน</span><input type="number" id="payHouse" value="${(state.pay || {}).housing || 0}" inputmode="numeric"></label></div>
+      <div class="frow" style="margin-top:8px"><label class="fld"><span>ค่าตำแหน่ง</span><input type="number" id="payPos" value="${(state.pay || {}).position || 0}" inputmode="numeric"></label>
+        <div class="fld"><span>เงินเพิ่มต่อรอบ</span><b class="pay-sum">${fmtBaht(allowances())}</b></div></div>
+      <div class="actions"><button class="sm" data-act="savePay">บันทึกเงินเดือน</button></div>
+      <div class="pay-rates"><div><b>${fmtBaht(c.dailyBase)}</b><span>ต่อวัน (÷30)</span></div><div><b>${fmtBaht(c.hourly)}</b><span>ต่อชั่วโมง (÷8)</span></div></div>
+    </section>
+    <section class="card"><h3>รายได้เพิ่มเติมเดือนนี้<span class="muted">${fmtBaht(mExtra)}</span></h3>
+      ${rows || '<p class="muted" style="margin:0">ยังไม่มีวันที่บันทึกเวลา</p>'}</section>`;
+}
+const VIEWS = { today: vToday, schedule: vSchedule, history: vHistory, summary: vSummaryTab, profile: vProfile };
+VIEWS.income = payCard;
+
+function render(){
+  const u = state.user;
+  if (!u) return;
+  const hr = new Date().getHours();
+  $("greet").textContent = timeNow();
+  $("title").textContent = state.tab === "today" ? u.name : TITLES[state.tab];
+  // Top-left badge shows the user's profile photo (or initial / guest icon)
+  $("avatar").innerHTML = u.picture ? `<img src="${esc(u.picture)}" alt="">`
+    : u.provider === "anonymous" ? '<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>'
+    : esc((u.name || "?").charAt(0).toUpperCase());
+  document.querySelectorAll(".tabs .pill button[data-tab]").forEach(b => b.classList.toggle("on", b.dataset.tab === state.tab));
+  const head = state.tab === "today" ? `<div><div class="greet">${hr < 12 ? "Good morning," : hr < 18 ? "Good afternoon," : "Good evening,"}</div><div class="name dt">${esc(dateNow())}</div></div>` : "";
+  $("view").innerHTML = head + VIEWS[state.tab]();
+  moveIndicator();
+  i18n();
+  scheduleSave();
+}
+
+// ===== Add panel =====
+function openSheet(ed){
+  state.editing = ed || null;
+  const it = ed ? findItem(ed.k, ed.key) : null;
+  $("sheetTitle").textContent = tr(it ? "แก้ไขรายการ" : "เพิ่มรายการ");
+  $("sheetSubmit").textContent = tr(it ? "บันทึก" : "เพิ่มรายการ");
+  $("presets").hidden = !!it;
+  $("newText").value = it ? it.text : "";
+  $("newDate").value = it ? ed.k : state.sel;
+  $("newTime").value = it ? (it.time || "") : "";
+  setKind("");
+  $("expRows").innerHTML = "";
+  if (it && it.expenses && it.expenses.length) it.expenses.forEach(x => addExpRow(x.name, x.amount));
+  else if (it && it.cost) addExpRow("", it.cost);
+  else addExpRow();
+  setIcon(it ? (it.icon || "📌") : "📌");
+  $("newRepeat").checked = it ? it.src === "T" : false;
+  const rows = !it ? [] : (it.foods && it.foods.length
+    ? it.foods.map(f => ({ name: f.n, icon: f.i, u: f.u, q: f.q, k: f.k }))
+    : (it.kcal ? [{ name: "", q: 1, k: it.kcal }] : []));
+  renderFoodRows(rows);
+  refreshFoods().then(() => { if (!$("sheet").hidden) renderFoodRows(readFoodRows()); });
+  const sh = $("sheet"), bg = $("sheetBg");
+  sh.hidden = false; bg.hidden = false; i18n();
+  requestAnimationFrame(() => { sh.classList.add("open"); bg.classList.add("open"); });
+  setTimeout(() => $("newText").focus(), 350);
+}
+function setIcon(e){
+  $("newIcon").value = e;
+  document.querySelectorAll("#ipick .ipk").forEach(b => b.classList.toggle("on", b.dataset.i === e));
+}
+const PRESETS = [
+  {t:"ข้าวเช้า", i:"🍚", p:"morning"}, {t:"ข้าวเที่ยง", i:"🍚", p:"afternoon"}, {t:"ข้าวเย็น", i:"🍚", p:"evening"},
+  {t:"กินกาแฟ", i:"☕", p:"afternoon"}, {t:"ไปเที่ยว", i:"⛰️", p:"afternoon"}, {t:"ออกกำลังกาย", i:"🏃", p:"morning"}
+, {t:"ทำงาน", i:"💼", p:"morning", kind:"work"}, {t:"โอที", i:"🔥", p:"evening", kind:"ot"}];
+function applyPreset(idx){
+  const p = PRESETS[idx]; if (!p) return;
+  $("newText").value = p.t; setIcon(p.i); setKind(p.kind || "");
+  document.querySelectorAll("#presets .preset").forEach((b, i) => b.classList.toggle("on", i === idx));
+}
+function closeSheet(){
+  const sh = $("sheet"), bg = $("sheetBg");
+  if (sh.hidden) return;
+  sh.classList.remove("open"); bg.classList.remove("open");
+  setTimeout(() => { sh.hidden = true; bg.hidden = true; }, 350);
+}
+function submitAdd(e){
+  e.preventDefault();
+  const text = $("newText").value.trim();
+  if (!text) return toast("กรุณาพิมพ์รายการก่อน");
+  const date = $("newDate").value || state.sel;
+  const ed = state.editing;
+  const old = ed ? findItem(ed.k, ed.key) : null;
+  const oldSteps = old ? (old.steps || []) : [];
+  const steps = oldSteps;
+  const foods = readFoodRows().filter(r => r.name || r.k > 0)
+    .map(r => ({ n: r.name, i: r.icon || "", u: r.u || 0, q: r.q || 1, k: Math.round(r.k) }));
+  const kind = $("newKind").value;
+  let workPatch = null;
+  if (kind === "work") {
+    const lv = $("newLeave").value;
+    if (lv) workPatch = { start: "", end: "", leave: lv };
+    else {
+      const st = $("wStart").value, en = $("wEnd").value;
+      if (!st || !en) return toast("กรุณาใส่เวลาเริ่มและเลิกงาน");
+      workPatch = { start: st, end: en, leave: "" };
+    }
+  }
+  if (kind === "ot") {
+    const os = $("oStart").value, oe = $("oEnd").value;
+    if (!os || !oe || toMin(oe) <= toMin(os)) return toast("กรุณาใส่เวลาเริ่มและเลิกโอทีให้ถูกต้อง");
+    workPatch = { ot: { start: os, end: oe } };
+  }
+  if (kind) {
+    const dup = (state.plans[date] || []).some(x => x.kind === kind && (!old || x.id !== old.id));
+    if (dup) return toast(kind === "work" ? "วันนี้มีรายการทำงานแล้ว (ได้วันละ 1 รายการ)" : "วันนี้มีรายการโอทีแล้ว (ได้วันละ 1 รายการ)");
+  }
+  if (workPatch) state.work[date] = { ...(state.work[date] || {}), ...workPatch };
+  const expenses = [...document.querySelectorAll("#expRows .frw")].map(el => ({
+    name: el.querySelector(".ex-name").value.trim(),
+    amount: Number(el.querySelector(".ex-amt").value) || 0
+  })).filter(x => x.amount > 0 || x.name);
+  const costTotal = expenses.reduce((a, x) => a + x.amount, 0);
+  const item = {
+    id: old ? old.id : uid(), text,
+    time: kind === "work" ? $("wStart").value : $("newTime").value, icon: $("newIcon").value,
+    cost: costTotal, expenses, kind, kcal: foods.reduce((a, f) => a + f.k, 0), foods, steps
+  };
+  if (old) {
+    const srcList = old.src === "T" ? state.templates : (state.plans[ed.k] || []);
+    const idx = srcList.findIndex(x => x.id === old.id);
+    if (idx >= 0) srcList.splice(idx, 1);
+  }
+  if ($("newRepeat").checked) state.templates.push(item);
+  else { if (!state.plans[date]) state.plans[date] = []; state.plans[date].push(item); }
+  state.sel = date; state.month = date.slice(0, 7);
+  state.editing = null;
+  e.target.reset();
+  ["newTime", "wStart", "wEnd", "oStart", "oEnd"].forEach(id => { $(id).value = ""; });
+  closeSheet(); render(); toast(old ? "บันทึกแล้ว" : "เพิ่มรายการแล้ว");
+}
+
+// ===== Food search inside each row =====
+document.addEventListener("input", e => {
+  if (!e.target.classList || !e.target.classList.contains("fr-search")) return;
+  const combo = e.target.closest(".fr-combo"), list = combo.querySelector(".fr-list");
+  const q = e.target.value.trim().toLowerCase();
+  const items = _foodList.map((f, i) => ({ f, i }))
+    .filter(({ f }) => !q || f.name.toLowerCase().includes(q) || tr(f.name).toLowerCase().includes(q))
+    .slice(0, 30);
+  list.innerHTML = items.map(({ f, i }) => `<button type="button" class="fr-item" data-i="${i}"><span>${f.icon || "🍽️"}</span> ${esc(tr(f.name))}<small>${f.kcal} kcal</small></button>`).join("")
+    + `<button type="button" class="fr-item new" data-i="__new">+ ${tr("เพิ่มอาหารเอง")}${q ? ": " + esc(e.target.value.trim()) : ""}</button>`;
+  list.hidden = false;
+});
+document.addEventListener("click", e => {
+  const item = e.target.closest && e.target.closest(".fr-item");
+  if (item) {
+    const combo = item.closest(".fr-combo"), sel = combo.querySelector(".fr-food");
+    sel.value = item.dataset.i;
+    if (item.dataset.i !== "__new") combo.querySelector(".fr-search").value = tr(_foodList[Number(item.dataset.i)].name);
+    combo.querySelector(".fr-list").hidden = true;
+    sel.dispatchEvent(new Event("change", { bubbles: true }));
+    return;
+  }
+  if (!(e.target.closest && e.target.closest(".fr-combo"))) document.querySelectorAll(".fr-list").forEach(l => l.hidden = true);
+}, true);
+// ===== Food & calories =====
+function allFoods(){
+  return [...FOODS, ...(state.sharedFoods || [])].map(f => {
+    const o = (state.foodOv || {})[f.name];
+    return !o ? f : o.del ? null : { ...f, name: o.n || f.name, kcal: o.k != null ? o.k : f.kcal, _orig: f.name };
+  }).filter(Boolean);
+}
+function refreshFoods(){
+  if (!window.FB || !window.FB.loadFoods) return Promise.resolve();
+  return window.FB.loadFoods().then(list => {
+    const ids = new Set(list.map(f => f.id));
+    state.sharedFoods = [...list, ...state.sharedFoods.filter(f => !ids.has(f.id))];
+  }).catch(e => console.warn("foods", e));
+}
+let _foodList = [];
+function buildFoodList(rows){
+  _foodList = allFoods().slice();
+  (rows || []).forEach(r => {
+    if (r.name && !_foodList.some(f => f.name === r.name)) _foodList.push({ name: r.name, icon: r.icon || "🍽️", kcal: r.u || 0 });
+  });
+}
+function foodRowHTML(r){
+  const opts = `<option value="">${tr("— ไม่เลือก —")}</option>`
+    + _foodList.map((f, i) => `<option value="${i}" ${f.name === r.name ? "selected" : ""}>${f.icon || "🍽️"} ${esc(tr(f.name))} · ${f.kcal} kcal</option>`).join("")
+    + `<option value="__new">${tr("+ เพิ่มอาหารเอง")}</option>`;
+  return `<div class="frw"><div class="fr-combo">
+      <input type="search" class="fr-search" placeholder="${tr("ค้นหาอาหาร")}" value="${esc(tr(r.name || ""))}" autocomplete="off">
+      <div class="fr-list" hidden></div>
+      <select class="fr-food" hidden>${opts}</select>
+    </div>
+    <input type="number" class="fr-qty" min="0.5" step="0.5" value="${r.q || 1}" inputmode="decimal">
+    <input type="number" class="fr-kcal" min="0" step="1" value="${r.k ? Math.round(r.k) : ""}" placeholder="kcal" inputmode="numeric">
+    <button type="button" class="fr-del" data-act="delFoodRow" aria-label="ลบ">×</button></div>`;
+}
+function renderFoodRows(rows){
+  rows = rows && rows.length ? rows : [{ name: "", q: 1, k: 0 }];
+  buildFoodList(rows);
+  $("foodRows").innerHTML = rows.map(foodRowHTML).join("");
+  updateFoodTotal(); i18n();
+}
+function readFoodRows(){
+  return [...document.querySelectorAll("#foodRows .frw")].map(el => {
+    const v = el.querySelector(".fr-food").value;
+    const f = v === "" || v === "__new" ? null : _foodList[Number(v)];
+    return { name: f ? f.name : "", icon: f ? f.icon : "", u: f ? f.kcal : 0,
+      q: Number(el.querySelector(".fr-qty").value) || 0, k: Number(el.querySelector(".fr-kcal").value) || 0 };
+  });
+}
+function updateFoodTotal(){
+  $("foodTotal").textContent = Math.round(readFoodRows().reduce((a, r) => a + r.k, 0));
+}
+function onFoodChange(sel){
+  const row = sel.closest(".frw");
+  const idx = [...document.querySelectorAll("#foodRows .frw")].indexOf(row);
+  if (sel.value === "__new") {
+    const rows = readFoodRows();
+    const name = (prompt(tr("ชื่ออาหาร")) || "").trim();
+    if (!name) { renderFoodRows(rows); return; }
+    const kcal = Number(prompt(tr("แคลอรี่ต่อหน่วย (kcal)"), "300")) || 0;
+    const food = { id: uid(), name, icon: "🍽️", kcal, custom: true };
+    state.sharedFoods.push(food);
+    if (window.FB && window.FB.addFood) {
+      window.FB.addFood(food).then(() => toast("บันทึกอาหารลงฐานข้อมูลแล้ว"))
+        .catch(e => { console.error(e); toast("บันทึกอาหารไม่สำเร็จ"); });
+    } else toast("เพิ่มอาหารแล้ว (บันทึกเฉพาะในเครื่อง)");
+    rows[idx] = { name, icon: food.icon, u: kcal, q: 1, k: kcal };
+    renderFoodRows(rows);
+    if (!$("newText").value.trim()) $("newText").value = name;
+    return;
+  }
+  const f = sel.value === "" ? null : _foodList[Number(sel.value)];
+  if (f) {
+    const q = Number(row.querySelector(".fr-qty").value) || 1;
+    row.querySelector(".fr-kcal").value = Math.round(f.kcal * q);
+    if (!$("newText").value.trim()) $("newText").value = tr(f.name);
+  }
+  updateFoodTotal();
+}
+function onQtyInput(inp){
+  const row = inp.closest(".frw"), v = row.querySelector(".fr-food").value;
+  const f = v === "" || v === "__new" ? null : _foodList[Number(v)];
+  if (f) row.querySelector(".fr-kcal").value = Math.round(f.kcal * (Number(inp.value) || 0));
+  updateFoodTotal();
+}
+function kcalCard(){
+  const k = todayKey(), its = itemsFor(k);
+  const sum = p => its.filter(i => !p || i.period === p).reduce((a, i) => a + (Number(i.kcal) || 0), 0);
+  const total = sum(), goal = state.kcalGoal || 2000, pct = Math.min(100, Math.round(total / goal * 100));
+  return `<section class="card kcal">
+    <div class="kc-top"><div><div class="muted">แคลอรี่วันนี้</div><b class="kc-big">${total} <small>/ ${goal} kcal</small></b></div>
+      <button class="ghost sm" data-act="kcalGoal">ตั้งเป้า</button></div>
+    <div class="bar3"><i style="width:${pct}%"></i></div>
+    <p class="muted" style="margin:6px 0 0;font-size:.7rem">ค่าประมาณจากฐานข้อมูล</p></section>`;
+}
+
+// ===== Tab bar (liquid indicator) =====
+function popNav(){
+  const i = document.querySelector(".ind"); if (!i) return;
+  i.classList.remove("bounce"); void i.offsetWidth; i.classList.add("bounce");
+}
+function moveIndicator(instant){
+  const btn = document.querySelector(".tabs .pill button.on");
+  if (!btn || !btn.offsetWidth) return;
+  const ind = document.querySelector(".ind"), gb = document.querySelector(".goo-blob");
+  const BW = 62, IW = 48, TOP = 11;
+  const c = btn.offsetLeft + btn.offsetWidth / 2;          // active tab centre (pill coords)
+  if (ind) ind.style.left = (c - IW / 2) + "px";
+  if (!gb) return;
+  const L1 = c - BW / 2 + 30;                              // .goo starts 30px left of the pill
+  if (gb._c === undefined || instant === true) {
+    gb._c = c; gb.getAnimations().forEach(a => a.cancel());
+    gb.style.left = L1 + "px"; return;
+  }
+  if (Math.abs(gb._c - c) < 1) return;
+  const L0 = parseFloat(getComputedStyle(gb).left);
+  gb.getAnimations().forEach(x => x.cancel());
+  gb._c = c; gb.style.left = L1 + "px";
+  // slide in step with the indicator circle
+  gb.animate([{ left: L0 + "px" }, { left: L1 + "px" }], { duration: 600, easing: "cubic-bezier(.34,1.35,.64,1)" });
+}
+
+// ===== Auth =====
+function renderAuth(){
+  const reg = state.authMode === "register";
+  $("auTitle").textContent = reg ? "สร้างบัญชี" : "เข้าสู่ระบบ";
+  $("auNameWrap").hidden = !reg;
+  $("auPass2Wrap").hidden = !reg;
+  $("auSwitch").hidden = true;
+  $("auRegWrap").innerHTML = reg
+    ? `<span>มีบัญชีอยู่แล้ว?</span> <button class="au-link" type="button" data-act="toggleMode">เข้าสู่ระบบ</button>`
+    : `<span>ยังไม่มีบัญชี?</span> <button class="au-link" type="button" data-act="toggleMode">สมัครสมาชิก</button>`;
+  $("auForgot").hidden = reg;
+  $("auErr").textContent = "";
+  if (window.resetSlider) window.resetSlider();
+  i18n();
+}
+function setScreen(){
+  const a = $("auth");
+  clearTimeout(setScreen._t1); clearTimeout(setScreen._t2);
+  document.body.classList.toggle("guest", !state.user);
+  if (!state.user) { a.classList.remove("over", "leaving"); a.hidden = false; return; }
+  if (a.hidden) return;
+  a.classList.add("over");                                           // cover the home page right away
+  setScreen._t1 = setTimeout(() => a.classList.add("leaving"), 280);  // short beat to show the green check, then fade
+  setScreen._t2 = setTimeout(() => { a.hidden = true; a.classList.remove("over", "leaving"); }, 1100);
+}
+function login(user){
+  refreshFoods();
+  state.user = user;
+  state.tab = "today";
+  setScreen(); render(); window.scrollTo(0, 0);
+  $("scroller").scrollTop = 0;
+  // home page content rises in as the sign-in screen fades
+  const v = $("view"); v.classList.add("enter", "late");
+  setTimeout(() => v.classList.remove("enter", "late"), 1800);
+}
+
+// ===== Firebase: per-user data (Firestore) =====
+function snapshot(){
+  return JSON.stringify({
+    templates: state.templates, plans: state.plans, pay: state.pay, work: state.work, customFoods: state.customFoods, completed: state.completed, foodOv: state.foodOv, notes: state.notes, water: state.water, weights: state.weights, costGoal: state.costGoal, costGoalM: state.costGoalM, kcalGoal: state.kcalGoal,
+    done: Object.keys(state.done), reminders: state.reminders, lang: state.lang
+  });
+}
+function resetData(){
+  state.pay = {salary:30400, housing:2500, position:800}; state.work = {}; state.templates = []; state.plans = {}; state.done = {}; state.customFoods = []; state.completed = {}; state.foodOv = {}; state.notes = {}; state.water = {}; state.weights = {}; state.costGoal = 0; state.costGoalM = 0; state.kcalGoal = 2000;
+  state.reminders = false; state.saved = "";
+}
+function applyData(d){
+  resetData();
+  d = d || {};
+  state.pay = d.pay || {salary:30400, housing:2500, position:800}; state.work = d.work || {};
+  state.templates = d.templates || [];
+  state.customFoods = d.customFoods || []; state.completed = d.completed || {}; state.foodOv = d.foodOv || {}; state.notes = d.notes || {}; state.water = d.water || {}; state.weights = d.weights || {}; state.costGoal = d.costGoal || 0; state.costGoalM = d.costGoalM || 0; state.kcalGoal = d.kcalGoal || 2000;
+  state.plans = d.plans || {};
+  (d.done || []).forEach(k => state.done[k] = true);
+  state.reminders = !!d.reminders;
+  if (d.lang === "th" || d.lang === "en") state.lang = d.lang;
+  state.saved = snapshot();
+}
+async function enterFirebase(u){
+  state.entering = true;
+  try {
+    const [data, prof] = await Promise.all([FB.loadData(u.uid), FB.loadProfile(u.uid)]);
+    applyData(data);
+    const bk = bkRead(u);
+    if (bk && bk.ts > ((data && data.clientUpdated) || 0)) {   // local copy is newer than the server's: keep it and push it up
+      applyData(bk.data); state.saved = ""; setSync("pending");
+    } else setSync("ok");
+    if (prof.photo) u.picture = prof.photo;
+    login(u);
+  } finally { state.entering = false; }
+}
+// ===== Local backup: written synchronously on every change, so nothing is lost if the app is closed or the
+// server write fails / is refused. On sign-in the newer of (server copy, local copy) wins.
+const bkKey = u => "strivlife:data:" + ((u && u.uid) || "guest");
+function bkWrite(u){
+  state.localTs = Date.now();
+  try { localStorage.setItem(bkKey(u), JSON.stringify({ ts: state.localTs, data: JSON.parse(snapshot()) })); } catch (e) {}
+}
+function bkRead(u){
+  try { const r = JSON.parse(localStorage.getItem(bkKey(u)) || "null"); return r && r.data ? r : null; } catch (e) { return null; }
+}
+function syncText(){
+  const sy = state.sync || {};
+  if (!state.user || !state.user.uid) return tr("ผู้เยี่ยมชม: เก็บข้อมูลไว้ในเครื่องนี้เท่านั้น");
+  if (sy.kind === "err") return tr("ซิงก์ไม่สำเร็จ") + (sy.code ? " (" + sy.code + ")" : "");
+  if (sy.kind === "pending") return tr("รอซิงก์ขึ้นฐานข้อมูล");
+  return tr("ซิงก์ขึ้นฐานข้อมูลแล้ว");
+}
+function setSync(kind, code){
+  state.sync = { kind, code: code || "" };
+  const el = $("syncInfo"); if (el) el.textContent = syncText();
+}
+function scheduleSave(){
+  const u = state.user;
+  if (!u || snapshot() === state.saved) return;
+  bkWrite(u);
+  if (!u.uid || !window.FB) { state.saved = snapshot(); return; }   // guest: local only
+  setSync("pending");
+  clearTimeout(scheduleSave._t);
+  scheduleSave._t = setTimeout(flushSave, 400);
+}
+let saveRetries = 0;
+function retrySave(e){
+  saveRetries++;
+  if (saveRetries === 1) toast(e && e.code === "permission-denied" ? fbError(e) : "บันทึกไม่สำเร็จ กำลังลองใหม่อัตโนมัติ");
+  clearTimeout(scheduleSave._t);
+  scheduleSave._t = setTimeout(flushSave, Math.min(30000, 2000 * 2 ** saveRetries));
+}
+async function flushSave(){
+  clearTimeout(scheduleSave._t);
+  const u = state.user;
+  if (!u || !u.uid || !window.FB) return;
+  const snap = snapshot();
+  if (snap === state.saved) return;
+  const p = FB.saveData(u.uid, { ...JSON.parse(snap), clientUpdated: state.localTs || Date.now() });
+  // Offline, Firestore keeps the write in its own cache and the promise stays pending until the server
+  // confirms. After 4 s treat it as queued; a later rejection triggers the retry path below.
+  const out = await new Promise(res => {
+    const t = setTimeout(() => res({ k: "queued" }), 4000);
+    p.then(() => { clearTimeout(t); res({ k: "ok" }); }, e => { clearTimeout(t); console.error(e); res({ k: "failed", e }); });
+  });
+  if (out.k === "failed") { setSync("err", out.e && (out.e.code || out.e.name)); return retrySave(out.e); }
+  state.saved = snap; saveRetries = 0;
+  if (out.k === "ok") setSync("ok");
+  else {
+    setSync("pending");
+    toast("ออฟไลน์: เก็บไว้ในเครื่อง จะซิงก์เมื่อมีเน็ต");
+    p.then(() => setSync("ok"), e => { if (state.saved === snap) state.saved = ""; setSync("err", e && (e.code || e.name)); retrySave(e); });
+  }
+}
+window.addEventListener("online", () => { saveRetries = 0; flushSave(); });
+document.addEventListener("visibilitychange", () => { if (document.visibilityState === "hidden") flushSave(); });
+window.addEventListener("pagehide", flushSave);
+
+// Restore session after reload
+window.addEventListener("fb-session", async e => {
+  if (state.user || state.entering || !e.detail) return;
+  try { await enterFirebase(e.detail); }
+  catch (err) { console.error(err); toast(fbError(err)); }
+});
+
+function fbError(e){
+  switch (e && e.code) {
+    case "auth/invalid-credential":
+    case "auth/user-not-found":
+    case "auth/wrong-password":
+    case "auth/invalid-email": return "อีเมลหรือรหัสผ่านไม่ถูกต้อง";
+    case "auth/email-already-in-use": return "อีเมลนี้ถูกใช้งานแล้ว";
+    case "auth/weak-password": return "รหัสผ่านต้องมีอย่างน้อย 8 ตัวอักษร";
+    case "auth/too-many-requests": return "ลองผิดหลายครั้งเกินไป กรุณารอสักครู่";
+    case "auth/network-request-failed": return "ไม่มีการเชื่อมต่ออินเทอร์เน็ต";
+    case "auth/operation-not-allowed": return "ยังไม่ได้เปิดใช้วิธีเข้าสู่ระบบนี้ใน Firebase Console";
+    case "auth/unauthorized-domain": return "โดเมนนี้ยังไม่ได้เพิ่มใน Authorized domains ของ Firebase";
+    case "permission-denied": return "ไม่มีสิทธิ์เข้าถึงข้อมูล (ตรวจสอบ Firestore rules)";
+    default: return "เกิดข้อผิดพลาด กรุณาลองใหม่";
+  }
+}
+async function logout(){
+  await flushSave();
+  if (window.FB) { try { await FB.signOut(); } catch (e) {} }
+  state.user = null; state.authMode = "login";
+  resetData();
+  ["auEmail","auPass","auPass2","auName"].forEach(id => $(id).value = "");
+  $("auPass").type = $("auPass2").type = "password"; $("auEye").classList.remove("on"); $("auEye").setAttribute("aria-checked", "false");
+  renderAuth(); setScreen();
+  toast("ออกจากระบบแล้ว");
+}
+function guestLogin(){
+  resetData();
+  const bk = bkRead(null); if (bk) applyData(bk.data);
+  login({ name: "ผู้เยี่ยมชม", email: "", provider: "anonymous" });
+}
+function resizeImage(file, size = 256){
+  return new Promise((resolve, reject) => {
+    const img = new Image(), url = URL.createObjectURL(file);
+    img.onload = () => {
+      const c = document.createElement("canvas"); c.width = c.height = size;
+      const side = Math.min(img.width, img.height);
+      c.getContext("2d").drawImage(img, (img.width - side) / 2, (img.height - side) / 2, side, side, 0, 0, size, size);
+      URL.revokeObjectURL(url);
+      resolve(c.toDataURL("image/jpeg", 0.85));
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); reject(new Error("bad image")); };
+    img.src = url;
+  });
+}
+async function setPhoto(dataUrl){
+  const u = state.user;
+  if (!u || !u.uid || !window.FB) return;
+  try {
+    await FB.updatePhoto(u.uid, dataUrl);
+    u.picture = dataUrl;
+    render(); toast(dataUrl ? "เปลี่ยนรูปโปรไฟล์แล้ว" : "ลบรูปแล้ว");
+  } catch (e) { console.error(e); toast(fbError(e)); }
+}
+$("photoIn").addEventListener("change", async e => {
+  const f = e.target.files[0]; e.target.value = "";
+  if (!f) return;
+  if (f.type.indexOf("image/") !== 0) return toast("กรุณาเลือกไฟล์รูปภาพ");
+  try { await setPhoto(await resizeImage(f)); }
+  catch (err) { toast("กรุณาเลือกไฟล์รูปภาพ"); }
+});
+async function rename(){
+  const u = state.user;
+  if (!u || u.provider === "anonymous") return;
+  const v = prompt(tr("ชื่อที่แสดง"), u.name);
+  if (v === null) return;
+  const name = v.trim().slice(0, 40);
+  if (!name) return toast("กรุณากรอกชื่อที่แสดง");
+  if (name === u.name) return;
+  try {
+    if (u.uid && window.FB) await FB.updateName(u.uid, name);
+    u.name = name;
+    render(); toast("เปลี่ยนชื่อแล้ว");
+  } catch (e) { console.error(e); toast(fbError(e)); }
+}
+async function forgot(){
+  const id = $("auEmail").value.trim();
+  if (!window.FB) return;
+  if (id.indexOf("@") < 0) return toast("กรอกอีเมลก่อน (บัญชีที่สมัครด้วย User ID ไม่สามารถรีเซ็ตทางอีเมลได้)");
+  try { await FB.resetPassword(id); toast("ส่งลิงก์รีเซ็ตรหัสผ่านไปที่อีเมลแล้ว"); }
+  catch (e) { toast(fbError(e)); }
+}
+let authBusy = false;
+async function authSubmit(){
+  if (authBusy) return;
+  authBusy = true;
+  try { await authSubmitInner(); }
+  finally { authBusy = false; }
+}
+// Enter in any sign-in field submits (keyboard / screen-reader alternative to the slider)
+$("auth").addEventListener("keydown", e => {
+  if (e.key === "Enter" && e.target.tagName === "INPUT") { e.preventDefault(); authSubmit(); }
+});
+function togglePass(){
+  const show = $("auPass").type === "password";
+  $("auPass").type = $("auPass2").type = show ? "text" : "password";
+  const b = $("auEye");
+  b.classList.toggle("on", show); b.setAttribute("aria-checked", String(show));
+}
+async function authSubmitInner(){
+  const err = $("auErr"); err.textContent = "";
+  if (!window.FB) return err.textContent = tr("กำลังเชื่อมต่อ Firebase กรุณาลองใหม่");
+  const id = $("auEmail").value.trim().toLowerCase();
+  const pass = $("auPass").value;
+  if (!id || !pass) return err.textContent = tr("โปรดใส่ username และ password");
+  try {
+    if (state.authMode === "login") {
+      const u = await FB.login(id, pass);
+      return await enterFirebase(u);
+    }
+    const name = $("auName").value.trim();
+    if (!name) return err.textContent = tr("กรุณากรอกชื่อที่แสดง");
+    const okId = id.indexOf("@") >= 0 ? /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(id) : /^[a-z0-9._-]{3,30}$/.test(id);
+    if (!okId) return err.textContent = tr("User ID ใช้ได้เฉพาะ a-z 0-9 . _ - (3–30 ตัว) หรือกรอกอีเมลให้ถูกต้อง");
+    if (pass.length < 8) return err.textContent = tr("รหัสผ่านต้องมีอย่างน้อย 8 ตัวอักษร");
+    if (pass !== $("auPass2").value) return err.textContent = tr("รหัสผ่านไม่ตรงกัน");
+    const u = await FB.register(id, pass, name);
+    await enterFirebase(u);
+    toast("สมัครสมาชิกสำเร็จ");
+  } catch (e) {
+    console.error(e);
+    err.textContent = tr(fbError(e));
+  }
+}
+async function googleLogin(){
+  if (!window.FB) return toast("กำลังเชื่อมต่อ Firebase กรุณาลองใหม่");
+  try { await enterFirebase(await FB.google()); }
+  catch (e) {
+    if (e && (e.code === "auth/popup-closed-by-user" || e.code === "auth/cancelled-popup-request")) return;
+    console.error(e);
+    $("auErr").textContent = tr(fbError(e));
+  }
+}
+
+// ===== Slide-to-sign-in =====
+(function(){
+  const sl = $("slider"), knob = sl.querySelector(".sl-knob"), fill = sl.querySelector(".sl-fill"), txt = $("slText");
+  const ARROW = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';
+  const CHECK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7"/></svg>';
+  let startX = 0, pos = 0, dragging = false, done = false;
+  const maxPos = () => sl.clientWidth - knob.offsetWidth - 8;
+  function setPos(x){
+    pos = Math.max(0, Math.min(maxPos(), x));
+    knob.style.transform = `translateX(${pos}px)`;
+    fill.style.width = (pos + knob.offsetWidth + 4) + "px";
+  }
+  function setLabel(){
+    txt.textContent = tr(state.authMode === "register" ? "เลื่อนเพื่อสมัครสมาชิก" : "เลื่อนเพื่อเข้าสู่ระบบ");
+    i18n();
+  }
+  function reset(){
+    done = false; sl.classList.remove("ok"); knob.innerHTML = ARROW;
+    setLabel();
+    knob.style.transition = "transform .3s ease"; fill.style.transition = "width .3s ease";
+    setPos(0);
+    setTimeout(() => { knob.style.transition = ""; fill.style.transition = ""; }, 320);
+  }
+  window.resetSlider = reset;
+  knob.addEventListener("pointerdown", e => {
+    if (done) return;
+    dragging = true; startX = e.clientX - pos;
+    knob.setPointerCapture(e.pointerId);
+    knob.style.transition = "none"; fill.style.transition = "none";
+  });
+  knob.addEventListener("pointermove", e => { if (dragging) setPos(e.clientX - startX); });
+  const end = () => {
+    if (!dragging) return;
+    dragging = false;
+    if (pos >= maxPos() * 0.9) {
+      const idEl = $("auEmail"), pwEl = $("auPass");
+      if (!idEl.value.trim() || !pwEl.value) {   // slid without filling in the credentials
+        $("auErr").textContent = tr("โปรดใส่ username และ password");
+        reset(); (idEl.value.trim() ? pwEl : idEl).focus();
+        return;
+      }
+      done = true; setPos(maxPos());
+      sl.classList.add("ok"); knob.innerHTML = CHECK;
+      txt.textContent = tr("ยินดีต้อนรับ!"); i18n();
+      knob.style.transition = ""; fill.style.transition = "";
+      Promise.resolve(authSubmit()).then(() => setTimeout(() => { if (!state.user) reset(); }, 900));
+    } else reset();
+  };
+  knob.addEventListener("pointerup", end);
+  knob.addEventListener("pointercancel", end);
+  window.addEventListener("resize", () => setPos(pos));
+  knob.innerHTML = ARROW;
+  setLabel();
+})();
+
+// ===== Motion: directional tab transitions =====
+const TAB_ORDER = ["today","schedule","summary","income","profile"];
+function switchTab(next){
+  if (next === state.tab) return;
+  const dir = TAB_ORDER.indexOf(next) > TAB_ORDER.indexOf(state.tab) ? 1 : -1;
+  popNav();
+  const out = $("view").animate(
+    [{opacity:1, transform:"translateX(0)"}, {opacity:0, transform:`translateX(${-dir * 28}px)`}],
+    {duration:170, easing:"ease-in", fill:"forwards"});
+  out.finished.then(() => {
+    state.tab = next;
+    render();
+    out.cancel();
+    const v = $("view");
+    v.animate(
+      [{opacity:0, transform:`translateX(${dir * 28}px)`}, {opacity:1, transform:"translateX(0)"}],
+      {duration:340, easing:"cubic-bezier(.2,.8,.2,1)"});
+    v.classList.add("enter");
+    setTimeout(() => v.classList.remove("enter"), 1000);
+  });
+}
+
+// ===== Events =====
+document.addEventListener("click", e => {
+  const tabBtn = e.target.closest("[data-tab]");
+  if (tabBtn && tabBtn.closest(".tabs")) { return switchTab(tabBtn.dataset.tab); }
+
+  const el = e.target.closest("[data-act]");
+  if (!el) return;
+  const act = el.dataset.act, k = el.dataset.k, key = el.dataset.key;
+  switch (act) {
+    case "toggleMode": state.authMode = state.authMode === "login" ? "register" : "login"; return renderAuth();
+    case "authSubmit": return authSubmit();
+    case "googleLogin": return googleLogin();
+    case "guestLogin": return guestLogin();
+    case "forgot": return forgot();
+    case "rename": return rename();
+    case "pickPhoto": return $("photoIn").click();
+    case "removePhoto": return setPhoto("");
+    case "logout": return logout();
+    case "lang": state.lang = state.lang === "th" ? "en" : "th"; renderAuth(); if (state.user) render(); return;
+    case "bell": return toast("ยังไม่มีการแจ้งเตือนใหม่");
+    case "fab": return openSheet();
+    case "addHere": return openSheet();
+    case "closeSheet": return closeSheet();
+    case "toggle": {
+      const id = `${k}|${key}`; toggleKey(id); state._pop = state.done[id] ? id : null;
+      const justDone = state.done[id] && dayAllDone(k) && !state.completed[k];
+      if (justDone) archiveDay(k);
+      render(); state._pop = null;
+      if (justDone) showSummary(k, true);
+      return;
+    }
+    case "showSummary": return showSummary(k, false);
+    case "closeCelebrate": return closeCelebrate();
+    case "budgetD": case "budgetM": {
+      const f = act === "budgetD" ? "costGoal" : "costGoalM";
+      const v = prompt(tr(act === "budgetD" ? "งบค่าใช้จ่ายต่อวัน (บาท) ใส่ 0 เพื่อปิด" : "งบค่าใช้จ่ายต่อเดือน (บาท) ใส่ 0 เพื่อปิด"), state[f] || "");
+      if (v === null) return; state[f] = Math.max(0, Number(v) || 0); return render();
+    }
+    case "waterAdd": case "waterSub": { const d = todayKey(); state.water[d] = Math.max(0, (state.water[d] || 0) + (act === "waterAdd" ? 1 : -1)); return render(); }
+    case "weightSet": {
+      const d = todayKey(), v = prompt(tr("น้ำหนักวันนี้ (กก.) ใส่ 0 เพื่อลบ"), state.weights[d] || ""); if (v === null) return;
+      const n = Number(v); if (n > 0 && n < 500) state.weights[d] = Math.round(n * 10) / 10; else if (!n) delete state.weights[d];
+      return render();
+    }
+    case "foodEdit": {
+      const f = allFoods().find(x => (x._orig || x.name) === el.dataset.n); if (!f) return;
+      const n = (prompt(tr("ชื่ออาหาร"), f.name) || "").trim(); if (!n) return;
+      const raw = prompt(tr("แคลอรี่ต่อหน่วย (kcal)"), f.kcal); if (raw === null || !(Number(raw) >= 0)) return;
+      state.foodOv[el.dataset.n] = { n, k: Number(raw) }; return render();
+    }
+    case "foodDel": if (!confirm(tr("ลบอาหารนี้ออกจากรายการ?"))) return; state.foodOv[el.dataset.n] = { del: true }; return render();
+    case "foodReset": state.foodOv = {}; return render();
+    case "exportData": return exportData();
+    case "importData": return $("importIn").click();
+    case "clearData":
+      if (!confirm(tr("ล้างข้อมูลทั้งหมด? ย้อนกลับไม่ได้")) || !confirm(tr("ยืนยันอีกครั้ง: ลบข้อมูลทั้งหมดจริงหรือไม่?"))) return;
+      resetData(); render(); toast("ล้างข้อมูลแล้ว"); return;
+    case "reopenDay": delete state.completed[k]; return render();
+    case "step": toggleKey(`${k}|${key}|${el.dataset.sid}`); return render();
+    case "del": {
+      const isT = key.charAt(0) === "T";
+      const list = isT ? state.templates : (state.plans[k] || []);
+      const idx = list.findIndex(x => (isT ? "T" : "P") + x.id === key);
+      if (idx < 0) return;
+      const removed = list.splice(idx, 1)[0];
+      render();
+      snack("ลบรายการแล้ว", "เลิกทำ", () => {
+        const l = isT ? state.templates : (state.plans[k] || (state.plans[k] = []));
+        l.splice(Math.min(idx, l.length), 0, removed);
+        render();
+      });
+      return;
+    }
+    case "undo": {
+      const sn = $("snack"), fn = sn._fn;
+      sn._fn = null; sn.classList.remove("show"); clearTimeout(snack._t);
+      if (fn) fn();
+      return;
+    }
+    case "togglePass": return togglePass();
+    case "goProfile": return switchTab("profile");
+    case "install": {
+      if (!deferredInstall) return;
+      deferredInstall.prompt();
+      deferredInstall.userChoice.finally(() => { deferredInstall = null; render(); });
+      return;
+    }
+    case "sumTab": state.sumTab = el.dataset.s; return render();
+    case "kcalGoal": { const v = Number(prompt(tr("เป้าหมายแคลอรี่ต่อวัน (kcal)"), state.kcalGoal || 2000)); if (v > 0) state.kcalGoal = v; return render(); }
+    case "theme": state.theme = state.theme === "dark" ? "light" : "dark"; applyTheme(); return;
+    case "savePay": {
+      state.pay = { salary: Number($("paySal").value) || 0, housing: Number($("payHouse").value) || 0, position: Number($("payPos").value) || 0 };
+      toast("บันทึกเงินเดือนแล้ว"); return render();
+    }
+    case "saveWork": {
+      const st = $("wkStart").value, en = $("wkEnd").value;
+      const prev = state.work[state.sel] || {}, next = { ...prev, start: st, end: en };
+      if (!st && !en && !next.ot) delete state.work[state.sel];
+      else state.work[state.sel] = next;
+      toast("บันทึกเวลาทำงานแล้ว"); return render();
+    }
+    case "clearWork": delete state.work[state.sel]; return render();
+    case "leave": setLeave(el.dataset.v); return;
+    case "fillStd":
+      $("dStart").value = "08:00"; $("dEnd").value = "17:20";
+      $("dOtS").value = "18:00"; $("dOtE").value = "20:00";
+      buildAllTP(); return;
+    case "closeDay": return closeDayPanel();
+    case "clearDay": delete state.work[state.sel]; closeDayPanel(); return render();
+    case "saveDay": {
+      const st = $("dStart").value, en = $("dEnd").value, os = $("dOtS").value, oe = $("dOtE").value;
+      if (!!st !== !!en) return toast("กรอกเวลาเริ่มและเลิกงานให้ครบทั้งคู่");
+      if (!!os !== !!oe) return toast("กรอกเวลาเริ่มและเลิกโอทีให้ครบทั้งคู่");
+      if (st && en && toMin(en) <= toMin(st)) return toast("เวลาเลิกงานต้องมากกว่าเวลาเริ่ม");
+      if (os && oe && toMin(oe) <= toMin(os)) return toast("เวลาเลิกโอทีต้องมากกว่าเวลาเริ่ม");
+      const rec = {};
+      if (st && en) { rec.start = st; rec.end = en; }
+      if (os && oe) rec.ot = { start: os, end: oe };
+      if (Object.keys(rec).length) state.work[state.sel] = rec; else delete state.work[state.sel];
+      closeDayPanel(); toast("บันทึกรายได้วันนี้แล้ว"); return render();
+    }
+    case "span": state.spanTab = el.dataset.s; return render();
+    case "pickIcon": setIcon(el.dataset.i); return;
+    case "addExpRow": addExpRow(); return;
+    case "delExpRow": el.closest(".frw").remove(); updateExpTotal(); return;
+    case "addFoodRow": { const rows = readFoodRows(); rows.push({ name: "", q: 1, k: 0 }); renderFoodRows(rows); return; }
+    case "delFoodRow": {
+      const rows = readFoodRows();
+      rows.splice([...document.querySelectorAll("#foodRows .frw")].indexOf(el.closest(".frw")), 1);
+      renderFoodRows(rows); return;
+    }
+    case "preset": applyPreset(Number(el.dataset.idx)); return;
+    case "ownPreset": $("newText").focus(); return;
+    case "edit": openSheet({ k, key }); return;
+    case "pick": {
+      const again = state.sel === k && state.tab === "income";
+      state.sel = k; state.month = k.slice(0, 7);
+      if (again) return openDayPanel();
+      return render();
+    }
+    case "openDay": state.sel = k; state.month = k.slice(0, 7); state.tab = "schedule"; popNav(); return render();
+    case "mprev":
+    case "mnext": {
+      const d = parseKey(state.month + "-01");
+      d.setMonth(d.getMonth() + (act === "mnext" ? 1 : -1));
+      state.month = keyOf(d).slice(0, 7);
+      return render();
+    }
+    case "calToggle": state.calOpen = !state.calOpen; return render();
+    case "toggleReminders":
+      state.reminders = !state.reminders;
+      if (state.reminders) enablePushUi(); else toast("ปิดการแจ้งเตือนแล้ว");
+      return render();
+  }
+});
+$("importIn").addEventListener("change", e => { const f = e.target.files[0]; e.target.value = ""; if (f) importData(f); });
+document.addEventListener("keydown", e => {
+  if ((e.key === "Enter" || e.key === " ") && e.target.id === "avatar") { e.preventDefault(); switchTab("profile"); }
+});
+document.addEventListener("submit", e => { if (e.target.id === "addForm") submitAdd(e); });
+document.addEventListener("pointermove", e => {
+  const c = e.target.closest && e.target.closest(".weekcard");
+  if (!c) return;
+  const r = c.getBoundingClientRect();
+  const x = (e.clientX - r.left) / r.width - 0.5, y = (e.clientY - r.top) / r.height - 0.5;
+  c.style.transform = `perspective(700px) rotateX(${(-y * 8).toFixed(2)}deg) rotateY(${(x * 10).toFixed(2)}deg)`;
+});
+document.addEventListener("pointerout", e => {
+  const c = e.target.closest && e.target.closest(".weekcard");
+  if (c && !c.contains(e.relatedTarget)) c.style.transform = "";
+});
+window.addEventListener("resize", () => moveIndicator(true));
+document.addEventListener("change", e => { if (e.target.id === "wkDate" && e.target.value) { state.sel = e.target.value; state.month = state.sel.slice(0, 7); render(); } });
+document.addEventListener("input", e => { if (e.target.classList.contains("ex-amt")) updateExpTotal(); });
+document.addEventListener("change", e => { if (e.target.classList && e.target.classList.contains("fr-food")) onFoodChange(e.target); });
+document.addEventListener("input", e => {
+  const id = e.target.id;
+  if (id === "dayNote") { const v = e.target.value; if (v.trim()) state.notes[todayKey()] = v; else delete state.notes[todayKey()]; scheduleSave(); return; }
+  if (id === "fmq") { state.fmq = e.target.value; $("fmList").innerHTML = fmListHTML(); return; }
+  const c = e.target.classList; if (!c) return;
+  if (c.contains("fr-qty")) onQtyInput(e.target);
+  else if (c.contains("fr-kcal")) updateFoodTotal();
+});
+
+// ===== Lock zoom (pinch, double-tap, ctrl+wheel) =====
+["gesturestart","gesturechange","gestureend"].forEach(ev => document.addEventListener(ev, e => e.preventDefault(), {passive:false}));
+document.addEventListener("touchmove", e => { if (e.touches.length > 1) e.preventDefault(); }, {passive:false});
+document.addEventListener("wheel", e => { if (e.ctrlKey) e.preventDefault(); }, {passive:false});
+document.addEventListener("keydown", e => { if ((e.ctrlKey || e.metaKey) && ["+","-","=","0"].includes(e.key)) e.preventDefault(); });
+let _lastTouchEnd = 0;
+document.addEventListener("touchend", e => { const now = Date.now(); if (now - _lastTouchEnd < 300) e.preventDefault(); _lastTouchEnd = now; }, {passive:false});
+
+// ===== Pull down to refresh =====
+function syncNow(){
+  const u = state.user;
+  if (!u || !u.uid || !window.FB || !window.FB.loadData || snapshot() !== state.saved) return Promise.resolve();
+  return window.FB.loadData(u.uid).then(d => {
+    if (!d || snapshot() !== state.saved) return;
+    applyData(d);
+    state.saved = snapshot();
+  }).catch(e => console.warn("sync", e));
+}
+(function(){
+  const app = $("app"), ptr = $("ptr");
+  let y0 = null, pull = 0, busy = false;
+  app.addEventListener("touchstart", e => {
+    y0 = (app.scrollTop <= 0 && !busy) ? e.touches[0].clientY : null;
+    pull = 0;
+  }, {passive: true});
+  app.addEventListener("touchmove", e => {
+    if (y0 === null) return;
+    const dy = e.touches[0].clientY - y0;
+    if (dy <= 0) { pull = 0; ptr.classList.remove("show", "ready"); ptr.style.transform = ""; return; }
+    pull = Math.min(dy * 0.5, 90);
+    ptr.style.transform = `translate(-50%, ${pull - 60}px)`;
+    ptr.classList.toggle("ready", pull >= 50);
+  }, {passive: true});
+  app.addEventListener("touchend", () => {
+    if (y0 === null) return;
+    y0 = null;
+    ptr.style.transform = "";
+    ptr.classList.remove("ready");
+    if (pull >= 50) refresh(); else ptr.classList.remove("show");
+    pull = 0;
+  }, {passive: true});
+  function refresh(){
+    busy = true;
+    ptr.classList.add("show", "spin");
+    const done = () => { ptr.classList.remove("show", "spin"); busy = false; };
+    Promise.all([refreshFoods(), syncNow()])
+      .then(() => { if (state.user) render(); })
+      .finally(() => setTimeout(done, 400));
+  }
+})();
+
+// ===== Start =====
+state.today = todayKey();
+// When the app comes back to the foreground: move to the new day, refresh foods, and pull the latest saved data
+document.addEventListener("visibilitychange", () => {
+  if (document.visibilityState !== "visible" || !state.user) return;
+  const k = todayKey();
+  if (state.today !== k) {
+    if (state.sel === state.today) state.sel = k;
+    state.today = k;
+    state.month = state.sel.slice(0, 7);
+  }
+  render();
+  refreshFoods();
+  const u = state.user;
+  if (u.uid && window.FB && window.FB.loadData && snapshot() === state.saved) {
+    window.FB.loadData(u.uid).then(d => {
+      if (!d || snapshot() !== state.saved) return;   // keep unsaved local changes
+      applyData(d);
+      state.saved = snapshot();
+      render();
+    }).catch(e => console.warn("resume sync", e));
+  }
+});
+function applyTheme(){
+  document.documentElement.dataset.theme = state.theme;
+  const m = document.querySelector('meta[name="theme-color"]');
+  if (m) m.content = state.theme === "dark" ? "#0f0e1a" : "#f7f6ff";
+}
+state.theme = window.matchMedia && matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+applyTheme();
+function dateNow(){
+  const d = parseKey(todayKey());
+  if (state.lang !== "en") return dateLabel(todayKey());   // Thai: วันเสาร์ที่ 24 ตุลาคม
+  return `${d.toLocaleDateString("en-US", {weekday:"long"})}, ${d.getDate()} ${d.toLocaleDateString("en-US", {month:"long"})}`;
+}
+function timeNow(){ return new Date().toLocaleTimeString(locale(), {hour:"2-digit", minute:"2-digit", second:"2-digit"}); }
+setInterval(() => { if (state.user && $("greet")) $("greet").textContent = timeNow(); }, 1000);
+window.addEventListener("beforeinstallprompt", e => {
+  e.preventDefault(); deferredInstall = e;
+  if (state.user && state.tab === "profile") render();
+});
+window.addEventListener("appinstalled", () => {
+  deferredInstall = null; toast("ติดตั้งแอปแล้ว");
+  if (state.user && state.tab === "profile") render();
+});
+if ("serviceWorker" in navigator && location.protocol.indexOf("http") === 0) {
+  window.addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(err => console.warn("SW", err)));
+}
+state.sel = todayKey(); state.month = state.sel.slice(0, 7);
+renderAuth();
+setScreen();
+setTimeout(() => $("splash").classList.add("gone"), 2200);
+
+</script>
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-app.js";
+  import { getAnalytics, isSupported } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-analytics.js";
+  import {
+    getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword,
+    signOut, updateProfile, GoogleAuthProvider, signInWithPopup, sendPasswordResetEmail
+  } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-auth.js";
+  import {
+    getFirestore, initializeFirestore, persistentLocalCache, persistentMultipleTabManager,
+    doc, getDoc, setDoc, serverTimestamp, collection, getDocs
+  } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-firestore.js";
+  import { getMessaging, getToken, isSupported as msgSupported } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-messaging.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyBRFCPqJIcTQaj7PjDUk2ecXPS75QNLdSQ",
+    authDomain: "strivlife.firebaseapp.com",
+    projectId: "strivlife",
+    storageBucket: "strivlife.firebasestorage.app",
+    messagingSenderId: "320035381429",
+    appId: "1:320035381429:web:3d26e5341e5b2051579efc",
+    measurementId: "G-DGJK5EK4MB"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  // Web Push key pair: Firebase console > Project settings > Cloud Messaging > Web Push certificates
+  const VAPID_KEY = "BHXxRZ8gjoPbQ9ItlYMVaYD5yHeTd4ohQd9aMOSu96btUTJzD34cc5sWINpuEeggAU7oXb-V7NrtM6C8YFyHWPY";
+  isSupported().then(ok => { if (ok) getAnalytics(app); }).catch(() => {});
+  const auth = getAuth(app);
+  // Offline persistence: reads and writes work without a connection and sync automatically afterwards
+  let db;
+  try {
+    db = initializeFirestore(app, { localCache: persistentLocalCache({ tabManager: persistentMultipleTabManager() }) });
+  } catch (e) { console.warn("Offline cache unavailable", e); db = getFirestore(app); }
+
+  // A User ID without "@" is stored as a synthetic email: <id>@users.strivlife.app
+  const DOMAIN = "@users.strivlife.app";
+  const toEmail = id => id.indexOf("@") >= 0 ? id : id + DOMAIN;
+  const shownEmail = e => (e || "").endsWith(DOMAIN) ? e.slice(0, -DOMAIN.length) : (e || "");
+  const info = (u, name) => ({
+    uid: u.uid,
+    name: name || u.displayName || shownEmail(u.email).split("@")[0] || "User",
+    email: shownEmail(u.email),
+    picture: u.photoURL || "",
+    provider: u.providerData[0] && u.providerData[0].providerId === "google.com" ? "google" : "email"
+  });
+  const dataRef = uid => doc(db, "users", uid, "data", "main");
+
+  let busy = false;
+  const guard = async fn => { busy = true; try { return await fn(); } finally { busy = false; } };
+
+  window.FB = {
+    register: (id, pass, name) => guard(async () => {
+      const cred = await createUserWithEmailAndPassword(auth, toEmail(id), pass);
+      await updateProfile(cred.user, { displayName: name });
+      await setDoc(doc(db, "users", cred.user.uid), {
+        name, userId: id, email: cred.user.email, createdAt: serverTimestamp()
+      }, { merge: true });
+      return info(cred.user, name);
+    }),
+    login: (id, pass) => guard(async () => {
+      const cred = await signInWithEmailAndPassword(auth, toEmail(id), pass);
+      return info(cred.user);
+    }),
+    google: () => guard(async () => {
+      const cred = await signInWithPopup(auth, new GoogleAuthProvider());
+      await setDoc(doc(db, "users", cred.user.uid), {
+        name: cred.user.displayName || "", email: cred.user.email || "", lastLogin: serverTimestamp()
+      }, { merge: true });
+      return info(cred.user);
+    }),
+    loadProfile: async uid => {
+      const snap = await getDoc(doc(db, "users", uid));
+      return snap.exists() ? snap.data() : {};
+    },
+    updatePhoto: (uid, photo) => setDoc(doc(db, "users", uid), { photo }, { merge: true }),
+    updateName: async (uid, name) => {
+      await updateProfile(auth.currentUser, { displayName: name });
+      await setDoc(doc(db, "users", uid), { name }, { merge: true });
+    },
+    resetPassword: email => sendPasswordResetEmail(auth, email),
+    signOut: () => signOut(auth),
+    async loadData(uid) {
+      const snap = await getDoc(dataRef(uid));
+      return snap.exists() ? snap.data() : {};
+    },
+    enablePush: async uid => {
+      if (VAPID_KEY.indexOf("PASTE") === 0) throw new Error("no-vapid");
+      if (!(await msgSupported())) throw new Error("unsupported");
+      if (Notification.permission !== "granted" && (await Notification.requestPermission()) !== "granted") throw new Error("denied");
+      const reg = await navigator.serviceWorker.register("firebase-messaging-sw.js", { scope: "./firebase-cloud-messaging-push-scope" });
+      if (!reg.active) await new Promise(res => { const w = reg.installing || reg.waiting; if (!w) return res(); w.addEventListener("statechange", () => w.state === "activated" && res()); });
+      const token = await getToken(getMessaging(app), { vapidKey: VAPID_KEY, serviceWorkerRegistration: reg });
+      await setDoc(doc(db, "users", uid, "tokens", token), { at: serverTimestamp(), tz: Intl.DateTimeFormat().resolvedOptions().timeZone || "Asia/Bangkok" });
+      return token;
+    },
+    saveData: (uid, data) => setDoc(dataRef(uid), { ...data, updatedAt: serverTimestamp() }),
+    addFood: food => setDoc(doc(collection(db, "foods"), food.id), food),
+    loadFoods: async () => (await getDocs(collection(db, "foods"))).docs.map(d => d.data())
+  };
+
+  // Restore the session after a page reload
+  onAuthStateChanged(auth, u => {
+    if (busy || !u) return;
+    window.dispatchEvent(new CustomEvent("fb-session", { detail: info(u) }));
+  });
+</script>
+<script>
+// Home-screen icons and web app manifest, built here so no separate icon/manifest files are needed.
+// (The long base64 strings are the PNG icons; they are kept at the very end of the file on purpose.)
+(function(){
+  var P = "data:image/png;base64,";
+  var ICON_192 = P + "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";
+  var ICON_512 = P + "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";
+  var ICON_MASK = P + "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";
+
+  var t = document.createElement("link");           // iPhone "Add to Home Screen"
+  t.rel = "apple-touch-icon"; t.href = ICON_192;
+  document.head.appendChild(t);
+
+  // Manifest only on a real web address; previews / local files can't resolve a base URL
+  if (!/^https?:$/.test(location.protocol)) return;
+  try {
+    var base = new URL("./", location.href).href;
+    var m = {
+      name: "StrivLife", short_name: "StrivLife", description: "Small steps, big results.", lang: "th",
+      start_url: base, scope: base, display: "standalone", orientation: "portrait",
+      background_color: "#ffffff", theme_color: "#6366f1",
+      icons: [
+        { src: ICON_192, sizes: "192x192", type: "image/png", purpose: "any" },
+        { src: ICON_512, sizes: "512x512", type: "image/png", purpose: "any" },
+        { src: ICON_MASK, sizes: "512x512", type: "image/png", purpose: "maskable" }
+      ]
+    };
+    var l = document.createElement("link");
+    l.rel = "manifest";
+    l.href = URL.createObjectURL(new Blob([JSON.stringify(m)], { type: "application/manifest+json" }));
+    document.head.appendChild(l);
+  } catch (e) { console.warn("manifest", e); }
+})();
+</script>
+</body>
+</html>
+
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="StrivLife">
