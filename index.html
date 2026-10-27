@@ -999,6 +999,7 @@ Object.assign(EN, {"เริ่มโอที":"Overtime start","เลิก�
 Object.assign(EN, {"รายได้รอบนี้":"This cycle","รายได้รอบเงินเดือน (22–21, ประมาณ)":"Pay cycle income (22–21, est.)"});
 Object.assign(EN, {"กรอกเวลาเริ่มและเลิกงานให้ครบทั้งคู่":"Enter both work start and end","กรอกเวลาเริ่มและเลิกโอทีให้ครบทั้งคู่":"Enter both overtime start and end","เวลาเลิกงานต้องมากกว่าเวลาเริ่ม":"End time must be after start","เวลาเลิกโอทีต้องมากกว่าเวลาเริ่ม":"Overtime end must be after start","บันทึกรายได้วันนี้แล้ว":"Income saved","แก้ไขรายได้วันนี้":"Edit income"});
 Object.assign(EN, {"ฐานเงินเดือน":"Base salary","เงินเดือน (ใช้คำนวณโอที)":"Salary (for OT)","โอที/วันหยุดรอบนี้ (22–21, ประมาณ)":"OT / weekend pay this cycle (22–21, est.)","ฐานคำนวณ":"Base","แตะวันที่เพื่อเลือก แตะซ้ำเพื่อแก้ไข":"Tap a date to select, tap again to edit"});
+Object.assign(EN, {"ค่าทำงานปกติ":"Regular work pay","รายได้รอบนี้ (22–21, ประมาณ)":"Income this cycle (22–21, est.)"});
 function tr(s){ return state.lang === "en" && EN[s] ? EN[s] : s; }
 // Walks the app's text nodes and placeholders; keeps the original Thai so it can switch back
 function i18n(){
@@ -1425,7 +1426,7 @@ function dayEditCard(){
   const k = state.sel, w = state.work[k] || {}, c = calcDay(k, w.start, w.end, w.ot);
   const ot = w.ot || {};
   const rows = c.hasWork ? `<div class="pay-detail">
-      ${c.baseDay > 0 ? `<div class="pay-row"><span>รายได้ต่อวัน</span><b>${fmtBaht(c.baseDay)}</b></div>` : ""}
+      ${c.baseDay > 0 ? `<div class="pay-row"><span>ค่าทำงานปกติ</span><b>${fmtBaht(c.baseDay)}</b></div>` : ""}
       ${!c.weekend && c.otH > 0 ? `<div class="pay-row"><span>โอที ${c.otH.toFixed(1)} ชม. (×1.5)</span><b>${fmtBaht(c.otPay)}</b></div>` : ""}
       ${c.weekend && c.wkH > 0 ? `<div class="pay-row"><span>วันหยุด ${c.wkH.toFixed(1)} ชม.</span><b>${fmtBaht(c.wkPay)}</b></div>` : ""}
       <div class="pay-row total"><span>รายได้วันนี้</span><b>${fmtBaht(c.baseDay + c.extra)}</b></div>
@@ -1474,7 +1475,7 @@ function calcDay(k, start, end, ot){
   if (!hasTimes && otHours <= 0) return r;
   r.hasWork = true;
   if (!weekend) {
-    // the base salary is not paid per day; it only sets the hourly rate
+    if (hasTimes) r.baseDay = dailyBase;
     // Mon-Fri: overtime from 18:00 at x1.5 (manual OT hours override the time-based calculation)
     r.otH = otHours > 0 ? otHours : Math.max(0, toMin(end) - Math.max(toMin(start), 18 * 60)) / 60;
     r.otPay = r.otH * hourly * 1.5;
@@ -1498,12 +1499,12 @@ function payCard(){
   let mExtra = 0, mDays = 0;
   const rows = Object.keys(state.work).filter(x => cycleKey(x) === ym).sort().map(x => {
     const r = calcDay(x, state.work[x].start, state.work[x].end, state.work[x].ot);
-    mExtra += r.extra; if (r.hasWork) mDays++;
-    return r.hasWork ? `<div class="pay-row"><span>${parseKey(x).getDate()}</span><b>${fmtBaht(r.extra)}</b></div>` : "";
+    mExtra += dayIncome(x).total; if (r.hasWork) mDays++;
+    return r.hasWork ? `<div class="pay-row"><span>${parseKey(x).getDate()}</span><b>${fmtBaht(dayIncome(x).total)}</b></div>` : "";
   }).join("");
   const p = state.pay || {};
   return `
-    <section class="card pay-hero"><div class="lbl">โอที/วันหยุดรอบนี้ (22–21, ประมาณ)</div>
+    <section class="card pay-hero"><div class="lbl">รายได้รอบนี้ (22–21, ประมาณ)</div>
       <div class="big">${fmtBaht(mExtra)}</div>
       <div class="muted">ฐานคำนวณ ${fmtBaht(baseSalary())}/เดือน · ${mDays} วัน</div></section>
     ${incomeCalendar()}
