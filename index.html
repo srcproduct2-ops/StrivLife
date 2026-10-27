@@ -1014,7 +1014,7 @@ function setLeave(v){
 }
 function attendance(cyc){
   let late = 0, leave = 0, vac = 0;
-  Object.keys(state.work).filter(x => cycleKey(x) === cyc).forEach(x => {
+  Object.keys(state.work).filter(x => x.startsWith(cyc)).forEach(x => {
     const w = state.work[x];
     if (w.leave === "vacation") vac++;
     else if (w.leave) leave++;
@@ -1026,12 +1026,12 @@ function attendance(cyc){
   return { late, leave, vac };
 }
 function attendCard(){
-  const a = attendance(cycleKey(todayKey()));
+  const a = attendance(state.month);
   return `<section class="card attend"><div class="att-grid">
       <div><b>${a.late}</b><span>มาสาย</span></div>
       <div><b>${a.leave}</b><span>ขาดลา</span></div>
       <div><b>${a.vac}</b><span>พักร้อน</span></div></div>
-    <p class="muted" style="margin:8px 0 0;font-size:.68rem">รอบ 22–21 · มาสายหลัง 08:00 (จันทร์–ศุกร์)</p></section>`;
+    <p class="muted" style="margin:8px 0 0;font-size:.68rem">ตามเดือนในปฏิทินรายได้ · มาสายหลัง 08:00 (จันทร์–ศุกร์)</p></section>`;
 }
 // ===== Work & overtime kinds =====
 function setKind(k){
@@ -1071,6 +1071,7 @@ Object.assign(EN, {"ค่าทำงานปกติ":"Regular work pay","�
 Object.assign(EN, {"ลาป่วย":"Sick leave","ลากิจ":"Personal leave","ลาพักร้อน":"Vacation","ขาดงาน":"Absent","ไม่มี":"None","มาสาย":"Late","ขาดลา":"Absent / leave","พักร้อน":"Vacation","รอบ 22–21 · มาสายหลัง 08:00 (จันทร์–ศุกร์)":"Cycle 22–21 · late after 08:00 (Mon–Fri)"});
 Object.assign(EN, {"ใส่เวลาปกติ (จ–ศ)":"Fill standard hours (Mon–Fri)"});
 Object.assign(EN, {"เงินเดือน (คิดโอที)":"Salary (for OT)","ค่าบ้าน":"Housing","ค่าตำแหน่ง":"Position allowance","เงินเพิ่มต่อรอบ":"Extra per cycle"});
+Object.assign(EN, {"ตามเดือนในปฏิทินรายได้ · มาสายหลัง 08:00 (จันทร์–ศุกร์)":"Follows the income calendar month · late after 08:00 (Mon–Fri)"});
 function tr(s){ return state.lang === "en" && EN[s] ? EN[s] : s; }
 // Walks the app's text nodes and placeholders; keeps the original Thai so it can switch back
 function i18n(){
