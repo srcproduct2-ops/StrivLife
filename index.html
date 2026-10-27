@@ -722,6 +722,18 @@ html[data-theme="dark"] .ic-cell small{background:#064e3b;color:#a7f3d0}
 .att-grid>div:nth-child(1) b{color:#d97706}
 .att-grid>div:nth-child(2) b{color:#e11d48}
 .att-grid>div:nth-child(3) b{color:#0d9488}
+/* Fit date and time fields side by side on small iPhones */
+.frow{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px}
+.fld{min-width:0}
+.fld input[type="date"],.fld input[type="time"]{min-width:0;width:100%;-webkit-appearance:none;appearance:none}
+.tpick{gap:2px;min-width:0;width:100%}
+.tpick select{flex:1 1 0;min-width:0;padding:8px 4px;font-size:15px}
+.tpick .tp-ap{flex:0 0 auto;min-width:0;width:auto;padding:8px 6px}
+.tp-sep,.tp-u{flex:0 0 auto;font-size:.85rem}
+@media (max-width:380px){
+  .tpick select{font-size:14px;padding:7px 2px}
+  .fld input[type="date"]{font-size:14px}
+}
 </style>
 </head>
 <body class="guest">
@@ -1049,6 +1061,8 @@ Object.assign(EN, {"กรอกเวลาเริ่มและเลิก
 Object.assign(EN, {"ฐานเงินเดือน":"Base salary","เงินเดือน (ใช้คำนวณโอที)":"Salary (for OT)","โอที/วันหยุดรอบนี้ (22–21, ประมาณ)":"OT / weekend pay this cycle (22–21, est.)","ฐานคำนวณ":"Base","แตะวันที่เพื่อเลือก แตะซ้ำเพื่อแก้ไข":"Tap a date to select, tap again to edit"});
 Object.assign(EN, {"ค่าทำงานปกติ":"Regular work pay","รายได้รอบนี้ (22–21, ประมาณ)":"Income this cycle (22–21, est.)"});
 Object.assign(EN, {"ลาป่วย":"Sick leave","ลากิจ":"Personal leave","ลาพักร้อน":"Vacation","ขาดงาน":"Absent","ไม่มี":"None","มาสาย":"Late","ขาดลา":"Absent / leave","พักร้อน":"Vacation","รอบ 22–21 · มาสายหลัง 08:00 (จันทร์–ศุกร์)":"Cycle 22–21 · late after 08:00 (Mon–Fri)"});
+Object.assign(EN, {"ใส่เวลาปกติ (จ–ศ)":"Fill standard hours (Mon–Fri)"});
+Object.assign(EN, {"เงินเดือน (คิดโอที)":"Salary (for OT)","ค่าบ้าน":"Housing","ค่าตำแหน่ง":"Position allowance","เงินเพิ่มต่อรอบ":"Extra per cycle"});
 function tr(s){ return state.lang === "en" && EN[s] ? EN[s] : s; }
 // Walks the app's text nodes and placeholders; keeps the original Thai so it can switch back
 function i18n(){
@@ -1446,7 +1460,7 @@ function dayIncome(k){
 function incomePanel(){
   const t = todayKey(), ym = cycleKey(t);
   const today = dayIncome(t);
-  let month = 0, days = 0;
+  let month = allowances(), days = 0;
   Object.keys(state.work).filter(x => cycleKey(x) === ym).forEach(x => {
     const d = dayIncome(x); month += d.total; days += d.days;
   });
@@ -1457,9 +1471,15 @@ function incomePanel(){
     </div></section>`;
 }
 TITLES.income = "รายได้";
+function allowances(){ const p = state.pay || {}; return (p.housing || 0) + (p.position || 0); }
 function baseSalary(){ return (state.pay && state.pay.salary) || 0; }
 function openDayPanel(){
   $("dayBody").innerHTML = dayEditCard();
+  const w0 = state.work[state.sel] || {}, wd = parseKey(state.sel).getDay();
+  if (!w0.start && !w0.end && !w0.ot && wd !== 0 && wd !== 6) {
+    $("dStart").value = "08:00"; $("dEnd").value = "17:20";
+    $("dOtS").value = "18:00"; $("dOtE").value = "20:00";
+  }
   const sh = $("daySheet"), bg = $("dayBg");
   sh.hidden = false; bg.hidden = false;
   buildAllTP(); i18n();
@@ -1555,11 +1575,14 @@ function payCard(){
   const p = state.pay || {};
   return `
     <section class="card pay-hero"><div class="lbl">รายได้รอบนี้ (22–21, ประมาณ)</div>
-      <div class="big">${fmtBaht(mExtra)}</div>
-      <div class="muted">ฐานคำนวณ ${fmtBaht(baseSalary())}/เดือน · ${mDays} วัน</div></section>
+      <div class="big">${fmtBaht(mExtra + allowances())}</div>
+      <div class="muted">เงินเพิ่ม ${fmtBaht(allowances())} + โอที/ทำงาน ${fmtBaht(mExtra)} · ${mDays} วัน</div></section>
     ${incomeCalendar()}
     <section class="card"><h3>ฐานเงินเดือน</h3>
-      <label class="fld"><span>เงินเดือน (ใช้คำนวณโอที)</span><input type="number" id="paySal" value="${baseSalary()}" inputmode="numeric"></label>
+      <div class="frow"><label class="fld"><span>เงินเดือน (คิดโอที)</span><input type="number" id="paySal" value="${baseSalary()}" inputmode="numeric"></label>
+        <label class="fld"><span>ค่าบ้าน</span><input type="number" id="payHouse" value="${(state.pay || {}).housing || 0}" inputmode="numeric"></label></div>
+      <div class="frow" style="margin-top:8px"><label class="fld"><span>ค่าตำแหน่ง</span><input type="number" id="payPos" value="${(state.pay || {}).position || 0}" inputmode="numeric"></label>
+        <div class="fld"><span>เงินเพิ่มต่อรอบ</span><b class="pay-sum">${fmtBaht(allowances())}</b></div></div>
       <div class="actions"><button class="sm" data-act="savePay">บันทึกเงินเดือน</button></div>
       <div class="pay-rates"><div><b>${fmtBaht(c.dailyBase)}</b><span>ต่อวัน (÷30)</span></div><div><b>${fmtBaht(c.hourly)}</b><span>ต่อชั่วโมง (÷8)</span></div></div>
     </section>
@@ -2278,7 +2301,7 @@ document.addEventListener("click", e => {
     case "kcalGoal": { const v = Number(prompt(tr("เป้าหมายแคลอรี่ต่อวัน (kcal)"), state.kcalGoal || 2000)); if (v > 0) state.kcalGoal = v; return render(); }
     case "theme": state.theme = state.theme === "dark" ? "light" : "dark"; applyTheme(); return;
     case "savePay": {
-      state.pay = { salary: Number($("paySal").value) || 0, housing: 0, position: 0 };
+      state.pay = { salary: Number($("paySal").value) || 0, housing: Number($("payHouse").value) || 0, position: Number($("payPos").value) || 0 };
       toast("บันทึกเงินเดือนแล้ว"); return render();
     }
     case "saveWork": {
@@ -2290,6 +2313,10 @@ document.addEventListener("click", e => {
     }
     case "clearWork": delete state.work[state.sel]; return render();
     case "leave": setLeave(el.dataset.v); return;
+    case "fillStd":
+      $("dStart").value = "08:00"; $("dEnd").value = "17:20";
+      $("dOtS").value = "18:00"; $("dOtE").value = "20:00";
+      buildAllTP(); return;
     case "closeDay": return closeDayPanel();
     case "clearDay": delete state.work[state.sel]; closeDayPanel(); return render();
     case "saveDay": {
