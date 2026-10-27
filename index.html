@@ -805,7 +805,9 @@ html[data-theme="dark"] .ic-cell small{background:#064e3b;color:#a7f3d0}
     </div>
     <button class="fab" data-act="fab" aria-label="เพิ่มรายการ"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button>
   </nav>
-  <div class="sheet-backdrop" data-act="closeSheet" id="sheetBg" hidden></div>
+  <div class="sheet-backdrop" data-act="closeDay" id="dayBg" hidden></div>
+<div class="sheet" id="daySheet" hidden><div class="sheet-grip"></div><div id="dayBody"></div></div>
+<div class="sheet-backdrop" data-act="closeSheet" id="sheetBg" hidden></div>
 <div class="sheet" id="sheet" hidden>
   <div class="sheet-grip"></div>
   <h3 id="sheetTitle">เพิ่มรายการ</h3>
@@ -994,6 +996,9 @@ Object.assign(EN, {"รายได้":"Income","รายได้เดือ
 Object.assign(EN, {"โอที":"Overtime","เริ่มงาน":"Start work","เลิกงาน":"End work","ชั่วโมงโอที":"Overtime hours","กรุณาใส่เวลาเริ่มและเลิกงาน":"Enter start and end time","กรุณาใส่ชั่วโมงโอที":"Enter overtime hours"});
 Object.assign(EN, {"รายได้":"Income"});
 Object.assign(EN, {"เริ่มโอที":"Overtime start","เลิกโอที":"Overtime end","กรุณาใส่เวลาเริ่มและเลิกโอทีให้ถูกต้อง":"Enter valid overtime start and end"});
+Object.assign(EN, {"รายได้รอบนี้":"This cycle","รายได้รอบเงินเดือน (22–21, ประมาณ)":"Pay cycle income (22–21, est.)"});
+Object.assign(EN, {"กรอกเวลาเริ่มและเลิกงานให้ครบทั้งคู่":"Enter both work start and end","กรอกเวลาเริ่มและเลิกโอทีให้ครบทั้งคู่":"Enter both overtime start and end","เวลาเลิกงานต้องมากกว่าเวลาเริ่ม":"End time must be after start","เวลาเลิกโอทีต้องมากกว่าเวลาเริ่ม":"Overtime end must be after start","บันทึกรายได้วันนี้แล้ว":"Income saved","แก้ไขรายได้วันนี้":"Edit income"});
+Object.assign(EN, {"ฐานเงินเดือน":"Base salary","เงินเดือน (ใช้คำนวณโอที)":"Salary (for OT)","โอที/วันหยุดรอบนี้ (22–21, ประมาณ)":"OT / weekend pay this cycle (22–21, est.)","ฐานคำนวณ":"Base","แตะวันที่เพื่อเลือก แตะซ้ำเพื่อแก้ไข":"Tap a date to select, tap again to edit"});
 function tr(s){ return state.lang === "en" && EN[s] ? EN[s] : s; }
 // Walks the app's text nodes and placeholders; keeps the original Thai so it can switch back
 function i18n(){
@@ -1373,6 +1378,12 @@ function vSummaryTab(){
   return switcher + (sub === "ach" ? vHistory() + vSummary() : spendCard());
 }
 const FOODS = [{name:"ข้าวผัด", icon:"🍚", kcal:550},{name:"ข้าวมันไก่", icon:"🍗", kcal:600},{name:"ข้าวกะเพราหมูสับไข่ดาว", icon:"🍳", kcal:650},{name:"ข้าวหมูแดง", icon:"🍖", kcal:580},{name:"ข้าวราดแกง", icon:"🥘", kcal:550},{name:"ข้าวต้ม", icon:"🥣", kcal:300},{name:"ก๋วยเตี๋ยวเรือ", icon:"🍜", kcal:400},{name:"ก๋วยเตี๋ยวหมู", icon:"🍜", kcal:350},{name:"บะหมี่หมูแดง", icon:"🍜", kcal:450},{name:"ส้มตำไทย", icon:"🥗", kcal:150},{name:"ไก่ย่าง", icon:"🍗", kcal:300},{name:"ข้าวเหนียว", icon:"🍚", kcal:300},{name:"ผัดกะเพรา", icon:"🍛", kcal:480},{name:"ต้มยำกุ้ง", icon:"🍲", kcal:150},{name:"แกงเขียวหวาน", icon:"🍛", kcal:250},{name:"ข้าวไข่เจียว", icon:"🍳", kcal:500},{name:"ลาบหมู", icon:"🥗", kcal:280},{name:"แซนด์วิช", icon:"🥪", kcal:250},{name:"ไข่ต้ม", icon:"🥚", kcal:75},{name:"กล้วย", icon:"🍌", kcal:105},{name:"แอปเปิ้ล", icon:"🍎", kcal:95},{name:"นมจืด", icon:"🥛", kcal:130},{name:"กาแฟดำ", icon:"☕", kcal:5},{name:"กาแฟลาเต้", icon:"☕", kcal:190},{name:"ชาเขียว", icon:"🍵", kcal:90},{name:"น้ำอัดลม", icon:"🥤", kcal:140},{name:"โยเกิร์ต", icon:"🥣", kcal:120},{name:"ข้าวโอ๊ต", icon:"🥣", kcal:150},{name:"สลัดผัก", icon:"🥗", kcal:120},{name:"โรตี", icon:"🫓", kcal:300},{name:"ไอศกรีม", icon:"🍨", kcal:200}];
+// ===== Pay cycle: 22nd of one month to 21st of the next =====
+function cycleKey(k){
+  const d = parseKey(k);
+  const c = d.getDate() >= 22 ? new Date(d.getFullYear(), d.getMonth() + 1, 1) : new Date(d.getFullYear(), d.getMonth(), 1);
+  return keyOf(c).slice(0, 7);
+}
 // ===== Income panel: per day and per month, from logged days only =====
 function dayIncome(k){
   const w = state.work[k];
@@ -1382,19 +1393,57 @@ function dayIncome(k){
   return { total: r.baseDay + r.extra, hours: w.start && w.end ? (toMin(w.end) - toMin(w.start)) / 60 : (w.ot && w.ot.start && w.ot.end && toMin(w.ot.end) > toMin(w.ot.start) ? (toMin(w.ot.end) - toMin(w.ot.start)) / 60 : 0), days: 1 };
 }
 function incomePanel(){
-  const t = todayKey(), ym = t.slice(0, 7);
+  const t = todayKey(), ym = cycleKey(t);
   const today = dayIncome(t);
   let month = 0, days = 0;
-  Object.keys(state.work).filter(x => x.startsWith(ym)).forEach(x => {
+  Object.keys(state.work).filter(x => cycleKey(x) === ym).forEach(x => {
     const d = dayIncome(x); month += d.total; days += d.days;
   });
   return `<section class="card income-panel">
     <div class="inc-grid">
       <div><span>รายได้วันนี้</span><b>${fmtBaht(today.total)}</b><small>${today.days ? today.hours.toFixed(1) + " ชม." : "ยังไม่ได้บันทึก"}</small></div>
-      <div><span>รายได้เดือนนี้</span><b>${fmtBaht(month)}</b><small>${days} วันที่บันทึก</small></div>
+      <div><span>รายได้รอบนี้</span><b>${fmtBaht(month)}</b><small>${days} วันที่บันทึก</small></div>
     </div></section>`;
 }
 TITLES.income = "รายได้";
+function baseSalary(){ return (state.pay && state.pay.salary) || 0; }
+function openDayPanel(){
+  $("dayBody").innerHTML = dayEditCard();
+  const sh = $("daySheet"), bg = $("dayBg");
+  sh.hidden = false; bg.hidden = false;
+  buildAllTP(); i18n();
+  requestAnimationFrame(() => { sh.classList.add("open"); bg.classList.add("open"); });
+}
+function closeDayPanel(){
+  const sh = $("daySheet"), bg = $("dayBg");
+  if (sh.hidden) return;
+  sh.classList.remove("open"); bg.classList.remove("open");
+  setTimeout(() => { sh.hidden = true; bg.hidden = true; }, 350);
+}
+// ===== Day editor: tap a date in the income calendar to view and change its work / overtime =====
+function dayEditCard(){
+  const k = state.sel, w = state.work[k] || {}, c = calcDay(k, w.start, w.end, w.ot);
+  const ot = w.ot || {};
+  const rows = c.hasWork ? `<div class="pay-detail">
+      ${c.baseDay > 0 ? `<div class="pay-row"><span>รายได้ต่อวัน</span><b>${fmtBaht(c.baseDay)}</b></div>` : ""}
+      ${!c.weekend && c.otH > 0 ? `<div class="pay-row"><span>โอที ${c.otH.toFixed(1)} ชม. (×1.5)</span><b>${fmtBaht(c.otPay)}</b></div>` : ""}
+      ${c.weekend && c.wkH > 0 ? `<div class="pay-row"><span>วันหยุด ${c.wkH.toFixed(1)} ชม.</span><b>${fmtBaht(c.wkPay)}</b></div>` : ""}
+      <div class="pay-row total"><span>รายได้วันนี้</span><b>${fmtBaht(c.baseDay + c.extra)}</b></div>
+    </div>` : '<p class="muted" style="margin:6px 0 0">ยังไม่ได้บันทึกเวลาวันนี้</p>';
+  return `<section class="card"><h3>${dateLabel(k)}</h3>
+    ${rows}
+    <div class="frow" style="margin-top:10px">
+      <label class="fld"><span>เริ่มงาน</span><input type="hidden" id="dStart" value="${w.start || ""}"><div class="tpick" data-for="dStart"></div></label>
+      <label class="fld"><span>เลิกงาน</span><input type="hidden" id="dEnd" value="${w.end || ""}"><div class="tpick" data-for="dEnd"></div></label>
+    </div>
+    <div class="frow" style="margin-top:8px">
+      <label class="fld"><span>เริ่มโอที</span><input type="hidden" id="dOtS" value="${ot.start || ""}"><div class="tpick" data-for="dOtS"></div></label>
+      <label class="fld"><span>เลิกโอที</span><input type="hidden" id="dOtE" value="${ot.end || ""}"><div class="tpick" data-for="dOtE"></div></label>
+    </div>
+    <div class="actions"><button class="sm" data-act="saveDay">บันทึก</button>${(w.start || w.end || w.ot) ? '<button class="ghost sm" data-act="clearDay">ลบ</button>' : ""}</div>
+    <p class="muted" style="margin:8px 0 0;font-size:.7rem">จันทร์–ศุกร์ โอทีคิด ×1.5 · เสาร์–อาทิตย์ ก่อน 17:30 ×1 และตั้งแต่ 17:30 ×3</p>
+  </section>`;
+}
 // ===== Income calendar: each day shows what was earned =====
 function incomeCalendar(){
   const [y, m] = state.month.split("-").map(Number);
@@ -1411,13 +1460,13 @@ function incomeCalendar(){
   const title = parseKey(state.month + "-01").toLocaleDateString(locale(), {month: "long", year: "numeric"});
   return `<section class="card"><div class="cal-head"><button class="sm ghost" data-act="mprev" aria-label="ก่อนหน้า">‹</button><b>${title}</b><button class="sm ghost" data-act="mnext" aria-label="ถัดไป">›</button></div>
     <div class="ic-grid">${WEEK.map(w => `<span class="wd">${w}</span>`).join("")}${cells.join("")}</div>
-    <p class="muted" style="margin:8px 0 0;font-size:.7rem">แตะวันที่เพื่อดูรายได้ของวันนั้น</p></section>`;
+    <p class="muted" style="margin:8px 0 0;font-size:.7rem">แตะวันที่เพื่อเลือก แตะซ้ำเพื่อแก้ไข</p></section>`;
 }
 // ===== Income: monthly pay + overtime / weekend work =====
 function monthlyPay(){ const p = state.pay || {}; return (p.salary || 0) + (p.housing || 0) + (p.position || 0); }
 function toMin(t){ const [h, m] = t.split(":").map(Number); return h * 60 + m; }
 function calcDay(k, start, end, ot){
-  const dailyBase = monthlyPay() / 30, hourly = dailyBase / 8;
+  const dailyBase = baseSalary() / 30, hourly = dailyBase / 8;
   const dow = parseKey(k).getDay(), weekend = dow === 0 || dow === 6;
   const r = { dailyBase, hourly, weekend, baseDay: 0, otH: 0, otPay: 0, wkH: 0, wkPay: 0, extra: 0, hasWork: false };
   const hasTimes = !!(start && end) && toMin(end) > toMin(start);
@@ -1425,7 +1474,7 @@ function calcDay(k, start, end, ot){
   if (!hasTimes && otHours <= 0) return r;
   r.hasWork = true;
   if (!weekend) {
-    if (hasTimes) r.baseDay = dailyBase;
+    // the base salary is not paid per day; it only sets the hourly rate
     // Mon-Fri: overtime from 18:00 at x1.5 (manual OT hours override the time-based calculation)
     r.otH = otHours > 0 ? otHours : Math.max(0, toMin(end) - Math.max(toMin(start), 18 * 60)) / 60;
     r.otPay = r.otH * hourly * 1.5;
@@ -1445,28 +1494,21 @@ function calcDay(k, start, end, ot){
 const fmtBaht = n => "฿" + Math.round(n).toLocaleString("en-US");
 function payCard(){
   const k = state.sel, w = state.work[k] || {}, c = calcDay(k, w.start, w.end, w.ot);
-  const ym = k.slice(0, 7);
+  const ym = cycleKey(k);
   let mExtra = 0, mDays = 0;
-  const rows = Object.keys(state.work).filter(x => x.startsWith(ym)).sort().map(x => {
+  const rows = Object.keys(state.work).filter(x => cycleKey(x) === ym).sort().map(x => {
     const r = calcDay(x, state.work[x].start, state.work[x].end, state.work[x].ot);
     mExtra += r.extra; if (r.hasWork) mDays++;
     return r.hasWork ? `<div class="pay-row"><span>${parseKey(x).getDate()}</span><b>${fmtBaht(r.extra)}</b></div>` : "";
   }).join("");
   const p = state.pay || {};
   return `
-    <section class="card pay-hero"><div class="lbl">รายได้เดือนนี้ (ประมาณ)</div>
-      <div class="big">${fmtBaht(monthlyPay() + mExtra)}</div>
-      <div class="muted">เงินเดือนประจำ ${fmtBaht(monthlyPay())} + โอที/วันหยุด ${fmtBaht(mExtra)} · ${mDays} วัน</div></section>
+    <section class="card pay-hero"><div class="lbl">โอที/วันหยุดรอบนี้ (22–21, ประมาณ)</div>
+      <div class="big">${fmtBaht(mExtra)}</div>
+      <div class="muted">ฐานคำนวณ ${fmtBaht(baseSalary())}/เดือน · ${mDays} วัน</div></section>
     ${incomeCalendar()}
-    <section class="card"><h3>เงินเดือนประจำ</h3>
-      <div class="frow">
-        <label class="fld"><span>เงินเดือน</span><input type="number" id="paySal" value="${p.salary || 0}" inputmode="numeric"></label>
-        <label class="fld"><span>ค่าบ้าน</span><input type="number" id="payHouse" value="${p.housing || 0}" inputmode="numeric"></label>
-      </div>
-      <div class="frow" style="margin-top:8px">
-        <label class="fld"><span>ค่าตำแหน่ง</span><input type="number" id="payPos" value="${p.position || 0}" inputmode="numeric"></label>
-        <div class="fld"><span>รวมต่อเดือน</span><b class="pay-sum">${fmtBaht(monthlyPay())}</b></div>
-      </div>
+    <section class="card"><h3>ฐานเงินเดือน</h3>
+      <label class="fld"><span>เงินเดือน (ใช้คำนวณโอที)</span><input type="number" id="paySal" value="${baseSalary()}" inputmode="numeric"></label>
       <div class="actions"><button class="sm" data-act="savePay">บันทึกเงินเดือน</button></div>
       <div class="pay-rates"><div><b>${fmtBaht(c.dailyBase)}</b><span>ต่อวัน (÷30)</span></div><div><b>${fmtBaht(c.hourly)}</b><span>ต่อชั่วโมง (÷8)</span></div></div>
     </section>
@@ -2181,7 +2223,7 @@ document.addEventListener("click", e => {
     case "kcalGoal": { const v = Number(prompt(tr("เป้าหมายแคลอรี่ต่อวัน (kcal)"), state.kcalGoal || 2000)); if (v > 0) state.kcalGoal = v; return render(); }
     case "theme": state.theme = state.theme === "dark" ? "light" : "dark"; applyTheme(); return;
     case "savePay": {
-      state.pay = { salary: Number($("paySal").value) || 0, housing: Number($("payHouse").value) || 0, position: Number($("payPos").value) || 0 };
+      state.pay = { salary: Number($("paySal").value) || 0, housing: 0, position: 0 };
       toast("บันทึกเงินเดือนแล้ว"); return render();
     }
     case "saveWork": {
@@ -2192,6 +2234,20 @@ document.addEventListener("click", e => {
       toast("บันทึกเวลาทำงานแล้ว"); return render();
     }
     case "clearWork": delete state.work[state.sel]; return render();
+    case "closeDay": return closeDayPanel();
+    case "clearDay": delete state.work[state.sel]; closeDayPanel(); return render();
+    case "saveDay": {
+      const st = $("dStart").value, en = $("dEnd").value, os = $("dOtS").value, oe = $("dOtE").value;
+      if (!!st !== !!en) return toast("กรอกเวลาเริ่มและเลิกงานให้ครบทั้งคู่");
+      if (!!os !== !!oe) return toast("กรอกเวลาเริ่มและเลิกโอทีให้ครบทั้งคู่");
+      if (st && en && toMin(en) <= toMin(st)) return toast("เวลาเลิกงานต้องมากกว่าเวลาเริ่ม");
+      if (os && oe && toMin(oe) <= toMin(os)) return toast("เวลาเลิกโอทีต้องมากกว่าเวลาเริ่ม");
+      const rec = {};
+      if (st && en) { rec.start = st; rec.end = en; }
+      if (os && oe) rec.ot = { start: os, end: oe };
+      if (Object.keys(rec).length) state.work[state.sel] = rec; else delete state.work[state.sel];
+      closeDayPanel(); toast("บันทึกรายได้วันนี้แล้ว"); return render();
+    }
     case "span": state.spanTab = el.dataset.s; return render();
     case "pickIcon": setIcon(el.dataset.i); return;
     case "addExpRow": addExpRow(); return;
@@ -2205,7 +2261,12 @@ document.addEventListener("click", e => {
     case "preset": applyPreset(Number(el.dataset.idx)); return;
     case "ownPreset": $("newText").focus(); return;
     case "edit": openSheet({ k, key }); return;
-    case "pick": state.sel = k; state.month = k.slice(0, 7); return render();
+    case "pick": {
+      const again = state.sel === k && state.tab === "income";
+      state.sel = k; state.month = k.slice(0, 7);
+      if (again) return openDayPanel();
+      return render();
+    }
     case "openDay": state.sel = k; state.month = k.slice(0, 7); state.tab = "schedule"; popNav(); return render();
     case "mprev":
     case "mnext": {
