@@ -1159,6 +1159,7 @@ Object.assign(EN, {"เงินเดือน (คิดโอที)":"Salary
 Object.assign(EN, {"ตามเดือนในปฏิทินรายได้ · มาสายหลัง 08:00 (จันทร์–ศุกร์)":"Follows the income calendar month · late after 08:00 (Mon–Fri)"});
 Object.assign(EN, {"จำนวนเงินรวม":"Total amount"});
 Object.assign(EN, {"วิ่ง":"Run","ระยะทาง (กม.)":"Distance (km)","เพซ (นาที:วินาที/กม.)":"Pace (min:sec/km)","อัตราการเต้นหัวใจ (bpm)":"Heart rate (bpm)","กรุณาใส่ระยะทาง":"Enter distance","กรุณาใส่เพซในรูปแบบ นาที:วินาที":"Enter pace as min:sec","ระยะทางวันนี้":"Distance today","เพซ/กม.":"Pace/km","ระยะทาง 7 วันล่าสุด (กม.)":"Distance, last 7 days (km)"});
+Object.assign(EN, {"รายจ่ายหักทุกเดือน":"Monthly deductions","+ เพิ่มรายจ่าย":"+ Add deduction","หักประจำ":"Fixed deductions","สุทธิ":"Net","บันทึกรายจ่ายแล้ว":"Deductions saved","ชื่อรายการ":"Item name"});
 function tr(s){ return state.lang === "en" && EN[s] ? EN[s] : s; }
 // Walks the app's text nodes and placeholders; keeps the original Thai so it can switch back
 function i18n(){
@@ -1568,6 +1569,15 @@ function incomePanel(){
     </div></section>`;
 }
 TITLES.income = "รายได้";
+// ===== Fixed monthly deductions (tax, social security, ...) =====
+const DEFAULT_DED = [{name:"ภาษี", amount:757.79}, {name:"ประกันสังคม", amount:875}];
+function deductions(){ return (state.pay && state.pay.deductions) || DEFAULT_DED; }
+function dedTotal(){ return deductions().reduce((a, d) => a + (Number(d.amount) || 0), 0); }
+function readDed(){
+  const rows = [...document.querySelectorAll(".ded-row")];
+  if (!rows.length) return deductions().slice();
+  return rows.map(r => ({ name: r.querySelector(".dd-name").value.trim(), amount: Number(r.querySelector(".dd-amt").value) || 0 }));
+}
 function allowances(){ const p = state.pay || {}; return (p.housing || 0) + (p.position || 0); }
 function baseSalary(){ return (state.pay && state.pay.salary) || 0; }
 function openDayPanel(){
@@ -1673,8 +1683,13 @@ function payCard(){
   return `
     <section class="card pay-hero"><div class="lbl">รายได้รอบนี้ (22–21, ประมาณ)</div>
       <div class="big">${fmtBaht(mExtra + allowances())}</div>
-      <div class="muted">เงินเพิ่ม ${fmtBaht(allowances())} + โอที/ทำงาน ${fmtBaht(mExtra)} · ${mDays} วัน</div></section>
+      <div class="muted">เงินเพิ่ม ${fmtBaht(allowances())} + โอที/ทำงาน ${fmtBaht(mExtra)} · ${mDays} วัน</div>
+      <div class="muted">หักประจำ −${fmtBaht(dedTotal())} · สุทธิ ${fmtBaht(mExtra + allowances() - dedTotal())}</div></section>
     ${incomeCalendar()}
+    <section class="card"><h3>รายจ่ายหักทุกเดือน<span class="muted">${fmtBaht(dedTotal())}</span></h3>
+      ${deductions().map((d, i) => `<div class="frw ded-row"><input class="dd-name" value="${esc(d.name)}" placeholder="${tr("ชื่อรายการ")}"><input class="dd-amt" type="number" min="0" step="0.01" inputmode="decimal" value="${d.amount}"><button type="button" class="fr-del" data-act="delDed" data-i="${i}" aria-label="ลบ">×</button></div>`).join("")}
+      <div class="actions"><button class="ghost sm" data-act="addDed">+ เพิ่มรายจ่าย</button><button class="sm" data-act="saveDed">บันทึก</button></div>
+    </section>
     <section class="card"><h3>ฐานเงินเดือน</h3>
       <div class="frow"><label class="fld"><span>เงินเดือน (คิดโอที)</span><input type="number" id="paySal" value="${baseSalary()}" inputmode="numeric"></label>
         <label class="fld"><span>ค่าบ้าน</span><input type="number" id="payHouse" value="${(state.pay || {}).housing || 0}" inputmode="numeric"></label></div>
@@ -2005,7 +2020,7 @@ function snapshot(){
   });
 }
 function resetData(){
-  state.pay = {salary:30400, housing:2500, position:800}; state.work = {}; state.templates = []; state.plans = {}; state.done = {}; state.customFoods = []; state.completed = {}; state.foodOv = {}; state.notes = {}; state.water = {}; state.weights = {}; state.costGoal = 0; state.costGoalM = 0; state.kcalGoal = 2000;
+  state.pay = {salary:30400, housing:2500, position:800, deductions:[{name:"ภาษี", amount:757.79}, {name:"ประกันสังคม", amount:875}]}; state.work = {}; state.templates = []; state.plans = {}; state.done = {}; state.customFoods = []; state.completed = {}; state.foodOv = {}; state.notes = {}; state.water = {}; state.weights = {}; state.costGoal = 0; state.costGoalM = 0; state.kcalGoal = 2000;
   state.reminders = false; state.saved = "";
 }
 function applyData(d){
@@ -2420,6 +2435,9 @@ document.addEventListener("click", e => {
       $("dStart").value = "08:00"; $("dEnd").value = "17:20";
       $("dOtS").value = "18:00"; $("dOtE").value = "20:00";
       buildAllTP(); return;
+    case "addDed": { const rows = readDed(); rows.push({ name: "", amount: 0 }); state.pay = { ...state.pay, deductions: rows }; return render(); }
+    case "delDed": { const rows = readDed(); rows.splice(Number(el.dataset.i), 1); state.pay = { ...state.pay, deductions: rows }; return render(); }
+    case "saveDed": { state.pay = { ...state.pay, deductions: readDed().filter(d => d.name || d.amount) }; toast("บันทึกรายจ่ายแล้ว"); return render(); }
     case "closeDay": return closeDayPanel();
     case "clearDay": delete state.work[state.sel]; closeDayPanel(); return render();
     case "saveDay": {
